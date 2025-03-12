@@ -27,11 +27,7 @@
 		<url/>
 	</scm>
 	<properties>
-<<<<<<< HEAD
 		<java.version>23</java.version>
-=======
-		<java.version>21</java.version>
->>>>>>> 9b18bf2 (lan2)
 	</properties>
 	<dependencies>
 		<dependency>
