@@ -16,5 +16,13 @@ public class Trangchu {
     public String shop(Model model) {
         return "home/sanpham";
     }
+    @GetMapping("/Dangnhap")
+    public String dangnhap(){
+        return "home/Dangnhap";
+    }
+    @GetMapping("/Dangky")
+    public String Dangky(){
+        return "home/Dangky";
+    }
     
 }

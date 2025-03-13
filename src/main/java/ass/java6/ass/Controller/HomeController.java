@@ -29,4 +29,6 @@ public class HomeController {
     public String sattistics() {
         return "admin/sattistics";
     }
+    
+   
 }
