@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head th:replace="~{/layouts/header}">
+</head>
+<body>
+    <header th:replace="~{/layouts/nav}"></header>
+    <main class="container">
+        <div class="container-fluid page-header py-5 bg-dark">
+            <h1 class="text-center text-white display-6">Giỏ Hàng</h1>
+            <ol class="breadcrumb justify-content-center mb-0">
+                <li class="breadcrumb-item"><a href="#" class="text-light">Trang Chủ</a></li>
+                <li class="breadcrumb-item"><a href="#" class="text-light">Trang</a></li>
+                <li class="breadcrumb-item active text-white">Giỏ Hàng</li>
+            </ol>
+        </div>
+        <div class="container py-5">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-dark text-center">
+                        <tr>
+                            <th scope="col" class="col-2">Sản Phẩm</th>
+                            <th scope="col" class="col-3">Tên</th>
+                            <th scope="col" class="col-2 ">Giá</th>
+                            <th scope="col" class="col-2">Số Lượng</th>
+                            <th scope="col" class="col-2 ">Tổng</th>
+                            <th scope="col" class="col-1">Xóa</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-center">
+                        <tr th:each="item : ${cartItems}">
+                            <th scope="row" class="col-2">
+                                <div class="d-flex align-items-center">
+                                    <img th:src="@{/images/{img}(img=${item.image})}" class="img-fluid me-3 rounded" 
+                                         style="width: 80px; height: 80px; object-fit: cover;" alt="Sản phẩm">
+                                </div>
+                            </th>
+                            <td class="col-3 text-truncate">
+                                <p class="mb-0" th:text="${item.name}"></p>
+                            </td>
+                            <td class="col-2">
+                                <p class="mb-0" th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></p>
+                            </td>
+                            <td class="col-2">
+                                <div class="input-group input-group-sm w-75 mx-auto">
+                                    <form th:action="@{/cart/update}" method="post" class="d-inline">
+                                        <input type="hidden" name="id" th:value="${item.id}">
+                                        <input type="hidden" name="quantity" th:value="${cartQuantities[item.id] - 1}">
+                                        <button type="submit" class="btn btn-outline-dark"
+                                                th:disabled="${cartQuantities[item.id] <= 1}">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                    </form>
+                                    <input type="text" class="form-control text-center border-0" 
+                                           th:value="${cartQuantities[item.id]}" readonly>
+                                    <form th:action="@{/cart/update}" method="post" class="d-inline">
+                                        <input type="hidden" name="id" th:value="${item.id}">
+                                        <input type="hidden" name="quantity" th:value="${cartQuantities[item.id] + 1}">
+                                        <button type="submit" class="btn btn-outline-dark">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                            <td class="col-2">
+                                <p class="mb-0" th:text="${#numbers.formatDecimal(item.price * cartQuantities[item.id], 0, 'COMMA', 0, 'POINT')} + ' ₫'"></p>
+                            </td>
+                            <td class="col-1">
+                                <form th:action="@{/cart/remove}" method="post">
+                                    <input type="hidden" name="id" th:value="${item.id}">
+                                    <button type="submit" class="btn btn-danger btn-sm rounded-circle">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Tổng đơn hàng -->
+            <div class="row g-4 justify-content-end">
+                <div class="col-lg-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h1 class="display-6 mb-4">Tổng đơn hàng</h1>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="mb-0">Tổng tiền :</h5>
+                                <p class="mb-0" th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></p>
+                            </div>
+                            <form th:action="@{/cart/checkout}" method="post">
+                                <button type="submit" class="btn btn-primary btn-lg w-100 text-uppercase">
+                                    Thanh Toán Ngay
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head th:replace="~{/layouts/header}">
+        <title>Home</title>
+    </head>
+    <body>
+        <header th:replace="~{/layouts/nav}">
+        </header>
+        <main class="container">
+            <div class="container-fluid page-header py-5">
+                <h1 class="text-center text-white display-6"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Thanh toán</font></font></h1>
+                <ol class="breadcrumb justify-content-center mb-0">
+                    <li class="breadcrumb-item"><a href="#"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Trang chủ</font></font></a></li>
+                    <li class="breadcrumb-item"><a href="#"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Trang</font></font></a></li>
+                    <li class="breadcrumb-item active text-white"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Thanh toán</font></font></li>
+                </ol>
+            </div>
+            <div class="container-fluid py-5">
+                <div class="container py-5">
+                    <h1 class="mb-4"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Chi tiết thanh toán</font></font></h1>
+                    <form action="#">
+                        <div class="row g-5">
+                            <div class="col-md-12 col-lg-6 col-xl-7">
+                                <div class="row">
+                                    <div class="col-md-12 col-lg-6">
+                                        <div class="form-item w-100">
+                                            <label class="form-label my-3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Tên </font></font><sup><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">*</font></font></sup></label>
+                                            <input type="text" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 col-lg-6">
+                                        
+                                    </div>
+                                </div>
+                                
+                                
+                                <div class="form-item">
+                                    <label class="form-label my-3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Thị trấn/Thành phố </font></font><sup><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">*</font></font></sup></label>
+                                    <input type="text" class="form-control">
+                                </div>
+                                
+                                
+                                <div class="form-item">
+                                    <label class="form-label my-3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Di động </font></font><sup><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">*</font></font></sup></label>
+                                    <input type="tel" class="form-control">
+                                </div>
+                                <div class="form-item">
+                                    <label class="form-label my-3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Địa chỉ Email </font></font><sup><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">*</font></font></sup></label>
+                                    <input type="email" class="form-control">
+                                </div>
+                                
+                                <hr>
+                                <div class="form-check my-3">
+                                    <input class="form-check-input" type="checkbox" id="Address-1" name="Address" value="Address">
+                                    <label class="form-check-label" for="Address-1"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Gửi đến một địa chỉ khác?</font></font></label>
+                                </div>
+                                
+                            </div>
+                            <div class="col-md-12 col-lg-6 col-xl-5">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Các sản phẩm</font></font></th>
+                                                <th scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Tên</font></font></th>
+                                                <th scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Giá</font></font></th>
+                                                <th scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Số lượng</font></font></th>
+                                                <th scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Tổng cộng</font></font></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row">
+                                                    <div class="d-flex align-items-center mt-2">
+                                                        <img src="img/vegetable-item-2.jpg" class="img-fluid rounded-circle" style="width: 90px; height: 90px;" alt="">
+                                                    </div>
+                                                </th>
+                                                <td class="py-5"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Súp lơ tuyệt vời</font></font></td>
+                                                <td class="py-5"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">69,00 đô la</font></font></td>
+                                                <td class="py-5"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2</font></font></td>
+                                                <td class="py-5"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">138,00 đô la</font></font></td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">
+                                                    <div class="d-flex align-items-center mt-2">
+                                                        <img src="img/vegetable-item-5.jpg" class="img-fluid rounded-circle" style="width: 90px; height: 90px;" alt="">
+                                                    </div>
+                                                </th>
+                                                <td class="py-5"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Khoai tây</font></font></td>
+                                                <td class="py-5"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">69,00 đô la</font></font></td>
+                                                <td class="py-5"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2</font></font></td>
+                                                <td class="py-5"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">138,00 đô la</font></font></td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">
+                                                    <div class="d-flex align-items-center mt-2">
+                                                        <img src="img/vegetable-item-3.png" class="img-fluid rounded-circle" style="width: 90px; height: 90px;" alt="">
+                                                    </div>
+                                                </th>
+                                                <td class="py-5"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Quả chuối lớn</font></font></td>
+                                                <td class="py-5"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">69,00 đô la</font></font></td>
+                                                <td class="py-5"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2</font></font></td>
+                                                <td class="py-5"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">138,00 đô la</font></font></td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">
+                                                </th>
+                                                <td class="py-5"></td>
+                                                <td class="py-5"></td>
+                                                <td class="py-5">
+                                                    <p class="mb-0 text-dark py-3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Tổng cộng</font></font></p>
+                                                </td>
+                                                <td class="py-5">
+                                                    <div class="py-3 border-bottom border-top">
+                                                        <p class="mb-0 text-dark"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">414,00 đô la</font></font></p>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">
+                                                </th>
+                                                <td class="py-5">
+                                                    <p class="mb-0 text-dark py-4"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Vận chuyển</font></font></p>
+                                                </td>
+                                                <td colspan="3" class="py-5">
+                                                    <div class="form-check text-start">
+                                                        <input type="checkbox" class="form-check-input bg-primary border-0" id="Shipping-1" name="Shipping-1" value="Shipping">
+                                                        <label class="form-check-label" for="Shipping-1"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Miễn phí vận chuyển</font></font></label>
+                                                    </div>
+                                                    <div class="form-check text-start">
+                                                        <input type="checkbox" class="form-check-input bg-primary border-0" id="Shipping-2" name="Shipping-1" value="Shipping">
+                                                        <label class="form-check-label" for="Shipping-2"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Giá cố định: $15.00</font></font></label>
+                                                    </div>
+                                                    <div class="form-check text-start">
+                                                        <input type="checkbox" class="form-check-input bg-primary border-0" id="Shipping-3" name="Shipping-1" value="Shipping">
+                                                        <label class="form-check-label" for="Shipping-3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Nhận hàng tại địa phương: $8.00</font></font></label>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">
+                                                </th>
+                                                <td class="py-5">
+                                                    <p class="mb-0 text-dark text-uppercase py-3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">TỔNG CỘNG</font></font></p>
+                                                </td>
+                                                <td class="py-5"></td>
+                                                <td class="py-5"></td>
+                                                <td class="py-5">
+                                                    <div class="py-3 border-bottom border-top">
+                                                        <p class="mb-0 text-dark"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">135,00 đô la</font></font></p>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
+                                    <div class="col-12">
+                                        <div class="form-check text-start my-3">
+                                            <input type="checkbox" class="form-check-input bg-primary border-0" id="Transfer-1" name="Transfer" value="Transfer">
+                                            <label class="form-check-label" for="Transfer-1"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Chuyển khoản ngân hàng trực tiếp</font></font></label>
+                                        </div>
+                                        <p class="text-start text-dark"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Thanh toán trực tiếp vào tài khoản ngân hàng của chúng tôi. Vui lòng sử dụng Mã đơn hàng của bạn làm tham chiếu thanh toán. Đơn hàng của bạn sẽ không được giao cho đến khi tiền được chuyển vào tài khoản của chúng tôi.</font></font></p>
+                                    </div>
+                                </div>
+                                <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
+                                    <div class="col-12">
+                                        <div class="form-check text-start my-3">
+                                            <input type="checkbox" class="form-check-input bg-primary border-0" id="Payments-1" name="Payments" value="Payments">
+                                            <label class="form-check-label" for="Payments-1"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Kiểm tra thanh toán</font></font></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
+                                    <div class="col-12">
+                                        <div class="form-check text-start my-3">
+                                            <input type="checkbox" class="form-check-input bg-primary border-0" id="Delivery-1" name="Delivery" value="Delivery">
+                                            <label class="form-check-label" for="Delivery-1"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Thanh toán khi nhận hàng</font></font></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
+                                    <div class="col-12">
+                                        <div class="form-check text-start my-3">
+                                            <input type="checkbox" class="form-check-input bg-primary border-0" id="Paypal-1" name="Paypal" value="Paypal">
+                                            <label class="form-check-label" for="Paypal-1"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Paypal</font></font></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row g-4 text-center align-items-center justify-content-center pt-4">
+                                    <button type="button" class="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Đặt hàng</font></font></button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+        <div th:replace="~{/layouts/footer}">
+        </div>
+    </body>
+</html>

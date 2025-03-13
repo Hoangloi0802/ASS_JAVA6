@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="~{/layouts/header}">
+    <title>Home</title>
+</head>
+
+<body>
+    <header th:replace="~{/layouts/nav}">
+    </header>
+    <main class="container">
+        <div class="container-fluid page-header py-5">
+            <h1 class="text-center text-white display-6">Shop Detail</h1>
+            <ol class="breadcrumb justify-content-center mb-0">
+                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                <li class="breadcrumb-item"><a href="#">Pages</a></li>
+                <li class="breadcrumb-item active text-white">Shop Detail</li>
+            </ol>
+        </div>
+        <div class="container-fluid py-5 mt-5">
+            <div class="container py-5">
+                <div class="row g-4 mb-5">
+                    <div class="col-lg-8 col-xl-9">
+                        <div class="row g-4">
+                            <!-- Hình ảnh sản phẩm -->
+                            <div class="col-lg-6">
+                                <div class="border rounded">
+                                    <a href="#">
+                                        <img th:src="@{'/images/' + ${product.image}}" class="img-fluid rounded"
+                                            alt="Product Image">
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Thông tin sản phẩm -->
+                            <div class="col-lg-6">
+                                <h4 class="fw-bold mb-3" th:text="${product.name}">Product Name</h4>
+                                <p class="mb-3">Thể loại: <span th:text="${product.category.name}"></span></p>
+                                <h5 class="fw-bold mb-3" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') + ' đ / kg'}"></h5>
+
+                                <a th:href="@{'/cart/add/' + ${product.id}}"
+                                    class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary">
+                                    <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-lg-4 col-xl-3">
+                        <div class="row g-4 fruite">
+                            <div class="col-lg-3">
+                                <div class="col-lg-3">
+                                    <h4>Categories</h4>
+                                    <ul class="list-unstyled fruite-categorie">
+                                        <li>
+                                            <a th:href="@{/shop}" th:classappend="${selectedCategory == null} ? 'active' : ''">All Products</a>
+                                        </li>
+                                        <th:block th:each="entry : ${categories}">
+                                            <li>
+                                                <a th:href="@{/shop(category=${entry.key})}" 
+                                                   th:text="${entry.key}" 
+                                                   th:classappend="${selectedCategory == entry.key} ? 'active' : ''">
+                                                </a> 
+                                                (<span th:text="${entry.value}"></span>)
+                                            </li>
+                                        </th:block>
+                                    </ul>
+                                </div>
+                                
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <div th:replace="~{/layouts/footer}">
+    </div>
+</body>
+
+</html>

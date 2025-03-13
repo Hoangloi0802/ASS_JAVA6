@@ -1,0 +1,42 @@
+<div class="col-md-2 themed-grid-col">
+    <div class="d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary" style="width: 280px;">
+        <h4 class="mb-3 text-secondary">Quản lý</h4>
+        <hr>
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li class="nav-item">
+                <a href="category" 
+                   class="nav-link d-flex align-items-center" 
+                   th:classappend="${activePage == 'category'} ? 'active'">
+                   <i class="bi bi-card-checklist me-2"></i> 
+                    Quản lý loại hàng
+                </a>
+            </li>
+            <li>
+                <a href="products" 
+                   class="nav-link link-body-emphasis d-flex align-items-center" 
+                   th:classappend="${activePage == 'product'} ? 'active'">
+                    <i class="bi bi-cart-fill me-2"></i>
+                    Quản lý sản phẩm
+                </a>
+            </li>
+            <li>
+                <a href="order" 
+                   class="nav-link link-body-emphasis d-flex align-items-center" 
+                   th:classappend="${activePage == 'order'} ? 'active'">
+                    <i class="bi bi-receipt-cutoff me-2"></i>
+                    Quản lý đơn hàng
+                </a>
+            </li>
+            <li>
+                <a href="accounts" 
+                   class="nav-link link-body-emphasis d-flex align-items-center" 
+                   th:classappend="${activePage == 'account'} ? 'active'">
+                    <i class="bi bi-people-fill me-2"></i>
+                    Quản lý tài khoản
+                </a>
+            </li>
+           
+        </ul>
+        <hr>
+    </div>
+</div>
