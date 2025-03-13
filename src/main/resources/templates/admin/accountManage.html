@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lí người dùng</title>
+    <link rel="stylesheet" href="/bootstrap-5.3.3/dist/css/bootstrap.css">
+    <script src="/bootstrap-5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="/css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-3 ">
+                <ul class="nav nav-pills flex-column mb-auto">
+                    <li class="nav-item">
+                        <a href="/" class="nav-link active" aria-current="page">
+                            Home
+                        </a>
+                    </li>
+                    <li>
+                        <a th:href="@{/admin/products}" class="nav-link">
+                            <i class="fa-solid fa-boxes-stacked me-2"></i>
+                            Quản Lý Sản Phẩm
+                        </a>
+                    </li>
+                    <li>
+                        <a th:href="@{/admin/categories}" class="nav-link">
+                            <i class="fa-solid fa-tags me-2"></i>
+                            Quản Lý Loại Sản Phẩm
+                        </a>
+                    </li>
+                    <li>
+                        <a th:href="@{/admin/bill}" class="nav-link">
+                            <i class="fa-solid fa-file-invoice-dollar me-2"></i>
+                            Quản Lý Hóa Đơn
+                        </a>
+                    </li>
+                    <li>
+                        <a th:href="@{/admin/account}" class="nav-link">
+                            <i class="fa-solid fa-users me-2"></i>
+                            Quản Lý Người Dùng
+                        </a>
+                    </li>
+                    <li>
+                        <a th:href="@{/admin/statistics}" class="nav-link">
+                            <i class="fa-solid fa-chart-pie me-2"></i>
+                            Thống Kê
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col">
+                <div>
+                    <h2>Quản Lý Người Dùng</h2>
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home"
+                                type="button" role="tab" aria-controls="home" aria-selected="true">CHỈNH SỬA</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile"
+                                type="button" role="tab" aria-controls="profile" aria-selected="false">DANH
+                                SÁCH</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                            <div class="container my-3">
+                                <div class="card shadow">
+                                    <div class="card-body">
+                                        <form th:action="@{/admin/users/save}" method="post"
+                                            enctype="multipart/form-data">
+                                            <div class="row row-cols-1 row-cols-md-2 g-3">
+                                                <div class="col text-center">
+                                                    <div class="card h-100 shadow-sm">
+                                                        <div class="card-body p-3">
+                                                            <div class="image-upload-container mb-3">
+                                                                <img src="/images/default-user.png" alt="User Photo"
+                                                                    class="img-fluid rounded-circle shadow mb-3 preview-image"
+                                                                    id="userPhoto"
+                                                                    style="width: 150px; height: 150px; object-fit: cover; cursor: pointer;"
+                                                                    onclick="document.getElementById('imageUpload').click()">
+                                                                <div class="upload-overlay">
+                                                                    <i class="fas fa-camera"></i>
+                                                                    <span>Change Photo</span>
+                                                                </div>
+                                                            </div>
+                                                            <input type="file" class="form-control d-none"
+                                                                id="imageUpload" name="photoFile" accept="image/*"
+                                                                onchange="previewImage(event)">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <script>
+                                                    function previewImage(event) {
+                                                        const file = event.target.files[0];
+                                                        const preview = document.getElementById('userPhoto');
+
+                                                        if (file) {
+                                                            if (file.size > 5 * 1024 * 1024) {
+                                                                alert('File ảnh quá lớn! Vui lòng chọn file dưới 5MB');
+                                                                event.target.value = '';
+                                                                return;
+                                                            }
+                                                            const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+                                                            if (!validTypes.includes(file.type)) {
+                                                                alert('Vui lòng chọn file ảnh (JPG, PNG hoặc GIF)');
+                                                                event.target.value = '';
+                                                                return;
+                                                            }
+                                                            const reader = new FileReader();
+                                                            reader.onload = function (e) {
+                                                                preview.src = e.target.result;
+                                                            }
+                                                            reader.readAsDataURL(file);
+                                                        }
+                                                    }
+                                                </script>
+                                                <div class="col">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Username:</label>
+                                                        <input type="text" class="form-control" name="username"
+                                                            placeholder="Nhập tên người dùng" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Mật khẩu:</label>
+                                                        <input type="password" class="form-control" name="newPassword"
+                                                            placeholder="Nhập mật khẩu mới (bỏ trống nếu không đổi)">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Họ và tên:</label>
+                                                        <input type="text" class="form-control" name="fullName"
+                                                            placeholder="Nhập họ và tên người dùng" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Email:</label>
+                                                        <input type="email" class="form-control" name="email"
+                                                            placeholder="Nhập email người dùng" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Trạng Thái:</label>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" name="active"
+                                                                value="true" id="activeYes" checked>
+                                                            <label class="form-check-label" for="activeYes">Hoạt
+                                                                động</label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" name="active"
+                                                                value="false" id="activeNo">
+                                                            <label class="form-check-label" for="activeNo">Không hoạt
+                                                                động</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-flex gap-2 flex-wrap">
+                                                        <button type="submit" class="btn btn-success">
+                                                            <i class="fa-solid fa-plus"></i> Thêm
+                                                        </button>
+                                                        <button type="submit" class="btn btn-primary">
+                                                            <i class="fa-solid fa-pen-to-square"></i> Cập nhật
+                                                        </button>
+                                                        <button type="reset" class="btn btn-warning">
+                                                            <i class="fa-solid fa-rotate"></i> Làm Mới
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                            <table class="table table-bordered table-hover align-middle shadow">
+                                <thead class="table-primary" border="1">
+                                    <tr>
+                                        <th scope="col">Username</th>
+                                        <th scope="col">Mật khẩu</th>
+                                        <th scope="col">Họ và Tên</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">Ảnh</th>
+                                        <th scope="col">Trạng Thái</th>
+                                        <th scope="col">Vai Trò</th>
+                                        <th scope="col" class="col-2">Hành Động</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-light">
+                                    <tr>
+                                        <td>user1</td>
+                                        <td>******</td>
+                                        <td>Nguyễn Văn A</td>
+                                        <td>user1@example.com</td>
+                                        <td><img src="/images/default-user.png" alt="User Photo"
+                                                style="max-width: 50px;"></td>
+                                        <td class="text-center badge-success-subtle">Hoạt động</td>
+                                        <td class="admin-role">Admin</td>
+                                        <td>
+                                            <a href="#" class="btn btn-info btn-sm btn-action edit-btn">
+                                                <i class="fa-solid fa-pen-to-square"></i> Sửa
+                                            </a>
+                                            <a href="#" class="btn btn-danger btn-sm btn-action delete-btn"
+                                                onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
+                                                <i class="fa-solid fa-trash"></i> Xóa
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

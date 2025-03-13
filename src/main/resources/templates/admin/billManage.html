@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Hóa Đơn</title>
+    <link rel="stylesheet" href="/bootstrap-5.3.3/dist/css/bootstrap.css">
+    <script src="/bootstrap-5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="/css/billAndStatistics.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-3">
+                <ul class="nav nav-pills flex-column mb-auto">
+                    <li class="nav-item">
+                        <a href="/" class="nav-link active" aria-current="page">
+                            Home
+                        </a>
+                    </li>
+                    <li>
+                        <a th:href="@{/admin/products}" class="nav-link">
+                            <i class="fa-solid fa-boxes-stacked me-2"></i>
+                            Quản Lý Sản Phẩm
+                        </a>
+                    </li>
+                    <li>
+                        <a th:href="@{/admin/categories}" class="nav-link">
+                            <i class="fa-solid fa-tags me-2"></i>
+                            Quản Lý Loại Sản Phẩm
+                        </a>
+                    </li>
+                    <li>
+                        <a th:href="@{/admin/bill}" class="nav-link">
+                            <i class="fa-solid fa-file-invoice-dollar me-2"></i>
+                            Quản Lý Hóa Đơn
+                        </a>
+                    </li>
+                    <li>
+                        <a th:href="@{/admin/account}" class="nav-link">
+                            <i class="fa-solid fa-users me-2"></i>
+                            Quản Lý Người Dùng
+                        </a>
+                    </li>
+                    <li>
+                        <a th:href="@{/admin/statistics}" class="nav-link">
+                            <i class="fa-solid fa-chart-pie me-2"></i>
+                            Thống Kê
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col">
+                <h2>Danh Sách Hóa Đơn</h2>
+                <table class="table table-bordered table-hover align-middle shadow">
+                    <thead class="table-primary">
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Người đặt hàng</th>
+                            <th scope="col">Địa chỉ</th>
+                            <th scope="col">Ngày tạo</th>
+                            <th scope="col">SĐT</th>
+                            <th scope="col" class="col-2">Hành Động</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-light">
+                        <tr>
+                            <td>HD001</td>
+                            <td>Nguyễn Văn An</td>
+                            <td>44 Bùi Hiển, Hòa An, Cẩm Lệ, Đà Nẵng</td>
+                            <td>13/03/2025</td>
+                            <td>012345678</td>
+                            <td>
+                                <a href="#" class="btn btn-danger btn-sm delete-btn"
+                                    onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
+                                    <i class="fa-solid fa-trash"></i> Xóa
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>HD002</td>
+                            <td>Trần Thị B</td>
+                            <td>123 Lê Lợi, Hải Châu, Đà Nẵng</td>
+                            <td>14/03/2025</td>
+                            <td>0987654321</td>
+                            <td>
+                                <a href="#" class="btn btn-danger btn-sm delete-btn"
+                                    onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
+                                    <i class="fa-solid fa-trash"></i> Xóa
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

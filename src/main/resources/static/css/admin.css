@@ -1,0 +1,287 @@
+:root {
+    --primary-color: rgb(30, 104, 241);
+    --hover-color: rgb(30, 104, 241);
+    --success-color: #03d935;
+    --warning-color: #f7c706;
+    --danger-color: #d71e15;
+    --shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    --border-radius: 10px;
+    --transition: all 0.3s ease;
+}
+
+body {
+    background: #f0f2f5;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.table {
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    margin: 30px 0;
+    background: white;
+    border: none;
+}
+
+.table thead th {
+    background: linear-gradient(135deg, var(--primary-color), var(--hover-color));
+    color: white;
+    font-weight: 250;
+    padding: 16px;
+    border-bottom: 4px solid var(--hover-color);
+    letter-spacing: 1.2px;
+    font-size: 15px;
+}
+
+.table tbody td {
+    padding: 14px;
+    vertical-align: middle;
+    font-size: 16px;
+    color: #2c3e50;
+}
+
+.table-hover tbody tr:hover {
+    background: #fef0f0;
+    transition: var(--transition);
+}
+
+.btn-action {
+    padding: 10px 14px;
+    font-size: 15px;
+    border-radius: 8px;
+    transition: var(--transition);
+    min-width: 100px;
+    margin: 0 8px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.edit-btn {
+    background: linear-gradient(135deg, #00cec9, #00b894);
+    border: none;
+    color: white;
+}
+
+.edit-btn:hover {
+    background: linear-gradient(135deg, #00b894, #009688);
+    box-shadow: 0 6px 15px rgba(0, 206, 201, 0.4);
+    transform: translateY(-3px);
+    color: white;
+}
+
+.delete-btn {
+    background: linear-gradient(135deg, var(--danger-color), #d63031);
+    border: none;
+    color: white;
+}
+
+.delete-btn:hover {
+    background: linear-gradient(135deg, #d63031, #c0392b);
+    box-shadow: 0 6px 15px rgba(255, 63, 52, 0.4);
+    transform: translateY(-3px);
+    color: white;
+}
+
+.table td:last-child {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    padding: 12px;
+}
+
+.image-upload-container {
+    position: relative;
+    display: inline-block;
+    margin: 25px 0;
+    transition: var(--transition);
+}
+
+.preview-image {
+    border-radius: 50%;
+    transition: var(--transition);
+    box-shadow: 0 4px 12px rgba(232, 67, 147, 0.2);
+}
+
+.upload-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 150px;
+    height: 150px;
+    background: linear-gradient(135deg, rgb(30, 104, 241), rgb(30, 104, 241));
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: var(--transition);
+    color: white;
+}
+
+.image-upload-container:hover .upload-overlay {
+    opacity: 1;
+}
+
+.image-upload-container:hover .preview-image {
+    opacity: 0.9;
+    transform: scale(1.05);
+}
+
+.upload-overlay i {
+    font-size: 34px;
+    margin-bottom: 12px;
+}
+
+.upload-overlay span {
+    font-size: 15px;
+    font-weight: 600;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.card.shadow {
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    background: white;
+    padding: 25px;
+    background: linear-gradient(145deg, #ffffff, #f9fbfd);
+}
+
+.form-control {
+    border-radius: 8px;
+    padding: 14px;
+    border: 2px solid #dfe6e9;
+    font-size: 16px;
+    transition: var(--transition);
+    background: #fff;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
+}
+
+.form-label {
+    font-weight: 600;
+    color: #2d3436;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--success-color), #00b894);
+    border: none;
+    color: white;
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #00b894, #009688);
+    box-shadow: 0 6px 15px rgba(0, 230, 118, 0.4);
+    transform: translateY(-3px);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--hover-color));
+    border: none;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, var(--hover-color), #e84393);
+    box-shadow: 0 6px 15px rgba(255, 107, 107, 0.4);
+    transform: translateY(-3px);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, var(--warning-color), #fdcb6e);
+    border: none;
+    color: #2d3436;
+}
+
+.btn-warning:hover {
+    background: linear-gradient(135deg, #fdcb6e, #e1b12c);
+    box-shadow: 0 6px 15px rgba(255, 221, 87, 0.4);
+    transform: translateY(-3px);
+}
+
+.nav-pills .nav-link {
+    border-radius: 8px;
+    margin: 10px 0;
+    padding: 14px 24px;
+    color: #2d3436;
+    font-weight: 600;
+    transition: var(--transition);
+    background: #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.nav-pills .nav-link:hover {
+    background: linear-gradient(135deg, rgb(30, 104, 241), #ffe6e6);
+    color: white;
+}
+
+.nav-pills .nav-link.active {
+    background: linear-gradient(135deg, var(--primary-color), var(--hover-color));
+    color: white;
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+}
+
+.nav-tabs {
+    border-bottom: 3px solid #dfe6e9;
+}
+
+.nav-tabs .nav-link {
+    padding: 14px 35px;
+    font-weight: 600;
+    color: #636e72;
+    border: none;
+    border-radius: 8px 8px 0 0;
+    transition: var(--transition);
+    background: #ffffff;
+}
+
+.nav-tabs .nav-link:hover {
+    background: rgb(30, 104, 241);
+    color: white;
+}
+
+.nav-tabs .nav-link.active {
+    background: linear-gradient(135deg, var(--primary-color), var(--hover-color));
+    color: white;
+    border-bottom: 4px solid var(--hover-color);
+    box-shadow: 0 -4px 12px rgba(255, 107, 107, 0.2);
+}
+
+.container {
+    max-width: 1450px;
+}
+
+h2 {
+    color: #2d3436;
+    font-weight: 700;
+    margin-bottom: 30px;
+    font-size: 32px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.form-check-label {
+    font-size: 16px;
+    color: #2d3436;
+    font-weight: 500;
+}
+
+.badge-success-subtle {
+    color: var(--success-color);
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.admin-role {
+    color: var(--primary-color);
+    font-weight: 600;
+    text-align: center;
+}
