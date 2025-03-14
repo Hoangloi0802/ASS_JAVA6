@@ -1,11 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>THỐNG KÊ</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" th:href="@{/bootstrap-5.3.3/dist/css/bootstrap.css}">
+    <script th:src="@{/bootstrap-5.3.3/dist/js/bootstrap.bundle.min.js}"></script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" th:href="@{/css/billAndStatistics.css}">
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- Favicon -->
+    <link rel="icon" th:href="@{/photo/analysis.png}" type="image/png">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        .stats-container {
+            margin-top: 20px;
+        }
+
+        .stats-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .chart-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 20px auto;
+        }
+    </style>
 </head>
+
 <body>
-    
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-3">
+                <ul class="nav nav-pills flex-column mb-auto">
+                    <li class="nav-item">
+                        <a href="/" class="nav-link active" aria-current="page">
+                            Home
+                        </a>
+                    </li>
+                    <li>
+                        <a th:href="@{/admin/products}" class="nav-link">
+                            <i class="fa-solid fa-boxes-stacked me-2"></i> Quản Lý Sản Phẩm
+                        </a>
+                    </li>
+                    <li>
+                        <a th:href="@{/admin/categories}" class="nav-link">
+                            <i class="fa-solid fa-tags me-2"></i> Quản Lý Loại Sản Phẩm
+                        </a>
+                    </li>
+                    <li>
+                        <a th:href="@{/admin/bill}" class="nav-link">
+                            <i class="fa-solid fa-file-invoice-dollar me-2"></i> Quản Lý Hóa Đơn
+                        </a>
+                    </li>
+                    <li>
+                        <a th:href="@{/admin/account}" class="nav-link">
+                            <i class="fa-solid fa-users me-2"></i> Quản Lý Người Dùng
+                        </a>
+                    </li>
+                    <li>
+                        <a th:href="@{/admin/statistics}" class="nav-link">
+                            <i class="fa-solid fa-chart-pie me-2"></i> Thống Kê
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col">
+                <h2>Thống kê</h2>
+                <div class="stats-container">
+                    <div class="chart-container">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="stats-card">
+                                <h4>Tổng Doanh Thu Theo Loại</h4>
+                                <canvas id="revenueByCategory"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="stats-card">
+                                <h4>Tổng Số Lượng Theo Loại</h4>
+                                <canvas id="quantityByCategory"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stats-card">
+                                <h4>Giá Cao Nhất</h4>
+                                <p id="maxPrice"></p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stats-card">
+                                <h4>Giá Thấp Nhất</h4>
+                                <p id="minPrice"></p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stats-card">
+                                <h4>Giá Trung Bình</h4>
+                                <p id="avgPrice"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{/js/thongke.js}" defer></script>
 </body>
+
 </html>

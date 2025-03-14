@@ -27,7 +27,7 @@ public class HomeController {
 
     @GetMapping("/admin/statistics")
     public String sattistics() {
-        return "admin/sattistics";
+        return "admin/statistics";
     }
     
    
