@@ -18,11 +18,11 @@ public class Trangchu {
     }
     @GetMapping("/Dangnhap")
     public String dangnhap(){
-        return "home/Dangnhap";
+        return "login/Dangnhap";
     }
     @GetMapping("/Dangky")
     public String Dangky(){
-        return "home/Dangky";
+        return "login/Dangky";
     }
     
 }
