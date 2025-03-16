@@ -616,3 +616,14 @@ section,
     margin-right: 0;
   }
 }
+.carousel-img {
+  width: 1200px !important;
+  height: 600px !important;
+  object-fit: cover !important;
+  margin: 0 auto; 
+}
+
+.carousel-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}

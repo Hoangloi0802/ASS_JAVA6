@@ -9,68 +9,60 @@
     <header th:replace="~{/layouts/nav}">
     </header>
     <main class="container">
-        <div class="container-fluid page-header py-5">
-            <h1 class="text-center text-white display-6">Shop Detail</h1>
-            <ol class="breadcrumb justify-content-center mb-0">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item"><a href="#">Pages</a></li>
-                <li class="breadcrumb-item active text-white">Shop Detail</li>
-            </ol>
-        </div>
-        <div class="container-fluid py-5 mt-5">
-            <div class="container py-5">
-                <div class="row g-4 mb-5">
-                    <div class="col-lg-8 col-xl-9">
-                        <div class="row g-4">
-                            <!-- Hình ảnh sản phẩm -->
-                            <div class="col-lg-6">
-                                <div class="border rounded">
-                                    <a href="#">
-                                        <img th:src="@{'/images/' + ${product.image}}" class="img-fluid rounded"
-                                            alt="Product Image">
-                                    </a>
-                                </div>
-                            </div>
-
-                            <!-- Thông tin sản phẩm -->
-                            <div class="col-lg-6">
-                                <h4 class="fw-bold mb-3" th:text="${product.name}">Product Name</h4>
-                                <p class="mb-3">Thể loại: <span th:text="${product.category.name}"></span></p>
-                                <h5 class="fw-bold mb-3" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') + ' đ / kg'}"></h5>
-
-                                <a th:href="@{'/cart/add/' + ${product.id}}"
-                                    class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary">
-                                    <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
-                                </a>
-                            </div>
-                        </div>
-
-                    </div>
-                    <div class="col-lg-4 col-xl-3">
-                        <div class="row g-4 fruite">
-                            <div class="col-lg-3">
-                                <div class="col-lg-3">
-                                    <h4>Categories</h4>
-                                    <ul class="list-unstyled fruite-categorie">
-                                        <li>
-                                            <a th:href="@{/shop}" th:classappend="${selectedCategory == null} ? 'active' : ''">All Products</a>
-                                        </li>
-                                        <th:block th:each="entry : ${categories}">
-                                            <li>
-                                                <a th:href="@{/shop(category=${entry.key})}" 
-                                                   th:text="${entry.key}" 
-                                                   th:classappend="${selectedCategory == entry.key} ? 'active' : ''">
-                                                </a> 
-                                                (<span th:text="${entry.value}"></span>)
-                                            </li>
-                                        </th:block>
-                                    </ul>
-                                </div>
-                                
-                    </div>
+      <section class="py-6" id="page-single-product" style="padding-top: 80px;">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-8 pe-lg-6">
+              <div class="row">
+                <div class="col-12 mt-4">
+                  <img class="rounded img-fluid" src="https://bizweb.dktcdn.net/100/446/974/products/ao-thun-mlb-new-era-heavy-cotton-new-york-yankees-black-13086578-1.jpg?v=1691318321487" alt="Sparrow Shirt main view">
                 </div>
+              </div>
             </div>
-        </div>
+            <div class="col-lg-4">
+              <div class="col-12">
+                <h1 >Sparrow Shirt - The Beginning</h1>
+              </div>
+              <div class="sticky-top py-6 py-lg-8">
+                <h2 class="fw-normal">$11.00</h2>
+                <h6 class="mt-4">Product Details</h6>
+                <p class="text-body-secondary">
+                  Blue solid chambray shirt, has a spread collar, three-quarter sleeves, button closure, 1 pocket, curved hem.
+                </p>
+                <h6 class="mt-4">Material & Care</h6>
+                <p>Lyocell<br>Machine-wash</p>
+                <h6 class="mt-4">Select Size</h6>
+                <div class="d-flex align-items-center mb-4 me-3">
+                  <div class="d-sm-flex align-items-center me-3">
+                    <label class="me-2 mb-0" for="size-select">Sizes</label>
+                    <select class="form-select font-secondary" id="size-select">
+                      <option>XS</option>
+                      <option>S</option>
+                      <option>M</option>
+                      <option>L</option>
+                      <option>XL</option>
+                    </select>
+                  </div>
+                  <div class="d-sm-flex align-items-center ms-3">
+                    <label class="me-2 mb-0" for="quantity-select">Quantity</label>
+                    <select class="form-select font-secondary" id="quantity-select">
+                      <option>1</option>
+                      <option>2</option>
+                      <option>3</option>
+                      <option>4</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="d-grid">
+                  <a class="btn btn-dark" href="../pages/cart.html">Add to Cart</a>
+                </div>
+                <a class="fs-10 text-body-highlight d-block mt-4" href="#!">Size Guide</a>
+                <a class="fs-10 text-body-highlight d-block" href="#!">Delivery & Returns</a>
+              </div>
+            </div>
+          </div>
+        </div><!-- end of .container -->
+      </section>
     </main>
     <div th:replace="~{/layouts/footer}">
     </div>
