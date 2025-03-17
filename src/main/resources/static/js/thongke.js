@@ -23,7 +23,7 @@ const prices = {
                         beginAtZero: true,
                         ticks: {
                             callback: function (value) {
-                                return value.toLocaleString() + 'đ';
+                                return value.toLocaleString() + ' VNĐ';
                             }
                         }
                     }
