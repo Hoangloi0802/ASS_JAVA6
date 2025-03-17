@@ -2,135 +2,136 @@
 <html lang="en">
 
 <head th:replace="~{/layouts/header}">
-    <title>Home</title>
+  <title>Home</title>
 </head>
 
 <body>
-    <header th:replace="~{/layouts/nav}">
-    </header>
+  <header th:replace="~{/layouts/nav}">
+  </header>
 
-    <main>
-        <div class="container-fluid page-header py-5">
-            <h1 class="text-center text-white display-6">Shop</h1>
-            <ol class="breadcrumb justify-content-center mb-0">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item"><a href="#">Pages</a></li>
-                <li class="breadcrumb-item active text-white">Shop</li>
-            </ol>
-        </div>
-        <div class="controller py-5 bg-light">
-            <div class="container">
-                <div class="text-center">
-                    <h1>TẤT CẢ SẢN PHẨM</h1>
-                    <div class="row justify-content-center g-3 mt-3">
-                        <div class="col-12 col-md-4 col-lg-3">
-                            <select wire:model="priceFilter" wire:change="filterChange" class="form-select">
-                                <option value="">Lọc giá</option>
-                                <option value="100000">100.000 VND</option>
-                                <option value="300000">300.000 VND</option>
-                                <option value="500000">500.000 VND</option>
-                                <option value="1000000">1.000.000 VND</option>
-                            </select>
-                        </div>
-                        <div class="col-12 col-md-4 col-lg-3">
-                            <select wire:model="categoryFilter" wire:change="filterChange" class="form-select">
-                                <option value="">Danh mục</option>
-                                <option value="5">Áo</option>
-                                <option value="6">Quần</option>
-                                <option value="7">Phụ kiện</option>
-                                <option value="8">Trang sức</option>
-                            </select>
-                        </div>
-                        <div class="col-12 col-md-4 col-lg-3">
-                            <select wire:model="sortOption" wire:change="filterChange" class="form-select">
-                                <option value="">Sắp xếp theo</option>
-                                <option value="Giá tăng dần">Giá tăng dần</option>
-                                <option value="Giá giảm dần">Giá giảm dần</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
+  <main>
+    <div class="container-fluid page-header py-5">
+      <h1 class="text-center text-white display-6">TẤT CẢ SẢN PHẨM</h1>
+    </div>
+    <div class="controller py-5 bg-light">
+      <div class="container">
+          <div class="row justify-content-center g-3 mt-3">
+            <div class="col-12 col-md-4 col-lg-3">
+              <select wire:model="priceFilter" wire:change="filterChange" class="form-select">
+                <option value="">Lọc giá</option>
+                <option value="100000">100.000 VND</option>
+                <option value="300000">300.000 VND</option>
+                <option value="500000">500.000 VND</option>
+                <option value="1000000">1.000.000 VND</option>
+              </select>
             </div>
-        
-        </div>
-        
-        <div class="container">
-            <div class="d-flex flex-wrap justify-content-between">
-              <!-- Product 1 -->
-              <div class="product-item" style="width: 305.333px; margin-right: 10px;">
-                <div class="image-holder">
-                  <a href="index.html">
-                    <img src="https://bizweb.dktcdn.net/100/446/974/products/ao-thun-mlb-new-era-heavy-cotton-new-york-yankees-black-13086578-1.jpg?v=1691318321487" alt="Dark florish onepiece" class="product-image img-fluid">
-                  </a>
-                </div>
-                <div class="product-content">
-                  <h5 class="text-uppercase fs-5 mt-3">
-                    <a href="index.html">Baggy Shirt</a>
-                  </h5>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <a href="index.html" class="text-decoration-none">$55.00</a>
-                    <button class="btn">Add to Cart</button>
-                  </div>
-                </div>
-              </div>
-              <!-- Product 2 -->
-              <div class="product-item" style="width: 305.333px; margin-right: 10px;">
-                <div class="image-holder">
-                  <a href="index.html">
-                    <img src="https://bizweb.dktcdn.net/100/287/440/products/ao-thun-den-streetwear-nen-mua.png?v=1602834266997" alt="Baggy Shirt" class="product-image img-fluid">
-                  </a>
-                </div>
-                <div class="product-content">
-                  <h5 class="text-uppercase fs-5 mt-3">
-                    <a href="index.html">Baggy Shirt</a>
-                  </h5>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <a href="index.html" class="text-decoration-none">$55.00</a>
-                    <button class="btn">Add to Cart</button>
-                  </div>
-                </div>
-              </div>
-              <!-- Product 3 -->
-              <div class="product-item" style="width: 305.333px; margin-right: 10px;">
-                <div class="image-holder">
-                  <a href="index.html">
-                    <img src="https://bizweb.dktcdn.net/100/415/697/products/1-4db3b09d-bd47-4f42-9b5c-2b33059a262d.jpg?v=1706691015690" alt="Cotton off-white shirt" class="product-image img-fluid">
-                  </a>
-                </div>
-                <div class="product-content">
-                  <h5 class="text-uppercase fs-5 mt-3">
-                    <a href="index.html">Baggy Shirt</a>
-                  </h5>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <a href="index.html" class="text-decoration-none">$55.00</a>
-                    <button class="btn">Add to Cart</button>
-                  </div>
-                </div>
-              </div>
-              <div class="product-item" style="width: 305.333px; margin-right: 10px;">
-                <div class="image-holder">
-                  <a href="index.html">
-                    <img src="https://bizweb.dktcdn.net/100/415/697/products/1-4db3b09d-bd47-4f42-9b5c-2b33059a262d.jpg?v=1706691015690" alt="Cotton off-white shirt" class="product-image img-fluid">
-                  </a>
-                </div>
-                <div class="product-content">
-                  <h5 class="text-uppercase fs-5 mt-3">
-                    <a href="index.html">Baggy Shirt</a>
-                  </h5>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <a href="index.html" class="text-decoration-none">$55.00</a>
-                    <button class="btn">Add to Cart</button>
-                  </div>
-                </div>
+            <div class="col-12 col-md-4 col-lg-3">
+              <select wire:model="categoryFilter" wire:change="filterChange" class="form-select">
+                <option value="">Danh mục</option>
+                <option value="5">Áo</option>
+                <option value="6">Quần</option>
+                <option value="7">Phụ kiện</option>
+                <option value="8">Trang sức</option>
+              </select>
+            </div>
+            <div class="ui-input-container">
+              <input required="" placeholder="Tên sản phẩm" class="ui-input" type="text" />
+              <div class="ui-input-underline"></div>
+              <div class="ui-input-highlight"></div>
+              <div class="ui-input-icon">
+                <i class="fa-solid fa-magnifying-glass"></i>
               </div>
             </div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="d-flex flex-wrap justify-content-between">
+        <!-- Product 1 -->
+        <div class="product-item" style="width: 305.333px; margin-right: 10px;">
+          <div class="image-holder">
+            <a href="index.html">
+              <img
+                src="https://bizweb.dktcdn.net/100/446/974/products/ao-thun-mlb-new-era-heavy-cotton-new-york-yankees-black-13086578-1.jpg?v=1691318321487"
+                alt="Dark florish onepiece" class="product-image img-fluid">
+            </a>
+          </div>
+          <div class="product-content">
+            <h5 class="text-uppercase fs-5 mt-3">
+              <a href="index.html">Baggy Shirt</a>
+            </h5>
+            <div class="d-flex justify-content-between align-items-center">
+              <a href="index.html" class="text-decoration-none">$55.00</a>
+              <button class="btn">Add to Cart</button>
+            </div>
+          </div>
         </div>
+        <!-- Product 2 -->
+        <div class="product-item" style="width: 305.333px; margin-right: 10px;">
+          <div class="image-holder">
+            <a href="index.html">
+              <img
+                src="https://bizweb.dktcdn.net/100/287/440/products/ao-thun-den-streetwear-nen-mua.png?v=1602834266997"
+                alt="Baggy Shirt" class="product-image img-fluid">
+            </a>
+          </div>
+          <div class="product-content">
+            <h5 class="text-uppercase fs-5 mt-3">
+              <a href="index.html">Baggy Shirt</a>
+            </h5>
+            <div class="d-flex justify-content-between align-items-center">
+              <a href="index.html" class="text-decoration-none">$55.00</a>
+              <button class="btn">Add to Cart</button>
+            </div>
+          </div>
+        </div>
+        <!-- Product 3 -->
+        <div class="product-item" style="width: 305.333px; margin-right: 10px;">
+          <div class="image-holder">
+            <a href="index.html">
+              <img
+                src="https://bizweb.dktcdn.net/100/415/697/products/1-4db3b09d-bd47-4f42-9b5c-2b33059a262d.jpg?v=1706691015690"
+                alt="Cotton off-white shirt" class="product-image img-fluid">
+            </a>
+          </div>
+          <div class="product-content">
+            <h5 class="text-uppercase fs-5 mt-3">
+              <a href="index.html">Baggy Shirt</a>
+            </h5>
+            <div class="d-flex justify-content-between align-items-center">
+              <a href="index.html" class="text-decoration-none">$55.00</a>
+              <button class="btn">Add to Cart</button>
+            </div>
+          </div>
+        </div>
+        <div class="product-item" style="width: 305.333px; margin-right: 10px;">
+          <div class="image-holder">
+            <a href="index.html">
+              <img
+                src="https://bizweb.dktcdn.net/100/415/697/products/1-4db3b09d-bd47-4f42-9b5c-2b33059a262d.jpg?v=1706691015690"
+                alt="Cotton off-white shirt" class="product-image img-fluid">
+            </a>
+          </div>
+          <div class="product-content">
+            <h5 class="text-uppercase fs-5 mt-3">
+              <a href="index.html">Baggy Shirt</a>
+            </h5>
+            <div class="d-flex justify-content-between align-items-center">
+              <a href="index.html" class="text-decoration-none">$55.00</a>
+              <button class="btn">Add to Cart</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    </main>
-    <div th:replace="~{/layouts/footer}">
     </div>
+    </div>
+    </div>
+  </main>
+  <div th:replace="~{/layouts/footer}">
+  </div>
 </body>
 
 </html>

@@ -46,6 +46,17 @@
       watchSlidesProgress: true,
       centeredSlides: true,
       slideToClickedSlide: true,
+      breakpoints: {
+        0: {
+          slidesPerView: 4,
+        },
+        768: {
+          slidesPerView: 6,
+        },
+        992: {
+          slidesPerView: 8,
+        },
+      },
     });
 
     // Khởi tạo Main Swiper

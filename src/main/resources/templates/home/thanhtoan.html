@@ -1,23 +1,26 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head th:replace="~{/layouts/header}">
     <title>Trang chủ</title>
 </head>
+
 <body>
     <header th:replace="~{/layouts/nav}">
     </header>
-    <main class="container">
+    <main>
+        <div class="row mb-3">
+            <div class="container-fluid page-header py-5">
+                <h1 class="text-center text-white display-6">GIỎ HÀNG CỦA BẠN </h1>
+            </div>
+        </div>
         <section class="mt-5 mt-lg-0" id="page-cart" style="transform: translate(0px, 0px); opacity: 1;">
             <div class="container">
-                <div class="row mb-3">
-                    <div class="col-12">
-                        <h1 class="fw-bold">Giỏ hàng của bạn</h1>
-                    </div>
-                </div>
+
                 <div class="row border-bottom">
                     <div class="col-7">
                         <div class="row">
-                           
+
                             <div class="col">
                                 <h6 class="fs-10 ls text-uppercase">Sản phẩm</h6>
                             </div>
@@ -40,7 +43,9 @@
                         <div class="row align-items-center">
                             <div class="col">
                                 <div class="row g-0 align-items-center">
-                                    <div class="col-auto"><img class="me-3" src="https://bizweb.dktcdn.net/100/446/974/products/ao-thun-mlb-new-era-heavy-cotton-new-york-yankees-black-13086578-1.jpg?v=1691318321487" alt="" width="50"></div>
+                                    <div class="col-auto"><img class="me-3"
+                                            src="https://bizweb.dktcdn.net/100/446/974/products/ao-thun-mlb-new-era-heavy-cotton-new-york-yankees-black-13086578-1.jpg?v=1691318321487"
+                                            alt="" width="50"></div>
                                     <div class="col-8 mt-2">
                                         <a class="text-black" href="#!">
                                             <h5 class="fw-bold mb-0">Áo len Sparrow - trắng & nâu</h5>
@@ -74,7 +79,9 @@
                         <div class="row align-items-center">
                             <div class="col">
                                 <div class="row g-0 align-items-center">
-                                    <div class="col-auto"><img class="me-3" src="https://bizweb.dktcdn.net/100/415/697/products/ap001.png?v=1701403328933" alt="" width="50"></div>
+                                    <div class="col-auto"><img class="me-3"
+                                            src="https://bizweb.dktcdn.net/100/415/697/products/ap001.png?v=1701403328933"
+                                            alt="" width="50"></div>
                                     <div class="col-8 mt-2">
                                         <a class="text-black" href="#!">
                                             <h5 class="fw-bold mb-0">Áo khoác Sparrow - nữ</h5>
@@ -108,7 +115,9 @@
                         <div class="row align-items-center">
                             <div class="col">
                                 <div class="row g-0 align-items-center">
-                                    <div class="col-auto"><img class="me-3" src="https://bizweb.dktcdn.net/100/415/697/products/ap001.png?v=1701403328933" alt="" width="50"></div>
+                                    <div class="col-auto"><img class="me-3"
+                                            src="https://bizweb.dktcdn.net/100/415/697/products/ap001.png?v=1701403328933"
+                                            alt="" width="50"></div>
                                     <div class="col-8 mt-2">
                                         <a class="text-black" href="#!">
                                             <h5 class="fw-bold mb-0">Áo Sparrow Charcoal - đen</h5>
@@ -142,7 +151,9 @@
                         <div class="row align-items-center">
                             <div class="col">
                                 <div class="row g-0 align-items-center">
-                                    <div class="col-auto"><img class="me-3" src="https://bizweb.dktcdn.net/100/415/697/products/ap001.png?v=1701403328933" alt="" width="50"></div>
+                                    <div class="col-auto"><img class="me-3"
+                                            src="https://bizweb.dktcdn.net/100/415/697/products/ap001.png?v=1701403328933"
+                                            alt="" width="50"></div>
                                     <div class="col-8 mt-2">
                                         <a class="text-black" href="#!">
                                             <h5 class="fw-bold mb-0">Túi xách Sparrow - nâu</h5>
@@ -216,4 +227,5 @@
     <div th:replace="~{/layouts/footer}">
     </div>
 </body>
+
 </html>
