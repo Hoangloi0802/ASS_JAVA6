@@ -11,34 +11,35 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
+   @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Tắt CSRF để dễ debug
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/dangky", "/dangnhap", "/css/**", "/js/**").permitAll() 
-                        .requestMatchers("/admin/**").hasAuthority("ADMIN") 
-                        .requestMatchers("/user/**").hasAuthority("USER") 
-                        .anyRequest().authenticated()
-                )
-                .formLogin(login -> login
-                        .loginPage("/dangnhap") 
-                        .loginProcessingUrl("/process-login") 
-                        .defaultSuccessUrl("/home", true) 
-                        .permitAll()
-                )
-                .logout(logout -> logout
-                        .logoutUrl("/logout") 
-                        .logoutSuccessUrl("/dangnhap?logout") 
-                        .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID")
-                );
+            .csrf(csrf -> csrf.disable()) // Tắt CSRF (nếu cần)
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers( "Dangnhaptest","/Dangkytest",  "/", "/dangky", "/css/**", "/js/**").permitAll() // Không cần đăng nhập
+                .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN") // Chỉ Admin truy cập được
+                .requestMatchers("/user/**").hasAuthority("ROLE_USER") // Chỉ User truy cập được
+                .anyRequest().authenticated() // Còn lại yêu cầu đăng nhập
+            )
+            .formLogin(login -> login
+                .loginPage("/dangnhap") // Trang login
+                .loginProcessingUrl("/process-login") // Xử lý login
+                .defaultSuccessUrl("/home", true) // Sau khi login thành công
+                .permitAll()
+            )
+            .logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/dangnhap?logout") // Sau khi logout
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+            );
 
         return http.build();
     }
+
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+    return new BCryptPasswordEncoder();
+}
+
 }
