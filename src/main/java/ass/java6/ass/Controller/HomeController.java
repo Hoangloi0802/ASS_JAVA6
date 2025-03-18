@@ -12,6 +12,7 @@ public class HomeController {
 
     @GetMapping("/admin/categories")
     public String category() {
+        
         return "admin/categoryManage";
     }
 
