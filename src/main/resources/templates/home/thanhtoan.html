@@ -8,222 +8,115 @@
 <body>
     <header th:replace="~{/layouts/nav}">
     </header>
-    <main>
+    <main >
         <div class="row mb-3">
             <div class="container-fluid page-header py-5">
-                <h1 class="text-center text-white display-6">GIỎ HÀNG CỦA BẠN </h1>
+                <h1 class="text-center text-white display-6">THANH TOÁN</h1>
             </div>
         </div>
-        <section class="mt-5 mt-lg-0" id="page-cart" style="transform: translate(0px, 0px); opacity: 1;">
-            <div class="container">
-
-                <div class="row border-bottom">
-                    <div class="col-7">
-                        <div class="row">
-
-                            <div class="col">
-                                <h6 class="fs-10 ls text-uppercase">Sản phẩm</h6>
+        <div class="container">
+        <div class="row mt-5">
+            <!-- Đơn hàng -->
+            <div class="col-md-6 mb-4">
+                <h4 class="mb-3">Đơn hàng của bạn</h4>
+                <ul class="list-group mb-3">
+                    <!-- Sản phẩm 1 -->
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <img src="https://cavathanquoc.com/wp-content/uploads/2024/06/Ao-thun-tron-cotton-mau-den.jpg" class="me-3 rounded" alt="Áo len Sparrow" style="width: 60px; height: 60px; object-fit: cover;">
+                            <div>
+                                <h6 class="my-0">Áo len Sparrow - trắng & nâu</h6>
+                                <small class="text-muted">Số lượng: 1</small>
                             </div>
                         </div>
+                        <span class="text-muted">500.000 VNĐ</span>
+                    </li>
+    
+                    <!-- Sản phẩm 2 -->
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <img src="https://cavathanquoc.com/wp-content/uploads/2024/06/Ao-thun-tron-cotton-mau-den.jpg" class="me-3 rounded" alt="Áo khoác Sparrow" style="width: 60px; height: 60px; object-fit: cover;">
+                            <div>
+                                <h6 class="my-0">Áo khoác Sparrow - nữ</h6>
+                                <small class="text-muted">Số lượng: 1</small>
+                            </div>
+                        </div>
+                        <span class="text-muted">250.000 VNĐ</span>
+                    </li>
+    
+                    <!-- Sản phẩm 3 -->
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <img src="https://cavathanquoc.com/wp-content/uploads/2024/06/Ao-thun-tron-cotton-mau-den.jpg" class="me-3 rounded" alt="Áo Sparrow Charcoal" style="width: 60px; height: 60px; object-fit: cover;">
+                            <div>
+                                <h6 class="my-0">Áo Sparrow Charcoal - đen</h6>
+                                <small class="text-muted">Số lượng: 1</small>
+                            </div>
+                        </div>
+                        <span class="text-muted">400.000 VNĐ</span>
+                    </li>
+    
+                    <!-- Sản phẩm 4 -->
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <img src="https://cavathanquoc.com/wp-content/uploads/2024/06/Ao-thun-tron-cotton-mau-den.jpg" class="me-3 rounded" alt="Túi xách Sparrow" style="width: 60px; height: 60px; object-fit: cover;">
+                            <div>
+                                <h6 class="my-0">Túi xách Sparrow - nâu</h6>
+                                <small class="text-muted">Số lượng: 1</small>
+                            </div>
+                        </div>
+                        <span class="text-muted">300.000 VNĐ</span>
+                    </li>
+                </ul>
+            </div>
+    
+            <!-- Thông tin khách hàng -->
+            <div class="col-md-6 mb-4">
+                <h4 class="mb-3">Thông tin khách hàng</h4>
+                <form>
+                    <div class="mb-3">
+                        <label for="fullName" class="form-label">Họ và tên</label>
+                        <input type="text" class="form-control" id="fullName" placeholder="Nhập họ và tên" required>
                     </div>
-                    <div class="col-5">
-                        <div class="row">
-                            <div class="col-6 text-center">
-                                <h6 class="fs-10 ls text-uppercase">Số lượng</h6>
-                            </div>
-                            <div class="col-6 text-end">
-                                <h6 class="fs-10 ls text-uppercase">Giá</h6>
-                            </div>
-                        </div>
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Địa chỉ</label>
+                        <input type="text" class="form-control" id="address" placeholder="Nhập địa chỉ" required>
                     </div>
-                </div>
-                <!-- Item 1 -->
-                <div class="row align-items-center py-3 border-bottom">
-                    <div class="col-sm-7">
-                        <div class="row align-items-center">
-                            <div class="col">
-                                <div class="row g-0 align-items-center">
-                                    <div class="col-auto"><img class="me-3"
-                                            src="https://bizweb.dktcdn.net/100/446/974/products/ao-thun-mlb-new-era-heavy-cotton-new-york-yankees-black-13086578-1.jpg?v=1691318321487"
-                                            alt="" width="50"></div>
-                                    <div class="col-8 mt-2">
-                                        <a class="text-black" href="#!">
-                                            <h5 class="fw-bold mb-0">Áo len Sparrow - trắng & nâu</h5>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Số điện thoại</label>
+                        <input type="tel" class="form-control" id="phone" placeholder="Nhập SĐT" required>
                     </div>
-                    <div class="col-sm-5 mt-4 mt-sm-0">
-                        <div class="row align-items-center justify-content-end">
-                            <div class="col-3 col-sm-6 text-end text-sm-center">
-                                <div class="form-group mb-0">
-                                    <select class="form-select font-secondary">
-                                        <option>1</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                        <option>4</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-3 col-sm-6 text-end">
-                                <h6 class="fs-9 fw-normal mb-0">500.000 VNĐ</h6>
-                            </div>
-                        </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email (không bắt buộc)</label>
+                        <input type="email" class="form-control" id="email" placeholder="Nhập Email">
                     </div>
-                </div>
-                <!-- Item 2 -->
-                <div class="row align-items-center py-3 border-bottom">
-                    <div class="col-sm-7">
-                        <div class="row align-items-center">
-                            <div class="col">
-                                <div class="row g-0 align-items-center">
-                                    <div class="col-auto"><img class="me-3"
-                                            src="https://bizweb.dktcdn.net/100/415/697/products/ap001.png?v=1701403328933"
-                                            alt="" width="50"></div>
-                                    <div class="col-8 mt-2">
-                                        <a class="text-black" href="#!">
-                                            <h5 class="fw-bold mb-0">Áo khoác Sparrow - nữ</h5>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-5 mt-4 mt-sm-0">
-                        <div class="row align-items-center justify-content-end">
-                            <div class="col-3 col-sm-6 text-end text-sm-center">
-                                <div class="form-group mb-0">
-                                    <select class="form-select font-secondary">
-                                        <option>1</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                        <option>4</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-3 col-sm-6 text-end">
-                                <h6 class="fs-9 fw-normal mb-0">250.000 VNĐ</h6>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Item 3 -->
-                <div class="row align-items-center py-3 border-bottom">
-                    <div class="col-sm-7">
-                        <div class="row align-items-center">
-                            <div class="col">
-                                <div class="row g-0 align-items-center">
-                                    <div class="col-auto"><img class="me-3"
-                                            src="https://bizweb.dktcdn.net/100/415/697/products/ap001.png?v=1701403328933"
-                                            alt="" width="50"></div>
-                                    <div class="col-8 mt-2">
-                                        <a class="text-black" href="#!">
-                                            <h5 class="fw-bold mb-0">Áo Sparrow Charcoal - đen</h5>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-5 mt-4 mt-sm-0">
-                        <div class="row align-items-center justify-content-end">
-                            <div class="col-3 col-sm-6 text-end text-sm-center">
-                                <div class="form-group mb-0">
-                                    <select class="form-select font-secondary">
-                                        <option>1</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                        <option>4</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-3 col-sm-6 text-end">
-                                <h6 class="fs-9 fw-normal mb-0">400.000 VNĐ</h6>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Item 4 -->
-                <div class="row align-items-center py-3 border-bottom">
-                    <div class="col-sm-7">
-                        <div class="row align-items-center">
-                            <div class="col">
-                                <div class="row g-0 align-items-center">
-                                    <div class="col-auto"><img class="me-3"
-                                            src="https://bizweb.dktcdn.net/100/415/697/products/ap001.png?v=1701403328933"
-                                            alt="" width="50"></div>
-                                    <div class="col-8 mt-2">
-                                        <a class="text-black" href="#!">
-                                            <h5 class="fw-bold mb-0">Túi xách Sparrow - nâu</h5>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-5 mt-4 mt-sm-0">
-                        <div class="row align-items-center justify-content-end">
-                            <div class="col-3 col-sm-6 text-end text-sm-center">
-                                <div class="form-group mb-0">
-                                    <select class="form-select font-secondary">
-                                        <option>1</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                        <option>4</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-3 col-sm-6 text-end">
-                                <h6 class="fs-9 fw-normal mb-0">300.000 VNĐ</h6>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Tổng kết -->
-                <div class="row justify-content-end text-end mt-4">
-                    <div class="col-md-8 col-lg-6">
-                        <div class="row justify-content-end mt-2">
-                            <div class="col-6">
-                                <h4 class="fw-normal text-body">Tạm tính:</h4>
-                            </div>
-                            <div class="col-4">
-                                <h4 class="fw-normal">1.450.000 VNĐ</h4>
-                            </div>
-                        </div>
-                        <div class="row justify-content-end mt-2">
-                            <div class="col-6">
-                                <h4 class="fw-normal text-body">Phí vận chuyển:</h4>
-                            </div>
-                            <div class="col-4">
-                                <h4 class="fw-normal text-end">50.000 VNĐ</h4>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 px-0">
-                        <hr class="mb-0">
-                        <hr class="mt-1">
-                    </div>
-                    <div class="col-md-8 col-lg-6">
-                        <div class="row justify-content-end mt-2">
-                            <div class="col-6">
-                                <h4 class="fw-bold">Tổng cộng:</h4>
-                            </div>
-                            <div class="col-4">
-                                <h4 class="fw-bold">1.500.000 VNĐ</h4>
-                            </div>
-                        </div>
-                        <div class="row justify-content-end mt-4">
-                            <div class="col-10 col-sm-8 d-grid">
-                                <a class="btn btn-lg btn-danger" href="#!">Đặt hàng ⟶</a>
-                            </div>
-                        </div>
-                    </div>
+                </form>
+    
+                <!-- Tổng tiền + nút xác nhận -->
+                <ul class="list-group mb-3">
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Tạm tính</span>
+                        <strong>1.450.000 VNĐ</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Phí vận chuyển</span>
+                        <strong>50.000 VNĐ</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Tổng cộng</span>
+                        <strong>1.500.000 VNĐ</strong>
+                    </li>
+                </ul>
+    
+                <div class="d-grid">
+                    <button class="btn btn-danger btn-lg">Xác nhận đặt hàng</button>
                 </div>
             </div>
-        </section>
+        </div>
+    </div>
     </main>
+    
+
     <div th:replace="~{/layouts/footer}">
     </div>
 </body>

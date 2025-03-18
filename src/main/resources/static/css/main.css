@@ -460,67 +460,27 @@ section,
   }
 }
  
-/*--------------------------------------------------------------
-# Slider Section
---------------------------------------------------------------*/
-.slider {
-  background-color: transparent;
-}
-
-.slider .swiper-pagination .swiper-pagination-bullet {
-  background-color: color-mix(in srgb, var(--default-color) 90%, white 15%);
-}
-
-.slider .swiper-pagination .swiper-pagination-bullet-active {
-  background-color: var(--accent-color);
-}
-
-.slider .swiper-wrapper {
-  height: auto !important;
-}
-
-.slider .swiper-slide {
-  min-height: 500px;
-  position: relative;
-  display: flex;
-  align-items: flex-end;
-  background-repeat: no-repeat;
-  background-size: cover;
-}
-
-.slider .swiper-slide::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
+.carousel-item img {
+  height: 600px;
   width: 100%;
-  height: 100%;
-  background: color-mix(in srgb, var(--background-color), transparent 50%);
+  object-fit: cover;
 }
 
-@media (max-width: 575px) {
-  .slider .swiper-slide {
-    min-height: 300px;
-  }
+.carousel {
+  width: 100%;
 }
 
-.slider .swiper-button-prev:after,
-.slider .swiper-button-next:after {
-  font-size: 24px;
-  color: color-mix(in srgb, var(--default-color), transparent 50%);
+
+.carousel-caption {
+  z-index: 1; /* Đè lên hình */
 }
 
-.slider .content {
-  padding: 60px 80px;
-  max-width: 700px;
-  position: relative;
+
+.carousel-caption a.btn {
+  font-weight: 200;
 }
 
-.slider .content a,
-.slider .content h2,
-.slider .content p {
-  color: var(--default-color);
-}
+
 /*--------------------------------------------------------------
 # Product Section
 --------------------------------------------------------------*/
@@ -578,6 +538,14 @@ section,
   border-radius: 4px;
   transition: background 0.3s;
 }
+.featurs-icon {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%; /* Làm tròn */
+}
 
 .product-card .btn:hover {
   background-color: color-mix(in srgb, var(--accent-color),  15%);
@@ -634,10 +602,15 @@ section,
   margin: 0 auto; 
 }
 
-.carousel-inner {
-  max-width: 1200px;
-  margin: 0 auto;
+.overlay {
+  background-color: rgba(0, 0, 0, 0.322); /* Màu đen mờ, chỉnh alpha 0.4 */
+  z-index: 1; /* Đặt lớp dưới chữ */
 }
+.carousel-caption {
+  z-index: 2; /* Đè lên lớp overlay */
+  position: absolute;
+}
+
 
 
 
@@ -707,4 +680,26 @@ section,
 .ui-input-icon svg {
   width: 20px;
   height: 20px;
+}
+.profile-img {
+  width: 100px; /* Giảm từ 150px xuống 100px */
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.product-img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.product-name {
+  font-weight: 500;
+}
+.align-center {
+  vertical-align: middle !important;
+  text-align: center;
+}
+td, th {
+  vertical-align: middle !important;
 }
