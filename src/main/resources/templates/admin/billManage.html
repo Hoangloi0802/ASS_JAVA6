@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
@@ -9,96 +9,158 @@
     <script src="/bootstrap-5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="/css/billAndStatistics.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="/photo/bill.png" type="image/png">
 </head>
 
 <body>
-    <div class="container mt-3">
-        <div class="row">
-            <div class="col-3">
-                <ul class="nav nav-pills flex-column mb-auto">
-                    <li class="nav-item">
+<div class="container-fluid">
+    <div class="row g-4">
+        <!-- Sidebar -->
+        <div class="col-auto p-3 min-vh-100 bg-white shadow-sm">
+            <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
+                <a href="/" class="d-flex align-items-center pb-3 mb-md-0 text-decoration-none">
+                    <span class="fs-5 d-none d-sm-inline" style="color: var(--primary-color); font-weight: 600;">Admin Dashboard</span>
+                </a>
+                <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start w-100">
+                    <li class="nav-item w-100">
                         <a href="/" class="nav-link active" aria-current="page">
-                            Home
+                            <i class="fa-solid fa-house me-2"></i>
+                            <span class="ms-1 d-none d-sm-inline">Home</span>
                         </a>
                     </li>
-                    <li>
+                    <li class="nav-item w-100">
                         <a th:href="@{/admin/products}" class="nav-link">
                             <i class="fa-solid fa-boxes-stacked me-2"></i>
-                            Quản Lý Sản Phẩm
+                            <span class="ms-1 d-none d-sm-inline">Quản Lý Sản Phẩm</span>
                         </a>
                     </li>
-                    <li>
+                    <li class="nav-item w-100">
                         <a th:href="@{/admin/categories}" class="nav-link">
                             <i class="fa-solid fa-tags me-2"></i>
-                            Quản Lý Loại Sản Phẩm
+                            <span class="ms-1 d-none d-sm-inline">Quản Lý Loại Sản Phẩm</span>
                         </a>
                     </li>
-                    <li>
+                    <li class="nav-item w-100">
                         <a th:href="@{/admin/bill}" class="nav-link">
                             <i class="fa-solid fa-file-invoice-dollar me-2"></i>
-                            Quản Lý Hóa Đơn
+                            <span class="ms-1 d-none d-sm-inline">Quản Lý Hóa Đơn</span>
                         </a>
                     </li>
-                    <li>
+                    <li class="nav-item w-100">
                         <a th:href="@{/admin/account}" class="nav-link">
                             <i class="fa-solid fa-users me-2"></i>
-                            Quản Lý Người Dùng
+                            <span class="ms-1 d-none d-sm-inline">Quản Lý Người Dùng</span>
                         </a>
                     </li>
-                    <li>
+                    <li class="nav-item w-100">
                         <a th:href="@{/admin/statistics}" class="nav-link">
                             <i class="fa-solid fa-chart-pie me-2"></i>
-                            Thống Kê
+                            <span class="ms-1 d-none d-sm-inline">Thống Kê</span>
                         </a>
                     </li>
                 </ul>
             </div>
-            <div class="col">
-                <h2>Danh Sách Hóa Đơn</h2>
-                <table class="table table-bordered table-hover align-middle shadow">
-                    <thead class="table-primary">
-                        <tr>
-                            <th scope="col">ID</th>
-                            <th scope="col">Người đặt hàng</th>
-                            <th scope="col">Địa chỉ</th>
-                            <th scope="col">Ngày tạo</th>
-                            <th scope="col">SĐT</th>
-                            <th scope="col" class="col-2">Hành Động</th>
-                        </tr>
-                    </thead>
-                    <tbody class="table-light">
-                        <tr>
-                            <td>HD001</td>
-                            <td>Nguyễn Văn An</td>
-                            <td>44 Bùi Hiển, Hòa An, Cẩm Lệ, Đà Nẵng</td>
-                            <td>13/03/2025</td>
-                            <td>012345678</td>
-                            <td>
-                                <a href="#" class="btn btn-danger btn-sm delete-btn"
-                                    onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
-                                    <i class="fa-solid fa-trash"></i> Xóa
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>HD002</td>
-                            <td>Trần Thị B</td>
-                            <td>123 Lê Lợi, Hải Châu, Đà Nẵng</td>
-                            <td>14/03/2025</td>
-                            <td>0987654321</td>
-                            <td>
-                                <a href="#" class="btn btn-danger btn-sm delete-btn"
-                                    onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
-                                    <i class="fa-solid fa-trash"></i> Xóa
-                                </a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col p-4">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="mb-0">Quản Lý Hóa Đơn</h2>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Quản Lý Hóa Đơn</li>
+                        </ol>
+                    </nav>
+                </div>
+
+                <div class="card shadow-sm">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Người đặt hàng</th>
+                                    <th>Địa chỉ</th>
+                                    <th>Ngày tạo</th>
+                                    <th>SĐT</th>
+                                    <th>Trạng thái</th>
+                                    <th class="text-center">Hành Động</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>
+                                        <span class="fw-medium">#HD001</span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src="/images/default-user.png" alt="Avatar" class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
+                                            <div>
+                                                <div class="fw-medium">Nguyễn Văn An</div>
+                                                <div class="small text-muted">customer@example.com</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>44 Bùi Hiển, Hòa An, Cẩm Lệ, Đà Nẵng</td>
+                                    <td>13/03/2025</td>
+                                    <td>012345678</td>
+                                    <td>
+                                        <span class="badge badge-success">Đã thanh toán</span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <button class="btn btn-info btn-sm">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="fw-medium">#HD002</span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src="/images/default-user.png" alt="Avatar" class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
+                                            <div>
+                                                <div class="fw-medium">Trần Thị B</div>
+                                                <div class="small text-muted">customer2@example.com</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>123 Lê Lợi, Hải Châu, Đà Nẵng</td>
+                                    <td>14/03/2025</td>
+                                    <td>0987654321</td>
+                                    <td>
+                                        <span class="badge badge-warning">Chờ xác nhận</span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <button class="btn btn-info btn-sm">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+</div>
 </body>
 
 </html>
