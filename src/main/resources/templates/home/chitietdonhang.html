@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="~{/layouts/header}">
+    <title>Home</title>
+</head>
+
+<body>
+    <header th:replace="~{/layouts/nav}">
+    </header>
+    <main>
+        <div class="row mb-3">
+            <div class="container-fluid page-header py-5">
+                <h1 class="text-center text-white display-6">CHI TIẾT ĐƠN HÀNG CỦA BẠN</h1>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <!-- Thông tin đơn hàng -->
+                <div class="mb-4 col-6">
+                    <h5>Thông tin đơn hàng</h5>
+                    <p><strong>Mã đơn hàng:</strong> #DH123456</p>
+                    <p><strong>Ngày đặt:</strong> 18/03/2025</p>
+                    <p><strong>Trạng thái:</strong> <span class="badge bg-success">Đã giao</span></p>
+                </div>
+
+                <!-- Thông tin khách hàng -->
+                <div class="mb-4 col-6">
+                    <h5>Thông tin khách hàng</h5>
+                    <p><strong>Họ và tên:</strong> Nguyễn Văn A</p>
+                    <p><strong>Email:</strong> nguyenvana@gmail.com</p>
+                    <p><strong>Số điện thoại:</strong> 0901234567</p>
+                    <p><strong>Địa chỉ:</strong> Liên Chiểu,Đà Nẵng</p>
+                </div>
+            </div>
+            <!-- Danh sách sản phẩm -->
+            <div class="mb-4">
+                <h5>Danh sách sản phẩm</h5>
+                <table class="table table-bordered text-center">
+                    <thead class="table-dark ">
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th>Số lượng</th>
+                            <th>Đơn giá</th>
+                            <th>Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody >
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="https://bizweb.dktcdn.net/100/446/974/products/ao-thun-mlb-new-era-heavy-cotton-new-york-yankees-black-13086578-1.jpg?v=1691318321487" alt="Áo len Sparrow - trắng & nâu" class="product-img me-2">
+                                    <span>Áo len Sparrow - trắng & nâu</span>
+                                </div>
+                            </td>
+                            <td> 1</td>
+                            <td>500.000 VNĐ</td>
+                            <td>500.000 VNĐ</td>
+                        </tr>
+                        <tr>
+                            <td>Áo khoác Sparrow - nữ</td>
+                            <td>1</td>
+                            <td>250.000 VNĐ</td>
+                            <td>250.000 VNĐ</td>
+                        </tr>
+                        <tr>
+                            <td>Áo Sparrow Charcoal - đen</td>
+                            <td>1</td>
+                            <td>400.000 VNĐ</td>
+                            <td>400.000 VNĐ</td>
+                        </tr>
+                        <tr>
+                            <td>Túi xách Sparrow - nâu</td>
+                            <td>1</td>
+                            <td>300.000 VNĐ</td>
+                            <td>300.000 VNĐ</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="3" class="text-end">Tổng cộng:</th>
+                            <th>1.500.000 VNĐ</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <!-- Nút quay lại -->
+            <div class="text-end">
+                <a href="/donhang" class="btn btn-secondary">Quay lại</a>
+            </div>
+        </div>
+    </main>
+    <div th:replace="~{/layouts/footer}">
+    </div>
+</body>
+
+</html>

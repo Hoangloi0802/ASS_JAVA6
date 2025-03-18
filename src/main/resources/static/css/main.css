@@ -154,7 +154,7 @@ h6 {
   .navmenu {
     padding: 0;
   }
-
+  
   .navmenu ul {
     margin: 0;
     padding: 0;
@@ -162,100 +162,111 @@ h6 {
     list-style: none;
     align-items: center;
   }
-
+  
   .navmenu li {
     position: relative;
   }
-
-  .navmenu a,
-  .navmenu a:focus {
+  
+  .navmenu a {
     color: var(--nav-color);
-    padding: 18px 15px;
-    font-size: 14px;
+    padding: 15px 15px;
+    font-size: 15px;
     font-family: var(--nav-font);
     font-weight: 400;
     display: flex;
     align-items: center;
     justify-content: space-between;
     white-space: nowrap;
-    transition: 0.3s;
+    position: relative;
+    transition: color 0.3s ease;
   }
-
-  .navmenu a i,
-  .navmenu a:focus i {
-    font-size: 12px;
-    line-height: 0;
-    margin-left: 5px;
-    transition: 0.3s;
+  
+  /* Underline effect */
+  .navmenu a::after {
+    content: "";
+    position: absolute;
+    width: 0%;
+    height: 2px;
+    bottom: 8px;
+    left: 50%;
+    background-color: var(--nav-hover-color);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
   }
-
-  .navmenu li:last-child a {
-    padding-right: 0;
-  }
-
-  .navmenu li:hover>a,
-  .navmenu .active,
-  .navmenu .active:focus {
+  
+  .navmenu li:hover > a,
+  .navmenu .active {
     color: var(--nav-hover-color);
   }
-
+  
+  .navmenu li:hover > a::after,
+  .navmenu .active::after {
+    width: 50%;
+  }
+  
+  .navmenu a i {
+    font-size: 12px;
+    margin-left: 5px;
+    transition: transform 0.3s ease;
+  }
+  
+  /* Arrow rotate */
+  .navmenu li:hover > a i {
+    transform: rotate(180deg);
+  }
+  
+  /* Dropdown menu */
   .navmenu .dropdown ul {
     margin: 0;
     padding: 10px 0;
     background: var(--nav-dropdown-background-color);
-    display: block;
     position: absolute;
     visibility: hidden;
-    left: 14px;
-    top: 130%;
     opacity: 0;
-    transition: 0.3s;
+    top: 120%;
+    left: 0;
     border-radius: 4px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s ease;
     z-index: 99;
-    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.1);
   }
-
+  
+  .navmenu .dropdown:hover > ul {
+    visibility: visible;
+    opacity: 1;
+    top: 100%;
+  }
+  
   .navmenu .dropdown ul li {
     min-width: 200px;
   }
-
+  
   .navmenu .dropdown ul a {
-    padding: 10px 20px;
+    padding: 12px 20px;
     font-size: 15px;
-    text-transform: none;
     color: var(--nav-dropdown-color);
+    transition: background 0.3s, color 0.3s;
   }
-
-  .navmenu .dropdown ul a i {
-    font-size: 12px;
-  }
-
-  .navmenu .dropdown ul a:hover,
-  .navmenu .dropdown ul .active:hover,
-  .navmenu .dropdown ul li:hover>a {
+  
+  .navmenu .dropdown ul li:hover > a {
     color: var(--nav-dropdown-hover-color);
+    background: rgba(0, 0, 0, 0.03);
   }
-
-  .navmenu .dropdown:hover>ul {
-    opacity: 1;
-    top: 100%;
-    visibility: visible;
-  }
-
+  
+  /* Multi-level dropdown */
   .navmenu .dropdown .dropdown ul {
     top: 0;
-    left: -90%;
+    left: 100%;
     visibility: hidden;
+    opacity: 0;
   }
-
-  .navmenu .dropdown .dropdown:hover>ul {
-    opacity: 1;
-    top: 0;
-    left: -100%;
+  
+  .navmenu .dropdown .dropdown:hover > ul {
     visibility: visible;
+    opacity: 1;
   }
+  
 }
-
 /* Navmenu - Mobile */
 @media (max-width: 1199px) {
   .mobile-nav-toggle {
@@ -449,67 +460,27 @@ section,
   }
 }
  
-/*--------------------------------------------------------------
-# Slider Section
---------------------------------------------------------------*/
-.slider {
-  background-color: transparent;
-}
-
-.slider .swiper-pagination .swiper-pagination-bullet {
-  background-color: color-mix(in srgb, var(--default-color) 90%, white 15%);
-}
-
-.slider .swiper-pagination .swiper-pagination-bullet-active {
-  background-color: var(--accent-color);
-}
-
-.slider .swiper-wrapper {
-  height: auto !important;
-}
-
-.slider .swiper-slide {
-  min-height: 500px;
-  position: relative;
-  display: flex;
-  align-items: flex-end;
-  background-repeat: no-repeat;
-  background-size: cover;
-}
-
-.slider .swiper-slide::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
+.carousel-item img {
+  height: 600px;
   width: 100%;
-  height: 100%;
-  background: color-mix(in srgb, var(--background-color), transparent 50%);
+  object-fit: cover;
 }
 
-@media (max-width: 575px) {
-  .slider .swiper-slide {
-    min-height: 300px;
-  }
+.carousel {
+  width: 100%;
 }
 
-.slider .swiper-button-prev:after,
-.slider .swiper-button-next:after {
-  font-size: 24px;
-  color: color-mix(in srgb, var(--default-color), transparent 50%);
+
+.carousel-caption {
+  z-index: 1; /* Đè lên hình */
 }
 
-.slider .content {
-  padding: 60px 80px;
-  max-width: 700px;
-  position: relative;
+
+.carousel-caption a.btn {
+  font-weight: 200;
 }
 
-.slider .content a,
-.slider .content h2,
-.slider .content p {
-  color: var(--default-color);
-}
+
 /*--------------------------------------------------------------
 # Product Section
 --------------------------------------------------------------*/
@@ -567,6 +538,14 @@ section,
   border-radius: 4px;
   transition: background 0.3s;
 }
+.featurs-icon {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%; /* Làm tròn */
+}
 
 .product-card .btn:hover {
   background-color: color-mix(in srgb, var(--accent-color),  15%);
@@ -593,7 +572,7 @@ section,
 }
 
 .page-header {
-  background-image: url('https://images.hdqwalls.com/wallpapers/negative-space-texture-sa.jpg');
+  background-image: url("/img/nen.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -615,4 +594,112 @@ section,
   .cascading-right {
     margin-right: 0;
   }
+}
+.carousel-img {
+  width: 1200px !important;
+  height: 600px !important;
+  object-fit: cover !important;
+  margin: 0 auto; 
+}
+
+.overlay {
+  background-color: rgba(0, 0, 0, 0.322); /* Màu đen mờ, chỉnh alpha 0.4 */
+  z-index: 1; /* Đặt lớp dưới chữ */
+}
+.carousel-caption {
+  z-index: 2; /* Đè lên lớp overlay */
+  position: absolute;
+}
+
+
+
+
+/* From Uiverse.io by LeonKohli */ 
+.ui-input-container {
+  position: relative;
+  width: 300px;
+}
+
+.ui-input {
+  width: 100%;
+  padding: 10px 10px 10px 40px;
+  font-size: 1em;
+  border: none;
+  border-bottom: 2px solid #ccc;
+  outline: none;
+  background-color: transparent;
+  transition: border-color 0.3s;
+}
+
+.ui-input:focus {
+  border-color: #6c63ff;
+}
+
+.ui-input-underline {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  background-color: #6c63ff;
+  transform: scaleX(0);
+  transition: transform 0.3s;
+}
+
+.ui-input:focus + .ui-input-underline {
+  transform: scaleX(1);
+}
+
+.ui-input-highlight {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 100%;
+  width: 0;
+  background-color: rgba(108, 99, 255, 0.1);
+  transition: width 0.3s;
+}
+
+.ui-input:focus ~ .ui-input-highlight {
+  width: 100%;
+}
+
+.ui-input-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+  transition: color 0.3s;
+}
+
+.ui-input:focus ~ .ui-input-icon {
+  color: #6c63ff;
+}
+
+.ui-input-icon svg {
+  width: 20px;
+  height: 20px;
+}
+.profile-img {
+  width: 100px; /* Giảm từ 150px xuống 100px */
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.product-img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.product-name {
+  font-weight: 500;
+}
+.align-center {
+  vertical-align: middle !important;
+  text-align: center;
+}
+td, th {
+  vertical-align: middle !important;
 }

@@ -17,16 +17,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Builder
-@Table(name = "Accounts")
+@Table(name = "accounts")
 public class Account implements Serializable {
     @Id
-    String username;
-    String password;
-    String fullname;
-    String email;
-    String photo;
+    private String username;
+    private String password;
+    private String fullname;
+    private String email;
+    private String photo;
     boolean activated;
-    boolean admin;
+    private Role role;
     String activationCode;
     @OneToMany(mappedBy = "account")
     List<Order> orders;
