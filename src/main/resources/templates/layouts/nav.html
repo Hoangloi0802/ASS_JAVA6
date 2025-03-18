@@ -1,4 +1,5 @@
 <header id="header" class="header d-flex align-items-center sticky-top">
+    
   <div class="container position-relative d-flex align-items-center justify-content-between">
 
     <a href="index.html" class="logo d-flex align-items-center me-auto me-xl-0">
@@ -7,27 +8,16 @@
 
     <nav id="navmenu" class="navmenu">
       <ul class="fs-5">
-        <li><a href="index.html" class="active">Home</a></li>
-        <li><a href="about.html">Sản phẩm</a></li>
-        <li><a href="single-post.html">Giỏ hàng</a></li>
+        <li><a href="/" class="active">TRANG CHỦ</a></li>
+        <li><a href="/shop">SẢN PHẨM</a></li>
+        <li><a href="/giohang">GIỎ HÀNG</a></li>
       </ul>
       <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
     </nav>
 
     <div class="header-social-links d-flex align-items-center">
-      <!-- Thanh tìm kiếm -->
-      <form action="/search" method="GET" class="d-flex me-3">
-        <div class="input-group">
-          <input class="form-control border-end-0" type="search" name="keyword" placeholder="Tìm kiếm..."
-            aria-label="Search">
-          <button type="submit" class="input-group-text bg-primary text-white border-0">
-            <i class="bi bi-search"></i>
-          </button>
-        </div>
-      </form>
-
       <!-- Icon giỏ hàng -->
-      <a href="/cart" class="position-relative me-3">
+      <a href="/giohang" class="position-relative me-3">
         <i class="bi bi-cart fs-4"></i>
         <span class="position-absolute bg-danger rounded-circle text-white px-2"
           style="top: -5px; left: 15px; height: 20px; min-width: 20px; font-size: 12px; line-height: 20px;">
@@ -47,7 +37,7 @@
           <li><a class="dropdown-item" href="/forgot-password">Quên mật khẩu</a></li>
           <li class="dropdown-divider"></li>
           <li><a class="dropdown-item" href="/profile">Hồ sơ</a></li>
-          <li><a class="dropdown-item" href="/order">Đơn hàng của bạn</a></li>
+          <li><a class="dropdown-item" href="/donhang">Đơn hàng của bạn</a></li>
           <li><a class="dropdown-item" href="/doimk">Đổi mật khẩu</a></li>
           <li><a class="dropdown-item" th:href="@{/admin/products}">Quản Lý</a></li>
           <li><a class="dropdown-item" href="/logout">Đăng xuất</a></li>

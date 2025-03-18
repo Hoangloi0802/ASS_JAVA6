@@ -2,78 +2,77 @@
 <html lang="en">
 
 <head th:replace="~{/layouts/header}">
-    <title>Home</title>
+  <title>Home</title>
 </head>
 
 <body>
-    <header th:replace="~{/layouts/nav}">
-    </header>
-    <main class="container">
-        <div class="container-fluid page-header py-5">
-            <h1 class="text-center text-white display-6">Shop Detail</h1>
-            <ol class="breadcrumb justify-content-center mb-0">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item"><a href="#">Pages</a></li>
-                <li class="breadcrumb-item active text-white">Shop Detail</li>
-            </ol>
-        </div>
-        <div class="container-fluid py-5 mt-5">
-            <div class="container py-5">
-                <div class="row g-4 mb-5">
-                    <div class="col-lg-8 col-xl-9">
-                        <div class="row g-4">
-                            <!-- Hình ảnh sản phẩm -->
-                            <div class="col-lg-6">
-                                <div class="border rounded">
-                                    <a href="#">
-                                        <img th:src="@{'/images/' + ${product.image}}" class="img-fluid rounded"
-                                            alt="Product Image">
-                                    </a>
-                                </div>
-                            </div>
-
-                            <!-- Thông tin sản phẩm -->
-                            <div class="col-lg-6">
-                                <h4 class="fw-bold mb-3" th:text="${product.name}">Product Name</h4>
-                                <p class="mb-3">Thể loại: <span th:text="${product.category.name}"></span></p>
-                                <h5 class="fw-bold mb-3" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') + ' đ / kg'}"></h5>
-
-                                <a th:href="@{'/cart/add/' + ${product.id}}"
-                                    class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary">
-                                    <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
-                                </a>
-                            </div>
-                        </div>
-
+  <header th:replace="~{/layouts/nav}"></header>
+  <main class="container ">
+    <section class="py-6" id="page-single-product">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-6 pe-lg-6">
+            <div class="row">
+              <div class="row">
+                <div class="col-lg-12 mb-4 mb-lg-0">
+                  <div class="swiper main-slider">
+                    <div class="swiper-wrapper">
+                      <div class="swiper-slide"><img class="img-thumbnail"
+                          src="https://bizweb.dktcdn.net/100/446/974/products/ao-thun-mlb-new-era-heavy-cotton-new-york-yankees-black-13086578-1.jpg?v=1691318321487"
+                          alt=""></div>
+                      <div class="swiper-slide"><img class="img-fluid"
+                          src="https://bizweb.dktcdn.net/100/446/974/products/ao-thun-mlb-new-era-heavy-cotton-new-york-yankees-black-13086578-1.jpg?v=1691318321487"
+                          alt=""></div>
+                      <div class="swiper-slide"><img class="img-fluid"
+                          src="https://bizweb.dktcdn.net/100/446/974/products/ao-thun-mlb-new-era-heavy-cotton-new-york-yankees-black-13086578-1.jpg?v=1691318321487"
+                          alt=""></div>
+                      <div class="swiper-slide"><img class="img-fluid"
+                          src="https://bizweb.dktcdn.net/100/446/974/products/ao-thun-mlb-new-era-heavy-cotton-new-york-yankees-black-13086578-1.jpg?v=1691318321487"
+                          alt=""></div>
                     </div>
-                    <div class="col-lg-4 col-xl-3">
-                        <div class="row g-4 fruite">
-                            <div class="col-lg-3">
-                                <div class="col-lg-3">
-                                    <h4>Categories</h4>
-                                    <ul class="list-unstyled fruite-categorie">
-                                        <li>
-                                            <a th:href="@{/shop}" th:classappend="${selectedCategory == null} ? 'active' : ''">All Products</a>
-                                        </li>
-                                        <th:block th:each="entry : ${categories}">
-                                            <li>
-                                                <a th:href="@{/shop(category=${entry.key})}" 
-                                                   th:text="${entry.key}" 
-                                                   th:classappend="${selectedCategory == entry.key} ? 'active' : ''">
-                                                </a> 
-                                                (<span th:text="${entry.value}"></span>)
-                                            </li>
-                                        </th:block>
-                                    </ul>
-                                </div>
-                                
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
+                  </div>
+                  <div class="swiper thumbs-slider mt-3">
+                    <div class="swiper-wrapper">
+                      <div class="swiper-slide"><img class="img-fluid"
+                          src="https://bizweb.dktcdn.net/100/446/974/products/ao-thun-mlb-new-era-heavy-cotton-new-york-yankees-black-13086578-1.jpg?v=1691318321487"
+                          alt=""></div>
+                      <div class="swiper-slide"><img class="img-fluid"
+                          src="https://bizweb.dktcdn.net/100/446/974/products/ao-thun-mlb-new-era-heavy-cotton-new-york-yankees-black-13086578-1.jpg?v=1691318321487"
+                          alt=""></div>
+                      <div class="swiper-slide"><img class="img-fluid"
+                          src="https://bizweb.dktcdn.net/100/446/974/products/ao-thun-mlb-new-era-heavy-cotton-new-york-yankees-black-13086578-1.jpg?v=1691318321487"
+                          alt=""></div>
+                      <div class="swiper-slide"><img class="img-fluid"
+                          src="https://bizweb.dktcdn.net/100/446/974/products/ao-thun-mlb-new-era-heavy-cotton-new-york-yankees-black-13086578-1.jpg?v=1691318321487"
+                          alt=""></div>
                     </div>
+                  </div>
                 </div>
+              </div>
             </div>
+          </div>
+          <div class="col-lg-6 ">
+            <div class="col-12 mb-4">
+              <h1>Sparrow Shirt - The Beginning</h1>
+            </div>
+            <h2 class="fw-normal">$11.00</h2>
+            <h6 class="mt-4">Product Details</h6>
+            <p class="text-body-secondary">
+              Blue solid chambray shirt, has a spread collar, three-quarter sleeves, button closure, 1 pocket, curved
+              hem.
+            </p>
+            <h6 class="mt-4">Material & Care</h6>
+            <p>Lyocell<br>Machine-wash</p>
+              <a class="btn btn-dark" href="../pages/cart.html">Add to Cart</a>
+          </div>
         </div>
-    </main>
-    <div th:replace="~{/layouts/footer}">
-    </div>
+      </div>
+    </section>
+  </main>
+
+  <div th:replace="~{/layouts/footer}"></div>
 </body>
 
 </html>
