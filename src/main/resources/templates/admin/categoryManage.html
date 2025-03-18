@@ -73,27 +73,32 @@
                             <div class="container my-3">
                                 <div class="card shadow">
                                     <div class="card-body">
-                                        <form th:action="@{/admin/users/save}" method="post">
+                                        <form th:action="@{/admin/categories/save}" th:object="${cate}" method="post">
                                             <div class="row row-cols-1 row-cols-md-2 g-3">
                                                 <div class="mb-3">
                                                     <label class="form-label">ID:</label>
                                                     <input type="text" class="form-control" name="id"
-                                                        placeholder="Nhập id loại sản phẩm" required>
+                                                        placeholder="Nhập id loại sản phẩm" th:field="*{id}" required>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Tên loại sản phẩm:</label>
                                                     <input type="text" class="form-control" name="name"
-                                                        placeholder="Nhập tên loại sản phẩm">
+                                                        placeholder="Nhập tên loại sản phẩm" th:field="*{name}"
+                                                        required>
                                                 </div>
                                                 <div class="d-flex gap-2 flex-wrap">
-                                                    <button type="submit" class="btn btn-success">
+                                                    <button type="submit" class="btn btn-success"
+                                                        formaction="/admin/categories/create">
                                                         <i class="fa-solid fa-plus"></i> Thêm
                                                     </button>
-                                                    <button type="submit" class="btn btn-primary">
+                                                    <button type="submit" class="btn btn-primary"
+                                                        formaction="/admin/categories/update">
                                                         <i class="fa-solid fa-pen-to-square"></i> Cập nhật
                                                     </button>
                                                     <button type="reset" class="btn btn-warning">
-                                                        <i class="fa-solid fa-rotate"></i> Làm Mới
+                                                        <a th:href="@{/category/index}" class="btn btn-warning">
+                                                            <i class="fa-solid fa-rotate"></i> Làm Mới
+                                                        </a>
                                                     </button>
                                                 </div>
                                             </div>
@@ -112,19 +117,25 @@
                                     </tr>
                                 </thead>
                                 <tbody class="table-light">
-                                    <tr>
-                                        <td>LSP001</td>
-                                        <td>Rau Xanh</td>
-                                        <td>
-                                            <a href="#" class="btn btn-info btn-sm btn-action edit-btn">
-                                                <i class="fa-solid fa-pen-to-square"></i> Sửa
-                                            </a>
-                                            <a href="#" class="btn btn-danger btn-sm btn-action delete-btn"
-                                                onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
-                                                <i class="fa-solid fa-trash"></i> Xóa
-                                            </a>
-                                        </td>
-                                    </tr>
+                                    <th:block th:each="item : ${categories}">
+                                        <tr>
+                                            <td th:text="${item.id}"></td>
+                                            <td th:text="${item.name}"></td>
+                                            <td>
+                                                <a th:href="@{|/admin/categories/edit/${item.id}|}"
+                                                    class="btn btn-sm btn-info">
+                                                    <i class="fa-solid fa-pen-to-square"></i> Sửa
+                                                </a>
+                                                <form th:action="@{/category/delete}" method="post" class="d-inline"
+                                                    onsubmit="return confirm('Bạn có chắc chắn muốn xóa loại sản phẩm này?')">
+                                                    <input type="hidden" name="id" th:value="${item.id}">
+                                                    <button type="submit" class="btn btn-sm btn-danger">
+                                                        <i class="fa-solid fa-trash"></i> Xóa
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    </th:block>
                                 </tbody>
                             </table>
                         </div>
