@@ -7,14 +7,15 @@
 
     <nav id="navmenu" class="navmenu">
       <ul class="fs-5">
-        <li><a th:href="@{/}" class="active">Home</a></li>
-        <li><a th:href="@{/shop}">Sản phẩm</a></li>
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="about.html">Sản phẩm</a></li>
         <li><a href="single-post.html">Giỏ hàng</a></li>
       </ul>
       <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
     </nav>
 
     <div class="header-social-links d-flex align-items-center">
+      <!-- Thanh tìm kiếm -->
       <form action="/search" method="GET" class="d-flex me-3">
         <div class="input-group">
           <input class="form-control border-end-0" type="search" name="keyword" placeholder="Tìm kiếm..."
@@ -24,6 +25,8 @@
           </button>
         </div>
       </form>
+
+      <!-- Icon giỏ hàng -->
       <a href="/cart" class="position-relative me-3">
         <i class="bi bi-cart fs-4"></i>
         <span class="position-absolute bg-danger rounded-circle text-white px-2"
@@ -31,6 +34,8 @@
           0
         </span>
       </a>
+
+      <!-- Dropdown người dùng -->
       <div class="nav-item dropdown">
         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button"
           data-bs-toggle="dropdown" aria-expanded="false">

@@ -40,59 +40,5 @@ public class Trangchu {
     public String Dangky( ){
         return "testdulieu/Dangky";
     }
-    @GetMapping("/Dangkytest")
-    public String Dangkytest(Model model) {
-    model.addAttribute("accoutDangky", new DangkyRequest()); 
-    return "testdulieu/Dangkytest";
-    }
-    @PostMapping("/Dangkytest")
-    public String dangkyPost(@Valid @ModelAttribute("accoutDangky") DangkyRequest dangkyRequest, 
-                         BindingResult result, 
-                         Model model ,HttpSession session) {
-    if (result.hasErrors()) {
-        return "testdulieu/Dangkytest";
-    }
-    try {
-        Account newAccount = accoutService.Dangky(dangkyRequest);
 
-        session.setAttribute("accout", newAccount);
-        model.addAttribute("message", "Đăng ký thành công!");
-         return "redirect:/Dangnhaptest";
-        
-    } catch (Exception e) {
-        model.addAttribute("error", e.getMessage());
-        return "testdulieu/Dangkytest";
-    }
-   
-    }
-    @GetMapping("/Dangnhaptest")
-    public String dangnhaptest(Model model){
-        model.addAttribute("accoutDangnhap", new DangnhapRequest());
-        return "testdulieu/Dangnhaptest";
-    }
-    @PostMapping("Dangnhaptest")
-    public String dangnhapPost(Model model ,@Valid @ModelAttribute("accoutDangnhap") DangnhapRequest dangnhapRequest ,BindingResult result ,HttpSession session){
-        if(result.hasErrors()){
-            return "testdulieu/Dangnhaptest";
-        }
-        try {
-            Account account = accoutService.Dangnhap(dangnhapRequest.getUsername(), dangnhapRequest.getPassword());
-            session.setAttribute("accout", account);
-            model.addAttribute("message", "Đăng nhập thành công!");
-            System.out.println("đăng nhập thành công");
-
-        } catch (Exception e) {
-            model.addAttribute("message", "Sai tài khoản hoặc mật khẩu!");
-            return "testdulieu/Dangnhaptest";
-        }
-        
-
-        return "testdulieu/Dangnhaptest";
-    }
-
-
-
-
-   
-    
 }
