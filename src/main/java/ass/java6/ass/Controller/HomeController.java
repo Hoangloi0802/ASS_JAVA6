@@ -12,7 +12,6 @@ public class HomeController {
 
     @GetMapping("/admin/categories")
     public String category() {
-        
         return "admin/categoryManage";
     }
 
@@ -30,6 +29,4 @@ public class HomeController {
     public String sattistics() {
         return "admin/statistics";
     }
-    
-   
 }
