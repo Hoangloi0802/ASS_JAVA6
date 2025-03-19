@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Nhân Sự</title>
+    <link rel="stylesheet" href="/bootstrap-5.3.3/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --secondary-color: #6366f1;
+        }
+        body {
+            background-color: #f3f4f6;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .role-badge {
+            padding: 0.35em 0.65em;
+            border-radius: 0.25rem;
+            font-size: 0.875em;
+        }
+        .role-admin {
+            background-color: #fee2e2;
+            color: #dc2626;
+        }
+        .role-manager {
+            background-color: #e0e7ff;
+            color: #4f46e5;
+        }
+        .role-staff {
+            background-color: #dcfce7;
+            color: #15803d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-auto p-3 min-vh-100 bg-white shadow-sm">
+                <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
+                    <a href="/" class="d-flex align-items-center pb-3 mb-md-0 text-decoration-none">
+                        <span class="fs-5 d-none d-sm-inline" style="color: var(--primary-color); font-weight: 600;">Admin Dashboard</span>
+                    </a>
+                    <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start w-100">
+                        <li class="nav-item w-100">
+                            <a href="/" class="nav-link active" aria-current="page">
+                                <i class="fa-solid fa-house me-2"></i>
+                                <span class="ms-1 d-none d-sm-inline">Home</span>
+                            </a>
+                        </li>
+                        <li class="nav-item w-100">
+                            <a th:href="@{/admin/products}" class="nav-link">
+                                <i class="fa-solid fa-boxes-stacked me-2"></i>
+                                <span class="ms-1 d-none d-sm-inline">Quản Lý Sản Phẩm</span>
+                            </a>
+                        </li>
+                        <li class="nav-item w-100">
+                            <a th:href="@{/admin/categories}" class="nav-link">
+                                <i class="fa-solid fa-tags me-2"></i>
+                                <span class="ms-1 d-none d-sm-inline">Quản Lý Loại Sản Phẩm</span>
+                            </a>
+                        </li>
+                        <li class="nav-item w-100">
+                            <a th:href="@{/admin/bill}" class="nav-link">
+                                <i class="fa-solid fa-file-invoice-dollar me-2"></i>
+                                <span class="ms-1 d-none d-sm-inline">Quản Lý Hóa Đơn</span>
+                            </a>
+                        </li>
+                        <li class="nav-item w-100">
+                            <a th:href="@{/admin/account}" class="nav-link">
+                                <i class="fa-solid fa-users me-2"></i>
+                                <span class="ms-1 d-none d-sm-inline">Quản Lý Người Dùng</span>
+                            </a>
+                        </li>
+                        <li class="nav-item w-100">
+                            <a th:href="@{/admin/nhansu}" class="nav-link">
+                                <i class="fa-solid fa-chart-pie me-2"></i>
+                                <span class="ms-1 d-none d-sm-inline">Quản Lý Nhân Sự</span>
+                            </a>
+                        </li>
+                        <li class="nav-item w-100">
+                            <a th:href="@{/admin/statistics}" class="nav-link">
+                                <i class="fa-solid fa-chart-pie me-2"></i>
+                                <span class="ms-1 d-none d-sm-inline">Thống Kê</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Main Content -->
+            <div class="col p-4">
+                <div class="container">
+                    <!-- Header -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h4 class="mb-1 fw-bold">Quản Lý Nhân Sự</h4>
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb mb-0">
+                                    <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Dashboard</a></li>
+                                    <li class="breadcrumb-item active">Quản Lý Nhân Sự</li>
+                                </ol>
+                            </nav>
+                        </div>
+                    
+                    </div>
+
+                    <!-- Search and Filter -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="Tìm kiếm nhân viên...">
+                                        <button class="btn btn-outline-secondary">
+                                            <i class="fa-solid fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Staff List -->
+                    <div class="card shadow-sm">
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="bg-light">
+                                        <tr>
+                                            <th>Nhân viên</th>
+                                            <th>Mã NV</th>
+                                            <th>Phòng ban</th>
+                                            <th>Email</th>
+                                            <th>Số điện thoại</th>
+                                            <th>Vai trò</th>
+                                            <th>Trạng thái</th>
+                                            <th class="text-center">Thao tác</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://ui-avatars.com/api/?name=John+Doe" 
+                                                         class="rounded-circle me-2" width="40" height="40">
+                                                    <div>
+                                                        <div class="fw-bold">John Doe</div>
+                                                        <div class="text-muted small">Trưởng phòng</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>NV001</td>
+                                            <td>Phòng Kinh Doanh</td>
+                                            <td>john.doe@company.com</td>
+                                            <td>0123456789</td>
+                                            <td>
+                                                <span class="role-badge role-manager">Manager</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-success">Đang làm việc</span>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex justify-content-center gap-2">
+                                                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" 
+                                                            data-bs-target="#editRoleModal">
+                                                        <i class="fa-solid fa-user-gear"></i>
+                                                    </button>
+                                                
+                                                    <button class="btn btn-danger btn-sm">
+                                                        <i class="fa-solid fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Role Modal -->
+    <div class="modal fade" id="editRoleModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Phân Quyền Nhân Viên</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-4">
+                        <h6 class="fw-bold mb-3">Thông tin nhân viên</h6>
+                        <p class="mb-1"><strong>Tên:</strong> John Doe</p>
+                        <p class="mb-1"><strong>Mã NV:</strong> NV001</p>
+                        <p class="mb-1"><strong>Phòng ban:</strong> Phòng Kinh Doanh</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Vai trò</label>
+                        <select class="form-select" id="roleSelect">
+                            <option value="Nhân Viên">Nhân viên</option>
+                            <option value="Admin" selected>Admin</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Quyền hạn</label>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="manageUsers">
+                            <label class="form-check-label" for="manageUsers">
+                                Quản lý người dùng
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="manageProducts">
+                            <label class="form-check-label" for="manageProducts">
+                                Quản lý sản phẩm
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="manageOrders">
+                            <label class="form-check-label" for="manageOrders">
+                                Quản lý đơn hàng
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="viewReports">
+                            <label class="form-check-label" for="viewReports">
+                                Xem báo cáo
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-primary">Lưu thay đổi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/bootstrap-5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Handle role change
+        document.getElementById('roleSelect').addEventListener('change', function() {
+            const role = this.value;
+            const checkboxes = document.querySelectorAll('.form-check-input');
+            
+            // Set permissions based on role
+            if (role === 'ADMIN') {
+                checkboxes.forEach(cb => {
+                    cb.checked = true;
+                    cb.disabled = true;
+                });
+            } else if (role === 'MANAGER') {
+                checkboxes.forEach(cb => {
+                    cb.disabled = false;
+                    cb.checked = cb.id !== 'manageUsers';
+                });
+            } else {
+                checkboxes.forEach(cb => {
+                    cb.disabled = false;
+                    cb.checked = cb.id === 'viewReports';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

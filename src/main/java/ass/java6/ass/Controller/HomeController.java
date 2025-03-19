@@ -29,6 +29,9 @@ public class HomeController {
     public String sattistics() {
         return "admin/statistics";
     }
-    
-   
+
+    @GetMapping("/admin/nhansu")
+    public String nhansu() {
+        return "admin/Quanlynhansu";
+    }
 }
