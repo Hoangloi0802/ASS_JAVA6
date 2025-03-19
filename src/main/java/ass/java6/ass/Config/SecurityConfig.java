@@ -1,7 +1,5 @@
 package ass.java6.ass.Config;
 
-import java.beans.Customizer;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,13 +14,13 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable()) // Tắt CSRF (nếu cần)
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers( "Dangnhaptest","/Dangkytest",  "/", "/dangky", "/css/**", "/js/**").permitAll() // Không cần đăng nhập
+                .requestMatchers( "/Dangnhap","/profile","/donmua","/donhang","/chitietdonhang","/shop" , "/", "/Dangky", "/css/**", "/js/**","/img/**","/bootstrap-5.3.3/dist/**","/fonts/**","/giohang","/chitiet","/thanhtoan","/admin/categories","/admin/account","/admin/products","/admin/bill","/admin/statistics","/checkotp","/quenmk","/datlaimk").permitAll() // Không cần đăng nhập
                 .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN") // Chỉ Admin truy cập được
                 .requestMatchers("/user/**").hasAuthority("ROLE_USER") // Chỉ User truy cập được
                 .anyRequest().authenticated() // Còn lại yêu cầu đăng nhập
             )
             .formLogin(login -> login
-                .loginPage("/dangnhap") // Trang login
+                .loginPage("/Dangnhap") // Trang login
                 .loginProcessingUrl("/process-login") // Xử lý login
                 .defaultSuccessUrl("/home", true) // Sau khi login thành công
                 .permitAll()
