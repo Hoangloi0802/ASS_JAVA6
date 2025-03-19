@@ -1,63 +1,78 @@
-// package ass.java6.ass.Controller;
+package ass.java6.ass.Controller;
 
-// import org.springframework.stereotype.Controller;
-// import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 
-// import ch.qos.logback.core.model.Model;
+import ch.qos.logback.core.model.Model;
+import org.springframework.web.bind.annotation.RequestParam;
 
-// @Controller
-// public class Trangchu {
-//     @GetMapping("/")
-//     public String getMethodName(Model model) {
-//         return "home/trangchu";
-//     }
 
-//     @GetMapping("/shop")
-//     public String shop(Model model) {
-//         return "home/sanpham";
-//     }
+@Controller
+public class Trangchu {
+    @GetMapping("/")
+    public String getMethodName(Model model) {
+        return "home/trangchu";
+    }
 
-//     @GetMapping("/Dangnhap")
-//     public String dangnhap() {
-//         return "login/Dangnhap";
-//     }
+    @GetMapping("/shop")
+    public String shop(Model model) {
+        return "home/sanpham";
+    }
 
-//     @GetMapping("/Dangky")
-//     public String Dangky() {
-//         return "login/Dangky";
-//     }
+    @GetMapping("/Dangnhap")
+    public String dangnhap() {
+        return "login/Dangnhap";
+    }
 
-//     @GetMapping("/thanhtoan")
-//     public String thanhtoan() {
-//         return "home/thanhtoan";
-//     }
+    @GetMapping("/Dangky")
+    public String Dangky() {
+        return "login/Dangky";
+    }
 
-//     @GetMapping("/chitiet")
-//     public String chitiet() {
-//         return "home/chitiet";
-//     }
+    @GetMapping("/thanhtoan")
+    public String thanhtoan() {
+        return "home/thanhtoan";
+    }
 
-//     @GetMapping("/giohang")
-//     public String getMethodName() {
-//         return "home/giohang";
-//     }
+    @GetMapping("/chitiet")
+    public String chitiet() {
+        return "home/chitiet";
+    }
 
-//     @GetMapping("/profile")
-//     public String profile() {
-//         return "home/profile";
-//     }
+    @GetMapping("/giohang")
+    public String getMethodName() {
+        return "home/giohang";
+    }
 
-//     @GetMapping("/donmua")
-//     public String donmua() {
-//         return "home/donmua";
-//     }
+    @GetMapping("/profile")
+    public String profile() {
+        return "home/profile";
+    }
 
-//     @GetMapping("/donhang")
-//     public String donhang() {
-//         return "home/donhang";
-//     }
-//     @GetMapping("/chitietdonhang")
-//     public String ctdonhang() {
-//         return "home/chitietdonhang";
-//     }
-// }
+    @GetMapping("/donmua")
+    public String donmua() {
+        return "home/donmua";
+    }
+
+    @GetMapping("/donhang")
+    public String donhang() {
+        return "home/donhang";
+    }
+    @GetMapping("/chitietdonhang")
+    public String ctdonhang() {
+        return "home/chitietdonhang";
+    }
+    @GetMapping("/checkotp")
+    public String check() {
+        return "login/otp";
+    }
+    @GetMapping("/quenmk")
+    public String quenmk() {
+        return "login/quenmk";
+    }
+    @GetMapping("/datlaimk")
+    public String datlaimk() {
+        return "login/datlaimatkhau";
+    }
+    
+}
