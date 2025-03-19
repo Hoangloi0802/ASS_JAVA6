@@ -10,10 +10,6 @@ public class HomeController {
         return "admin/accountManage";
     }
 
-    @GetMapping("/admin/categories")
-    public String category() {
-        return "admin/categoryManage";
-    }
 
     @GetMapping("/admin/products")
     public String product() {
