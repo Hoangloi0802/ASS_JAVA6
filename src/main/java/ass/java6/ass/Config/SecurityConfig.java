@@ -16,7 +16,7 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable()) // Tắt CSRF (nếu cần)
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers( "Dangnhaptest","/Dangkytest",  "/", "/dangky", "/css/**", "/js/**").permitAll() // Không cần đăng nhập
+                .requestMatchers( "/Dangnhap","/shop" , "/", "/Dangky", "/css/**", "/js/**","/img/**","/bootstrap-5.3.3/dist/**","/fonts/**","/giohang","/chitiet","/thanhtoan","/admin/categories/**","/admin/account/**","/admin/products/**","/admin/bill/**","/admin/statistics").permitAll()
                 .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN") // Chỉ Admin truy cập được
                 .requestMatchers("/user/**").hasAuthority("ROLE_USER") // Chỉ User truy cập được
                 .anyRequest().authenticated() // Còn lại yêu cầu đăng nhập

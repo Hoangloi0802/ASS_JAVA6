@@ -17,7 +17,6 @@
 <body>
     <div class="container-fluid">
         <div class="row g-4">
-            <!-- Sidebar -->
             <div class="col-auto p-3 min-vh-100 bg-white shadow-sm">
                 <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
                     <a href="/" class="d-flex align-items-center pb-3 mb-md-0 text-decoration-none">
@@ -64,117 +63,10 @@
                     </ul>
                 </div>
             </div>
-
-            <!-- Main Content -->
-            <div class="col p-4">
-                <div class="container">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h2 class="mb-0">Quản Lý Loại Sản Phẩm</h2>
-                        <nav aria-label="breadcrumb">
-                            <ol class="breadcrumb mb-0">
-                                <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Quản Lý Loại Sản Phẩm</li>
-                            </ol>
-                        </nav>
-                    </div>
-
-                    <div class="card shadow-sm">
-                        <div class="card-body p-0">
-                            <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link active" id="edit-tab" data-bs-toggle="tab"
-                                        data-bs-target="#edit" type="button" role="tab" aria-controls="edit"
-                                        aria-selected="true">
-                                        <i class="fa-solid fa-pen-to-square me-2"></i>CHỈNH SỬA
-                                    </button>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="list-tab" data-bs-toggle="tab" data-bs-target="#list"
-                                        type="button" role="tab" aria-controls="list" aria-selected="false">
-                                        <i class="fa-solid fa-list me-2"></i>DANH SÁCH
-                                    </button>
-                                </li>
-                            </ul>
-
-                            <div class="tab-content p-4" id="myTabContent">
-                                <!-- Edit Tab -->
-                                <div class="tab-pane fade show active" id="edit" role="tabpanel"
-                                    aria-labelledby="edit-tab">
-                                    <form th:action="@{/admin/categories/save}" method="post"
-                                        class="needs-validation category-form" novalidate>
-                                        <div class="row g-4">
-                                            <div class="col-md-6">
-                                                <div class="form-floating">
-                                                    <input type="text" class="form-control" id="categoryId" name="id"
-                                                        placeholder="Category ID" required>
-                                                    <label for="categoryId">ID loại sản phẩm</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-floating">
-                                                    <input type="text" class="form-control" id="categoryName"
-                                                        name="name" placeholder="Category Name" required>
-                                                    <label for="categoryName">Tên loại sản phẩm</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-12">
-                                                <div class="d-flex gap-2">
-                                                    <button type="submit" class="btn btn-success">
-                                                        <i class="fa-solid fa-plus me-2"></i>Thêm
-                                                    </button>
-                                                    <button type="submit" class="btn btn-primary">
-                                                        <i class="fa-solid fa-pen-to-square me-2"></i>Cập nhật
-                                                    </button>
-                                                    <button type="reset" class="btn btn-warning">
-                                                        <i class="fa-solid fa-rotate me-2"></i>Làm mới
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-
-                                <!-- List Tab -->
-                                <div class="tab-pane fade" id="list" role="tabpanel" aria-labelledby="list-tab">
-                                    <div class="table-responsive">
-                                        <table class="table table-hover align-middle mb-0 category-table">
-                                            <thead>
-                                                <tr>
-                                                    <th>ID</th>
-                                                    <th>Tên loại sản phẩm</th>
-                                                    <th class="text-center">Hành động</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td><span class="fw-medium">LSP001</span></td>
-                                                    <td>Rau Xanh</td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center gap-2">
-                                                            <button class="btn btn-info btn-sm btn-action edit-btn">
-                                                                <i class="fa-solid fa-pen-to-square"></i>
-                                                            </button>
-                                                            <button class="btn btn-danger btn-sm btn-action delete-btn"
-                                                                onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
-                                                                <i class="fa-solid fa-trash"></i>
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            
         </div>
     </div>
-
     <script>
-        // Form validation với SweetAlert2
         (() => {
             'use strict'
             const forms = document.querySelectorAll('.needs-validation')

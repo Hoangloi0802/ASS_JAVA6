@@ -24,6 +24,8 @@ public class Account implements Serializable {
     private String password;
     private String fullname;
     private String email;
+    private String address;
+    private String mobile;
     private String photo;
     boolean activated;
     private Role role;
