@@ -74,5 +74,5 @@ public class Trangchu {
     public String datlaimk() {
         return "login/datlaimatkhau";
     }
-    
+
 }
