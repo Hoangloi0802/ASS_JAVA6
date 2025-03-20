@@ -20,6 +20,8 @@ public class Order implements Serializable {
 
     private String address;
 
+    private boolean status;
+
     @Column(name = "createdate")
     private LocalDateTime createDate = LocalDateTime.now();
 
