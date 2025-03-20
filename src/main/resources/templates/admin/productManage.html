@@ -1,22 +1,101 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QUẢN LÝ LOẠI SẢN PHẨM</title>
+    <title>Quản Lý Sản Phẩm</title>
     <link rel="stylesheet" href="/bootstrap-5.3.3/dist/css/bootstrap.css">
-    <script src="/bootstrap-5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="/css/admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" href="/photo/categories.png" type="image/png">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-</head>
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --secondary-color: #6366f1;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .sidebar {
+            background: white;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+        }
+        .nav-link {
+            color: #4b5563;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .nav-link:hover, .nav-link.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+        }
+        .form-control, .form-select {
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        .table {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .table thead th {
+            background-color: #f8fafc;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+            letter-spacing: 0.05em;
+        }
+        .btn-action {
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+        }
 
+        image-upload-box {
+    height: 200px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.image-upload-box:hover {
+    border-color: var(--primary-color) !important;
+}
+
+.upload-placeholder {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.image-preview img {
+    max-height: 140px;
+    object-fit: cover;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+    </style>
+</head>
 <body>
     <div class="container-fluid">
-        <div class="row g-4">
+        <div class="row g-0">
             <!-- Sidebar -->
             <div class="col-auto p-3 min-vh-100 bg-white shadow-sm">
                 <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
@@ -55,6 +134,12 @@
                             </a>
                         </li>
                         <li class="nav-item w-100">
+                            <a th:href="@{/admin/nhansu}" class="nav-link">
+                                <i class="fa-solid fa-chart-pie me-2"></i>
+                                <span class="ms-1 d-none d-sm-inline">Quản Lý Nhân Sự</span>
+                            </a>
+                        </li>
+                        <li class="nav-item w-100">
                             <a th:href="@{/admin/statistics}" class="nav-link">
                                 <i class="fa-solid fa-chart-pie me-2"></i>
                                 <span class="ms-1 d-none d-sm-inline">Thống Kê</span>
@@ -63,108 +148,99 @@
                     </ul>
                 </div>
             </div>
-
             <!-- Main Content -->
             <div class="col p-4">
-                <div class="container">
+                <div class="container-fluid">
+                    <!-- Header -->
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h2 class="mb-0">Quản Lý Loại Sản Phẩm</h2>
-                        <nav aria-label="breadcrumb">
-                            <ol class="breadcrumb mb-0">
-                                <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Quản Lý Loại Sản Phẩm</li>
-                            </ol>
-                        </nav>
+                        <div>
+                            <h4 class="fw-bold mb-1">Quản Lý Sản Phẩm</h4>
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb mb-0">
+                                    <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Dashboard</a></li>
+                                    <li class="breadcrumb-item active">Sản phẩm</li>
+                                </ol>
+                            </nav>
+                        </div>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                            <i class="fa-solid fa-plus me-2"></i>Thêm sản phẩm mới
+                        </button>
                     </div>
 
-                    <div class="card shadow-sm">
-                        <div class="card-body p-0">
-                            <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link active" id="edit-tab" data-bs-toggle="tab"
-                                        data-bs-target="#edit" type="button" role="tab" aria-controls="edit"
-                                        aria-selected="true">
-                                        <i class="fa-solid fa-pen-to-square me-2"></i>CHỈNH SỬA
-                                    </button>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="list-tab" data-bs-toggle="tab"
-                                        data-bs-target="#list" type="button" role="tab" aria-controls="list"
-                                        aria-selected="false">
-                                        <i class="fa-solid fa-list me-2"></i>DANH SÁCH
-                                    </button>
-                                </li>
-                            </ul>
-
-                            <div class="tab-content p-4" id="myTabContent">
-                                <!-- Edit Tab -->
-                                <div class="tab-pane fade show active" id="edit" role="tabpanel"
-                                    aria-labelledby="edit-tab">
-                                    <form th:action="@{/admin/categories/save}" method="post"
-                                        class="needs-validation category-form" novalidate>
-                                        <div class="row g-4">
-                                            <div class="col-md-6">
-                                                <div class="form-floating">
-                                                    <input type="text" class="form-control" id="categoryId"
-                                                        name="id" placeholder="Category ID" required>
-                                                    <label for="categoryId">ID loại sản phẩm</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-floating">
-                                                    <input type="text" class="form-control" id="categoryName"
-                                                        name="name" placeholder="Category Name" required>
-                                                    <label for="categoryName">Tên loại sản phẩm</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-12">
-                                                <div class="d-flex gap-2">
-                                                    <button type="submit" class="btn btn-success">
-                                                        <i class="fa-solid fa-plus me-2"></i>Thêm
-                                                    </button>
-                                                    <button type="submit" class="btn btn-primary">
-                                                        <i class="fa-solid fa-pen-to-square me-2"></i>Cập nhật
-                                                    </button>
-                                                    <button type="reset" class="btn btn-warning">
-                                                        <i class="fa-solid fa-rotate me-2"></i>Làm mới
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
+                    <!-- Filter Section -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <select class="form-select">
+                                        <option>Tất cả danh mục</option>
+                                        <!-- Categories... -->
+                                    </select>
                                 </div>
-
-                                <!-- List Tab -->
-                                <div class="tab-pane fade" id="list" role="tabpanel" aria-labelledby="list-tab">
-                                    <div class="table-responsive">
-                                        <table class="table table-hover align-middle mb-0 category-table">
-                                            <thead>
-                                                <tr>
-                                                    <th>ID</th>
-                                                    <th>Tên loại sản phẩm</th>
-                                                    <th class="text-center">Hành động</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td><span class="fw-medium">LSP001</span></td>
-                                                    <td>Rau Xanh</td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center gap-2">
-                                                            <button class="btn btn-info btn-sm btn-action edit-btn">
-                                                                <i class="fa-solid fa-pen-to-square"></i>
-                                                            </button>
-                                                            <button class="btn btn-danger btn-sm btn-action delete-btn"
-                                                                onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
-                                                                <i class="fa-solid fa-trash"></i>
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                <div class="col-md-3">
+                                    <select class="form-select">
+                                        <option>Sắp xếp theo</option>
+                                        <option>Giá: Thấp đến cao</option>
+                                        <option>Giá: Cao đến thấp</option>
+                                        <option>Mới nhất</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="Tìm kiếm sản phẩm...">
+                                        <button class="btn btn-outline-secondary" type="button">
+                                            <i class="fa-solid fa-search"></i>
+                                        </button>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Products Table -->
+                    <div class="card">
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 80px">Ảnh</th>
+                                            <th>Tên sản phẩm</th>
+                                            <th>Danh mục</th>
+                                            <th>Giá</th>
+                                            <th>Tồn kho</th>
+                                            <th>Trạng thái</th>
+                                            <th style="width: 100px">Thao tác</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <img src="product-image.jpg" class="rounded" width="50" height="50" alt="">
+                                            </td>
+                                            <td>
+                                                <div class="fw-semibold">Tên sản phẩm</div>
+                                                <small class="text-muted">#SP001</small>
+                                            </td>
+                                            <td>Rau củ</td>
+                                            <td>120.000đ</td>
+                                            <td>50</td>
+                                            <td>
+                                                <span class="badge bg-success">Còn hàng</span>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex gap-2">
+                                                    <button class="btn btn-sm btn-info btn-action">
+                                                        <i class="fa-solid fa-pen-to-square"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-danger btn-action">
+                                                        <i class="fa-solid fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -173,28 +249,138 @@
         </div>
     </div>
 
+    <!-- Add/Edit Product Modal -->
+    <div class="modal fade" id="addProductModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Thêm sản phẩm mới</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Tên sản phẩm</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Danh mục</label>
+                            <select class="form-select" required>
+                                <option value="">Chọn danh mục</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Giá</label>
+                            <input type="number" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Số lượng</label>
+                            <input type="number" class="form-control" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Mô tả</label>
+                            <textarea class="form-control" rows="3"></textarea>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Hình ảnh sản phẩm (Tối đa 4 ảnh)</label>
+                            <div class="image-upload-container">
+                                <div class="row" id="imagePreviewContainer">
+                                    <div class="col-md-3 mb-3">
+                                        <div class="image-upload-box border rounded p-2 text-center">
+                                            <input type="file" class="hidden-file-input" accept="image/*" onchange="previewImage(this)" style="display: none;">
+                                            <div class="upload-placeholder cursor-pointer" onclick="triggerFileInput(this)">
+                                                <i class="fa-solid fa-plus fa-2x text-muted"></i>
+                                                <p class="mt-2 mb-0 small text-muted">Thêm ảnh</p>
+                                            </div>
+                                            <div class="image-preview" style="display: none;">
+                                                <img src="" alt="Preview" class="img-fluid mb-2">
+                                                <button type="button" class="btn btn-sm btn-danger w-100" onclick="removeImage(this)">
+                                                    <i class="fa-solid fa-trash-alt"></i> Xóa
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Additional upload boxes will be added dynamically -->
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-primary">Lưu</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script>
-        // Form validation với SweetAlert2
-        (() => {
-            'use strict'
-            const forms = document.querySelectorAll('.needs-validation')
-            Array.from(forms).forEach(form => {
-                form.addEventListener('submit', event => {
-                    if (!form.checkValidity()) {
-                        event.preventDefault()
-                        event.stopPropagation()
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Vui lòng điền đầy đủ thông tin!',
-                            text: 'Các trường bắt buộc không được để trống',
-                            confirmButtonColor: '#3b82f6'
-                        });
+        let imageCount = 0;
+        const MAX_IMAGES = 4;
+        
+        function createImageUploadBox() {
+            if (imageCount >= MAX_IMAGES) return;
+            
+            const template = `
+                <div class="col-md-3 mb-3">
+                    <div class="image-upload-box border rounded p-2 text-center">
+                        <input type="file" class="hidden-file-input" accept="image/*" onchange="previewImage(this)" style="display: none;">
+                        <div class="upload-placeholder cursor-pointer" onclick="triggerFileInput(this)">
+                            <i class="fa-solid fa-plus fa-2x text-muted"></i>
+                            <p class="mt-2 mb-0 small text-muted">Thêm ảnh</p>
+                        </div>
+                        <div class="image-preview" style="display: none;">
+                            <img src="" alt="Preview" class="img-fluid mb-2">
+                            <button type="button" class="btn btn-sm btn-danger w-100" onclick="removeImage(this)">
+                                <i class="fa-solid fa-trash-alt"></i> Xóa
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('imagePreviewContainer').insertAdjacentHTML('beforeend', template);
+        }
+        
+        function triggerFileInput(element) {
+            const fileInput = element.closest('.image-upload-box').querySelector('.hidden-file-input');
+            fileInput.click();
+        }
+        
+        function previewImage(input) {
+            const box = input.closest('.image-upload-box');
+            const preview = box.querySelector('.image-preview');
+            const placeholder = box.querySelector('.upload-placeholder');
+            const img = preview.querySelector('img');
+        
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    img.src = e.target.result;
+                    placeholder.style.display = 'none';
+                    preview.style.display = 'block';
+                    imageCount++;
+                    if (imageCount < MAX_IMAGES) {
+                        createImageUploadBox();
                     }
-                    form.classList.add('was-validated')
-                }, false)
-            })
-        })()
-    </script>
+                }
+                
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        
+        function removeImage(button) {
+            const box = button.closest('.col-md-3');
+            box.remove();
+            imageCount--;
+            if (imageCount < MAX_IMAGES && !document.querySelector('.upload-placeholder')) {
+                createImageUploadBox();
+            }
+        }
+        
+        // Initialize first upload box
+        createImageUploadBox();
+        </script>
+    <script src="/bootstrap-5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

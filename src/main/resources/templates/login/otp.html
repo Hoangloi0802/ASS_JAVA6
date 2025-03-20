@@ -13,12 +13,11 @@
                         <div class="row h-100">
                             <div class="col-sm-6 text-black d-flex align-items-center">
                                 <div class="px-5 ms-xl-4 mt-5 pt-5 pt-xl-0 mt-xl-n5 w-100">
-                                    <form id="otpForm" style="max-width: 23rem; margin: auto;">
+                                    <form id="otpForm" style="max-width: 23rem; margin: auto;" method="POST" action="/checkotp">
                                         <h2 class="text-center mb-4">Xác nhận mã OTP</h2>
                                         <p class="text-center text-muted mb-4">Vui lòng nhập mã OTP đã được gửi đến email/số điện thoại của bạn.</p>
-                                        
                                         <div class="mb-3">
-                                            <input type="text" class="form-control otp-input" id="otpInput" maxlength="6" placeholder="------" required>
+                                            <input type="number" class="form-control otp-input" id="otpInput" name="otpInput" maxlength="6" placeholder="------" required>
                                         </div>
                                         <button type="submit" class="btn btn-dark w-100">Xác nhận</button>
                 

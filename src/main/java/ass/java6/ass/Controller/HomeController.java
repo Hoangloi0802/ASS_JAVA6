@@ -10,6 +10,10 @@ public class HomeController {
         return "admin/accountManage";
     }
 
+    @GetMapping("/admin/categories")
+    public String category() {
+        return "admin/categoryManage";
+    }
 
     @GetMapping("/admin/products")
     public String product() {
@@ -25,4 +29,6 @@ public class HomeController {
     public String sattistics() {
         return "admin/statistics";
     }
+    
+   
 }
