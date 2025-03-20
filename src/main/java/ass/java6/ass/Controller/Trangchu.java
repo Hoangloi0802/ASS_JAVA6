@@ -134,5 +134,12 @@ public class Trangchu {
     public String datlaimk() {
         return "login/datlaimatkhau";
     }
+<<<<<<< HEAD
 
+=======
+    @GetMapping("/test")
+    public String testt(){
+        return "";
+    }
+>>>>>>> 0b51c13f6b5590b96a1df28c457c0674a5376977
 }
