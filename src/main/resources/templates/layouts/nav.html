@@ -65,7 +65,7 @@
       <li><a class="dropdown-item" href="/doimk">Đổi mật khẩu</a></li>
       
       <!-- Chỉ hiện nếu là admin -->
-      <th:block th:if="${user.role == 'ROLE_ADMIN'}">
+      <th:block th:if="${user.role.ROLE_ADMIN}">
         <li><a class="dropdown-item" href="/admin/products">Quản Lý</a></li>
       </th:block>
       

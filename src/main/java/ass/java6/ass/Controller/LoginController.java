@@ -42,14 +42,9 @@ public class LoginController {
             session.setAttribute("account", account);
             String otpCode = sendEmailConfig.generateOtp();
             session.setAttribute("otp", otpCode);
-
             String link = "http://localhost:8080/checkotp"; // Link tới trang nhập OTP
-
             String subject = "Xác nhận mã OTP để kích hoạt tài khoản";
-
             String content = sendEmailConfig.generateOtpEmailContent(otpCode, link);
-
-
             sendEmailConfig.sendEmail(account.getEmail(), subject, content);
             return "login/otp";
         } catch (IllegalArgumentException e) {
