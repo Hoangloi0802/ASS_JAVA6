@@ -46,10 +46,7 @@
     </a>
     
 
-      <!-- Dropdown người dùng -->
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
+
       <!-- Dropdown người dùng -->
       <div class="nav-item dropdown">
         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button"
@@ -93,47 +90,5 @@
       </div>
 
     </div>
-=======
->>>>>>> restore-code
-<!-- Dropdown người dùng -->
-<div class="nav-item dropdown">
-  <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button"
-    data-bs-toggle="dropdown" aria-expanded="false">
-    <!-- Hiển thị icon nếu chưa đăng nhập, ảnh nếu đã đăng nhập -->
-    <th:block th:if="${user == null}">
-      <i class="bi bi-person fs-4"></i>
-    </th:block>
-    <th:block th:if="${user != null}">
-      <img th:src="'/img/' + ${user.photo}" class="rounded-circle" style="width: 30px; height: 30px; object-fit: cover;" alt="Avatar">
-    </th:block>
-  </a>
-  <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="userDropdown">
-    
-    <!-- Chưa đăng nhập -->
-    <th:block th:if="${user == null}">
-      <li><a class="dropdown-item" href="/Dangnhap">Đăng nhập</a></li>
-      <li><a class="dropdown-item" href="/Dangky">Đăng ký</a></li>
-      <li><a class="dropdown-item" href="/forgot-password">Quên mật khẩu</a></li>
-    </th:block>
-    
-    <!-- Đã đăng nhập -->
-    <th:block th:if="${user != null}">
-      <li><a class="dropdown-item" href="/profile" th:text="${user.fullname}">Tên người dùng</a></li>
-      <li><a class="dropdown-item" href="/donhang">Đơn hàng của bạn</a></li>
-      <li><a class="dropdown-item" href="/doimk">Đổi mật khẩu</a></li>
-      
-      <!-- Chỉ hiện nếu là admin -->
-      <th:block th:if="${user.role.ROLE_ADMIN}">
-        <li><a class="dropdown-item" href="/admin/products">Quản Lý</a></li>
-      </th:block>
-      
-      <li><hr class="dropdown-divider"></li>
-      <li><a class="dropdown-item" href="/logout">Đăng xuất</a></li>
-    </th:block>
-    
-  </ul>
-</div>
-      
-  </div>
->>>>>>> 866754f0dc4bf8be8eb090597fb717292dcbe2b3
+
 </header>
