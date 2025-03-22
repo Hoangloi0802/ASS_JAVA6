@@ -42,6 +42,7 @@ public class LoginController {
             session.setAttribute("account", account);
             String otpCode = sendEmailConfig.generateOtp();
             session.setAttribute("otp", otpCode);
+<<<<<<< HEAD
 
             String link = "http://localhost:8080/checkotp"; // Link tới trang nhập OTP
 
@@ -50,6 +51,11 @@ public class LoginController {
             String content = sendEmailConfig.generateOtpEmailContent(otpCode, link);
 
 
+=======
+            String link = "http://localhost:8080/checkotp"; // Link tới trang nhập OTP
+            String subject = "Xác nhận mã OTP để kích hoạt tài khoản";
+            String content = sendEmailConfig.generateOtpEmailContent(otpCode, link);
+>>>>>>> 866754f0dc4bf8be8eb090597fb717292dcbe2b3
             sendEmailConfig.sendEmail(account.getEmail(), subject, content);
             return "login/otp";
         } catch (IllegalArgumentException e) {
@@ -87,6 +93,10 @@ public class LoginController {
     
     @GetMapping("/checkotp")
     public String check() {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 866754f0dc4bf8be8eb090597fb717292dcbe2b3
         return "login/otp";
     }
 
@@ -101,10 +111,13 @@ public class LoginController {
     public String quenmk() {
         return "login/quenmk";
     }
+<<<<<<< HEAD
     @GetMapping("/doimk")
     public String doimk() {
         return "login/doimatkhau";
     }
+=======
+>>>>>>> 866754f0dc4bf8be8eb090597fb717292dcbe2b3
     @GetMapping("/datlaimk")
     public String datlaimk() {
         return "login/datlaimatkhau";
