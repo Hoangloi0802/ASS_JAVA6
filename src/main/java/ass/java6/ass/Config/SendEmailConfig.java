@@ -33,11 +33,8 @@ public class SendEmailConfig {
 
     public String generateOtpEmailContent(String otpCode, String link) {
         return "<div style=\"max-width: 23rem; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; font-family: Arial, sans-serif;\">"
-<<<<<<< HEAD
                 + "<h2 style=\"text-align: center;\">Mã xác nhận OTP</h2>"
-=======
-                + "<h2 style=\"text-align: center;\">Xác nhận mã OTP</h2>"
->>>>>>> 866754f0dc4bf8be8eb090597fb717292dcbe2b3
+
                 + "<p style=\"text-align: center; color: #555;\">Vui lòng nhập mã OTP.</p>"
                 + "<div style=\"text-align: center; margin: 20px 0;\">"
                 + "<span style=\"display: inline-block; font-size: 24px; letter-spacing: 8px; font-weight: bold;\">"
