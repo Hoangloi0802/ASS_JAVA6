@@ -87,7 +87,6 @@ public class LoginController {
     
     @GetMapping("/checkotp")
     public String check() {
-
         return "login/otp";
     }
 
@@ -101,6 +100,10 @@ public class LoginController {
     @GetMapping("/quenmk")
     public String quenmk() {
         return "login/quenmk";
+    }
+    @GetMapping("/doimk")
+    public String doimk() {
+        return "login/doimatkhau";
     }
     @GetMapping("/datlaimk")
     public String datlaimk() {

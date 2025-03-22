@@ -2,6 +2,8 @@ package ass.java6.ass.Controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @Controller
 public class HomeController {
@@ -28,6 +30,10 @@ public class HomeController {
     @GetMapping("/admin/statistics")
     public String sattistics() {
         return "admin/statistics";
+    }
+    @GetMapping("/giohang")
+    public String getMethodName() {
+        return "home/giohang";
     }
     
    
