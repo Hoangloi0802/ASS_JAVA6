@@ -1,4 +1,4 @@
-(function() {
+(function () {
   "use strict";
 
   /** Toggle class when scrolling **/
@@ -72,5 +72,65 @@
       },
     });
   });
-  
+
 })();
+function increaseQuantity() {
+  var qtyInput = document.getElementById("quantityInput");
+  qtyInput.value = parseInt(qtyInput.value) + 1;
+}
+
+function decreaseQuantity() {
+  var qtyInput = document.getElementById("quantityInput");
+  if (parseInt(qtyInput.value) > 1) {
+    qtyInput.value = parseInt(qtyInput.value) - 1;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  const toggleButtons = document.querySelectorAll('.toggle-password');
+
+  toggleButtons.forEach(button => {
+    button.addEventListener('click', function () {
+      const targetId = this.getAttribute('data-target');
+      const input = document.getElementById(targetId);
+      const icon = this.querySelector('i');
+
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
+    });
+  });
+});
+const searchForm = document.getElementById('searchForm');
+const searchInput = document.getElementById('searchInput');
+const searchButton = document.getElementById('searchButton');
+const inputWrapper = document.querySelector('.input-wrapper');
+
+let expanded = false;
+
+searchButton.addEventListener('click', function () {
+  if (!expanded) {
+    inputWrapper.classList.add('expanded');
+    searchInput.focus();
+    expanded = true;
+  } else {
+    if (searchInput.value.trim() !== '') {
+      searchForm.submit();
+    } else {
+      searchInput.focus();
+    }
+  }
+});
+
+searchInput.addEventListener('blur', function () {
+  if (searchInput.value.trim() === '') {
+    inputWrapper.classList.remove('expanded');
+    expanded = false;
+  }
+});

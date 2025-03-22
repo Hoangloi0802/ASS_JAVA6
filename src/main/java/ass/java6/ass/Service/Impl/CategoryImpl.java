@@ -1,5 +1,7 @@
 package ass.java6.ass.Service.Impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,4 +26,8 @@ public class CategoryImpl implements CategoryService {
     public void deleteById(String id) {
         categoryRepository.deleteById(id);
     }
+     public List<Category> findAll() {
+        return categoryRepository.findAll();
+    }
 }
+
