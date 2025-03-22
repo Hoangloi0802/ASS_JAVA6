@@ -2,8 +2,8 @@ package ass.java6.ass.Controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-
 import ch.qos.logback.core.model.Model;
+
 
 @Controller
 public class Trangchu {
@@ -60,4 +60,17 @@ public class Trangchu {
     public String ctdonhang() {
         return "home/chitietdonhang";
     }
+    @GetMapping("/checkotp")
+    public String check() {
+        return "login/otp";
+    }
+    @GetMapping("/quenmk")
+    public String quenmk() {
+        return "login/quenmk";
+    }
+    @GetMapping("/datlaimk")
+    public String datlaimk() {
+        return "login/datlaimatkhau";
+    }
+    
 }

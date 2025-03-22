@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head th:replace="~{/layouts/header}">
+        <title>Home</title>
+    </head>
+    <body>
+        <header th:replace="~{/layouts/nav}">
+        </header>
+        <main class="container">
+            <section class="text-center text-lg-start">
+                <div class="container-fluid h-100 border border-secondary rounded p-3 bg-light"> <!-- Border bằng Bootstrap -->
+                    <div class="row h-100">
+                        <div class="col-sm-6 text-black d-flex align-items-center">
+                            <div class="px-5 ms-xl-4 mt-5 pt-5 pt-xl-0 mt-xl-n5 w-100">
+                                <form id="resetForm" style="max-width: 23rem; margin: auto;">
+                                    <h2 class="text-center mb-4">Đặt Lại Mật Khẩu</h2>
+                                    <p class="text-center text-muted mb-4">Nhập mật khẩu mới để hoàn tất quá trình đặt lại.</p>
+                                    
+                                    <div class="mb-3">
+                                        <input type="password" class="form-control" id="newPassword" placeholder="Mật khẩu mới" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <input type="password" class="form-control" id="confirmPassword" placeholder="Xác nhận mật khẩu" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100">Xác Nhận</button>
+    
+                                    <!-- Thông báo kết quả -->
+                                    <div id="resetMessage" class="mt-3 text-center" style="display: none;"></div>
+    
+                                    <!-- Link quay lại đăng nhập -->
+                                    <div class="text-center mt-3">
+                                        <a href="/login" class="text-decoration-none">Quay lại đăng nhập</a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 px-0 d-none d-sm-block">
+                            <img src="https://i.pinimg.com/736x/33/24/cd/3324cdb70febcaba0a66852f0e17322c.jpg"
+                                 alt="Reset Password image" class="w-50 vh-50" style="object-fit: cover; object-position: left;">
+                        </div>
+                        
+                    </div>
+                </div>
+            </section>
+        </main>
+        <div th:replace="~{/layouts/footer}">
+        </div>
+    </body>
+</html>

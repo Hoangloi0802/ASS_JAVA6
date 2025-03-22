@@ -25,7 +25,7 @@ public class Product implements Serializable {
     private Date createDate = new Date();
     private Boolean available;
     @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false)
+    @JoinColumn(name = "CategoryId", nullable = false)
     private Category category;
 
     @OneToMany(mappedBy = "product")
