@@ -10,7 +10,6 @@ import ass.java6.ass.Entity.Product;
 public interface ProductService {
     List<Product> findAll();
     Product findById(Integer id);
-    List<Product> searchByName(String keyword);
-    
-    Page<Product> filterSortAndPaginate(Double priceFilter, String categoryId, String sort, Pageable pageable);
+    Page<Product> filterSortAndPaginate(String keyword, Double priceFilter, String categoryId, String sort, Pageable pageable);
+
 }
