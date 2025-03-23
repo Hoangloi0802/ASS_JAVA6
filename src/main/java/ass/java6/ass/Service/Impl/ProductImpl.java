@@ -8,7 +8,7 @@ import ass.java6.ass.Service.ProductService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -34,10 +34,8 @@ public class ProductImpl implements ProductService {
     @Override
     public Page<Product> filterSortAndPaginate(String keyword, Double priceFilter, String categoryId, String sort,
             Pageable pageable) {
-        // Lấy tất cả sản phẩm
         List<Product> products = productRepository.findAll();
 
-        // 1. Lọc theo tên
         if (keyword != null && !keyword.trim().isEmpty()) {
             String lowerKeyword = keyword.toLowerCase();
             products = products.stream()
@@ -45,30 +43,26 @@ public class ProductImpl implements ProductService {
                     .collect(Collectors.toList());
         }
 
-        // 2. Filter giá
         if (priceFilter != null && priceFilter > 0) {
             products = products.stream()
                     .filter(p -> p.getPrice() <= priceFilter)
                     .collect(Collectors.toList());
         }
 
-        // 3. Filter danh mục
         if (categoryId != null && !categoryId.isEmpty()) {
             products = products.stream()
                     .filter(p -> p.getCategory().getId().equals(categoryId))
                     .collect(Collectors.toList());
         }
 
-        // 4. Sort
         if (sort != null && !sort.isEmpty()) {
-            if (sort.equals("5")) { // Tăng dần
+            if (sort.equals("5")) {
                 products.sort(Comparator.comparing(Product::getPrice));
-            } else if (sort.equals("6")) { // Giảm dần
+            } else if (sort.equals("6")) {
                 products.sort(Comparator.comparing(Product::getPrice).reversed());
             }
         }
 
-        // 5. Phân trang thủ công
         int total = products.size();
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), total);
@@ -76,4 +70,17 @@ public class ProductImpl implements ProductService {
 
         return new org.springframework.data.domain.PageImpl<>(pageContent, pageable, total);
     }
+
+    @Override
+    public List<Product> findTopSellingProducts(int limit) {
+        Pageable pageable = PageRequest.of(0, limit);
+        return productRepository.findTopSellingProducts(pageable);
+    }
+
+    @Override
+    public List<Product> findLatestProducts(int limit) {
+        Pageable pageable = PageRequest.of(0, limit);
+        return productRepository.findLatestProducts(pageable);
+    }
+
 }

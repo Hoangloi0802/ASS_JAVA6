@@ -17,13 +17,16 @@ import ass.java6.ass.Service.ProductService;
 public class Trangchu {
     @Autowired
     private ProductService productService;
-
     @GetMapping("/")
-    public String homePage(Model model) {
-        List<Product> products = productService.findAll();
-        model.addAttribute("products", products);
-        model.addAttribute("currentPage", "home");
-        return "home/trangchu";
+    public String home(Model model) {
+       // Sản phẩm bán chạy
+       List<Product> topSellingProducts = productService.findTopSellingProducts(8);
+       model.addAttribute("topSellingProducts", topSellingProducts);
+       model.addAttribute("currentPage", "home");
+       // Sản phẩm mới nhất
+       List<Product> latestProducts = productService.findLatestProducts(8);
+       model.addAttribute("latestProducts", latestProducts);
+        return "home/trangchu"; // view name
     }
 
     @GetMapping("/product/{id}")
@@ -36,17 +39,10 @@ public class Trangchu {
         return "home/chitiet"; // Tên file HTML chi tiết
     }
 
-    
-    
 
     @GetMapping("/thanhtoan")
     public String thanhtoan() {
         return "home/thanhtoan";
-    }
-
-    @GetMapping("/chitiet")
-    public String chitiet() {
-        return "home/chitiet";
     }
 
     @GetMapping("/profile")
