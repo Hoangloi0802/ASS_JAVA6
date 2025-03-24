@@ -42,14 +42,7 @@
       <div class="nav-item dropdown">
         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button"
           data-bs-toggle="dropdown" aria-expanded="false">
-          <!-- Hiển thị icon nếu chưa đăng nhập, ảnh nếu đã đăng nhập -->
-          <th:block th:if="${session.currentUser == null}">
             <i class="bi bi-person fs-4"></i>
-          </th:block>
-          <th:block th:if="${session.currentUser != null}">
-            <img th:src="'/img/' + ${session.currentUser.photo}" class="rounded-circle"
-                 style="width: 30px; height: 30px; object-fit: cover;" alt="Avatar">
-          </th:block>
         </a>
 
         <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="userDropdown">
@@ -62,11 +55,11 @@
             </li>
             <li>
               <a class="dropdown-item" href="/Dangky">
-                <i class="bi bi-person-plus me-1"></i> Đăng ký
+                <i class="bi bi-person-plus me-1"></i>Đăng ký
               </a>
             </li>
             <li>
-              <a class="dropdown-item" href="/forgot-password">
+              <a class="dropdown-item" href="/quenmk">
                 <i class="bi bi-key me-1"></i> Quên mật khẩu
               </a>
             </li>
