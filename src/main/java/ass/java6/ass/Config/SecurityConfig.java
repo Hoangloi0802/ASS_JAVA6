@@ -33,7 +33,7 @@ public class SecurityConfig {
 
     private final String[] PUBLIC_ENDPOINTS = {
         "/", "/Dangnhap", "/Dangky",
-        "/profile",
+        "/profile/update","/profile",
         "/donmua", "/donhang", "/chitietdonhang", "/shop",
         "/giohang", "/thanhtoan",
         "/chitiet",

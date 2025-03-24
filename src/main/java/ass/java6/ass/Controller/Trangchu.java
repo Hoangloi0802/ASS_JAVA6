@@ -39,10 +39,6 @@ public class Trangchu {
         return "home/chitiet"; // Tên file HTML chi tiết
     }
 
-    @GetMapping("/profile")
-    public String profile() {
-        return "home/profile";
-    }
 
 
 }
