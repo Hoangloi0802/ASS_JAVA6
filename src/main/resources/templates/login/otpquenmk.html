@@ -13,12 +13,12 @@
                         <div class="row h-100">
                             <div class="col-sm-6 text-black d-flex align-items-center">
                                 <div class="px-5 ms-xl-4 mt-5 pt-5 pt-xl-0 mt-xl-n5 w-100">
-                                    <form id="otpForm" style="max-width: 23rem; margin: auto;" method="POST" th:action="@{/checkotp}">
+                                    <form id="otpForm" style="max-width: 23rem; margin: auto;" method="POST" th:action="@{/otpquenmk}">
                                         <h2 class="text-center mb-4">Xác nhận mã OTP</h2>
                                         <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
                                         <p class="text-center text-muted mb-4">Vui lòng nhập mã OTP đã được gửi đến email/số điện thoại của bạn.</p>
                                         <div class="mb-3">
-                                            <input type="number" class="form-control otp-input" id="otpInput" name="otpInput" maxlength="6" placeholder="------" >
+                                            <input type="number" class="form-control otp-input" id="otpInput" name="otpInput" maxlength="6" placeholder="------" required>
                                         </div>
                                         <button type="submit" class="btn btn-dark w-100">Xác nhận</button>
                 
@@ -26,10 +26,9 @@
                                         <div id="otpMessage" class="mt-3 text-center" style="display: none;"></div>
                 
                                         <!-- Nút gửi lại mã OTP -->
-                                        <!-- Form gửi lại mã OTP -->
-                                    </form>
-                                    <form id="resendOtpForm" style="max-width: 23rem; margin: auto; margin-top: 10px;" method="POST" th:action="@{/goilaiotp}">
-                                        <button type="submit" class="btn btn-link w-100">🔄 Gửi lại mã OTP</button>
+                                        <div class="text-center mt-3">
+                                            <button type="submit" class="btn btn-secondary w-100">Gửi lại mã xác nhận</button>
+                                        </div>
                                     </form>
                                 </div>
                             </div>

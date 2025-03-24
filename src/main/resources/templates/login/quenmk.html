@@ -12,12 +12,13 @@
                     <div class="row h-100">
                         <div class="col-sm-6 text-black d-flex align-items-center">
                             <div class="px-5 ms-xl-4 mt-5 pt-5 pt-xl-0 mt-xl-n5 w-100">
-                                <form id="forgotForm" style="max-width: 23rem; margin: auto;">
+                                <form th:action="@{/quenmk}" method="post" id="forgotForm" style="max-width: 23rem; margin: auto;">
                                     <h2 class="text-center mb-4">Quên Mật Khẩu</h2>
+                                    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
                                     <p class="text-center text-muted mb-4">Vui lòng nhập email hoặc số điện thoại để nhận mã đặt lại mật khẩu.</p>
                                     
                                     <div class="mb-3">
-                                        <input type="email" class="form-control" id="emailInput" placeholder="Email hoặc số điện thoại" required>
+                                        <input type="email" class="form-control" id="emailInput" name="emailInput" placeholder="Email hoặc số điện thoại" required>
                                     </div>
                                     <button type="submit" class="btn btn-primary w-100">Gửi Yêu Cầu</button>
     

@@ -18,9 +18,7 @@
                                 <div class="card-body p-5 shadow-5 text-center">
                                     <h2 class="fw-bold mb-5">Đăng ký ngay</h2>
                                     <form th:action="@{/Dangky}" method="post" th:object="${dangkyaccout}">
-                                        <div th:if="${error != null}" style="color: red;">
-                                            <p th:text="${error}"></p>
-                                        </div>
+                                        <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
                                         <div class="row">
                                             <div class="col-md-6 mb-4">
                                                 <div data-mdb-input-init class="form-outline">
@@ -63,13 +61,7 @@
                                                 <span th:errors="*{password}"></span>
                                             </div>
                                         </div>
-                                        <div data-mdb-input-init class="form-outline mb-4">
-                                            <label class="form-label" for="form3Example5"> Xác nhận mật khẩu</label>
-                                            <input type="password" th:field="*{confirmPassword}" id="form3Example4" class="form-control form-control-lg" />
-                                            <div th:if="${#fields.hasErrors('confirmPassword')}" class="text-danger">
-                                                <span th:errors="*{confirmPassword}"></span>
-                                            </div>
-                                        </div>
+                                      
                                         
 
 

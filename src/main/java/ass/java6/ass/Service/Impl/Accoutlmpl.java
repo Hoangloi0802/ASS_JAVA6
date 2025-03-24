@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 
 import ass.java6.ass.Config.SendEmailConfig;
 import ass.java6.ass.Dto.DangkyRequest;
+import ass.java6.ass.Dto.DangnhapRequest;
 import ass.java6.ass.Entity.Account;
 import ass.java6.ass.Entity.Role;
 import ass.java6.ass.Repository.AccountRepository;
@@ -32,27 +33,6 @@ public class Accoutlmpl implements AccoutService {
         return accountRepository.findByUsername(username);
     }
 
-    @Override
-    public Account Dangnhap(String username, String password) {
-        Optional<Account> accOptional = accountRepository.findByUsername(username);
-
-        if (accOptional.isPresent()) {
-            Account account = accOptional.get();
-            if (!account.isActivated()) {
-                throw new IllegalArgumentException(
-                        "tài khoản của bạn đã bị khóa vui lòng liên hệ admin để kích hoạt lại !");
-            }
-            if (bCryptPasswordEncoder.matches(password, account.getPassword())) {
-                return account;
-            } else {
-                throw new IllegalArgumentException("Mật khẩu không đúng!");
-            }
-
-        } else {
-            throw new IllegalArgumentException("Tài khoản không tồn tại!");
-        }
-
-    }
 
     @Override
     public Account Dangky(@Valid @ModelAttribute("accoutDangky") DangkyRequest newaccout) {
@@ -79,25 +59,57 @@ public class Accoutlmpl implements AccoutService {
     }
 
     @Override
-    public Account Xacthuc(HttpSession session, int otpinput) {
+    public Account Xacthuc(HttpSession session, Integer otpinput) {
+    
+    Object otpObj = session.getAttribute("otp");
+    if (otpObj == null) {
+        throw new IllegalArgumentException("OTP đã hết hạn hoặc không tồn tại.");
+    }
+    int otpFromSession;
+    try {
+        otpFromSession = Integer.parseInt(otpObj.toString());
+    } catch (NumberFormatException e) {
+        throw new IllegalArgumentException("OTP không hợp lệ.");
+    }
+    Account account = (Account) session.getAttribute("account");
+    if (account == null) {
+        throw new IllegalArgumentException("Không tìm thấy tài khoản trong session.");
+    }
+    if (otpinput != otpFromSession) {
+        throw new IllegalArgumentException("❌ Mã OTP không đúng. Vui lòng thử lại.");
+        
+    } else {
+        account.setActivated(true);
+        accountRepository.save(account);
+        session.removeAttribute("otp"); 
+        return account;
+    }
+}
 
-        Object otpFromSessionObj = session.getAttribute("otp");
-        if (otpFromSessionObj == null) {
+
+    @Override
+    public void Checkotpquenmk(HttpSession session, String otpInput) {
+        Object otpObj = session.getAttribute("otp");
+
+        if (otpObj == null) {
             throw new IllegalArgumentException("OTP đã hết hạn hoặc không tồn tại.");
         }
-        int otpFromSession = Integer.parseInt(otpFromSessionObj.toString());
-        Account account = (Account) session.getAttribute("account");
-        if (account == null) {
-            throw new IllegalArgumentException("Không tìm thấy tài khoản trong session.");
+    
+        String otpFromSession = otpObj.toString().trim();
+        if (!otpFromSession.equals(otpInput.trim())) {
+            throw new IllegalArgumentException("OTP không đúng.");
         }
-        if (otpinput == otpFromSession) {
-            account.setActivated(true);
-            accountRepository.save(account);
-            session.removeAttribute("otp");
-            return account;
-        } else {
-            throw new IllegalArgumentException("Mã OTP không đúng. Vui lòng thử lại.");
-        }
+        session.removeAttribute("otp");   
     }
 
+
+    @Override
+    public void doiMatKhau(String email, String password) {
+        Account account = accountRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Email không tồn tại."));
+        String encodedPassword = bCryptPasswordEncoder.encode(password);
+        account.setPassword(encodedPassword);
+        Account updatedAccount = accountRepository.save(account);
+        System.out.println("Email: " + email + ", Mật khẩu mới: " + updatedAccount.getPassword());
+    }
 }

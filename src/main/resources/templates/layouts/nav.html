@@ -1,7 +1,5 @@
 <header id="header" class="header d-flex align-items-center sticky-top">
-    
   <div class="container position-relative d-flex align-items-center justify-content-between">
-
     <a href="index.html" class="logo d-flex align-items-center me-auto me-xl-0">
       <h1 class="sitename fs-3">Shop AOT</h1>
     </a>
@@ -10,9 +8,7 @@
       <ul class="fs-5">
         <li><a href="/" class="active">TRANG CHỦ</a></li>
         <li><a href="/shop">SẢN PHẨM</a></li>
-        
       </ul>
-      
       <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
     </nav>
 
@@ -26,7 +22,7 @@
         </button>
         <input type="text" name="text" class="input" placeholder="Tên sản phẩm" />
       </div>
-      
+
       <!-- Icon giỏ hàng -->
       <a href="/giohang" class="position-relative me-3">
         <i class="bi bi-cart fs-4"></i>
@@ -37,44 +33,45 @@
       </a>
 
       <!-- Dropdown người dùng -->
-<!-- Dropdown người dùng -->
-<div class="nav-item dropdown">
-  <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button"
-    data-bs-toggle="dropdown" aria-expanded="false">
-    <!-- Hiển thị icon nếu chưa đăng nhập, ảnh nếu đã đăng nhập -->
-    <th:block th:if="${user == null}">
-      <i class="bi bi-person fs-4"></i>
-    </th:block>
-    <th:block th:if="${user != null}">
-      <img th:src="'/img/' + ${user.photo}" class="rounded-circle" style="width: 30px; height: 30px; object-fit: cover;" alt="Avatar">
-    </th:block>
-  </a>
-  <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="userDropdown">
-    
-    <!-- Chưa đăng nhập -->
-    <th:block th:if="${user == null}">
-      <li><a class="dropdown-item" href="/Dangnhap">Đăng nhập</a></li>
-      <li><a class="dropdown-item" href="/Dangky">Đăng ký</a></li>
-      <li><a class="dropdown-item" href="/forgot-password">Quên mật khẩu</a></li>
-    </th:block>
-    
-    <!-- Đã đăng nhập -->
-    <th:block th:if="${user != null}">
-      <li><a class="dropdown-item" href="/profile" th:text="${user.fullname}">Tên người dùng</a></li>
-      <li><a class="dropdown-item" href="/donhang">Đơn hàng của bạn</a></li>
-      <li><a class="dropdown-item" href="/doimk">Đổi mật khẩu</a></li>
-      
-      <!-- Chỉ hiện nếu là admin -->
-      <th:block th:if="${user.role == 'ROLE_ADMIN'}">
-        <li><a class="dropdown-item" href="/admin/products">Quản Lý</a></li>
-      </th:block>
-      
-      <li><hr class="dropdown-divider"></li>
-      <li><a class="dropdown-item" href="/logout">Đăng xuất</a></li>
-    </th:block>
-    
-  </ul>
-</div>
-      
+      <div class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button"
+          data-bs-toggle="dropdown" aria-expanded="false">
+          <!-- Hiển thị icon nếu chưa đăng nhập, ảnh nếu đã đăng nhập -->
+          <th:block th:if="${session.currentUser == null}">
+            <i class="bi bi-person fs-4"></i>
+          </th:block>
+          <th:block th:if="${session.currentUser != null}">
+            <img th:src="'/img/' + ${session.currentUser.photo}" class="rounded-circle"
+                 style="width: 30px; height: 30px; object-fit: cover;" alt="Avatar">
+          </th:block>
+        </a>
+
+        <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="userDropdown">
+          <!-- Chưa đăng nhập -->
+          <th:block th:if="${session.currentUser == null}">
+            <li><a class="dropdown-item" href="/Dangnhap">Đăng nhập</a></li>
+            <li><a class="dropdown-item" href="/Dangky">Đăng ký</a></li>
+            <li><a class="dropdown-item" href="/forgot-password">Quên mật khẩu</a></li>
+          </th:block>
+
+          <!-- Đã đăng nhập -->
+          <th:block th:if="${session.currentUser != null}">
+            <li><a class="dropdown-item" href="/profile" th:text="${session.currentUser.fullname}">Tên người dùng</a></li>
+            <li><a class="dropdown-item" href="/donhang">Đơn hàng của bạn</a></li>
+            <li><a class="dropdown-item" href="/doimk">Đổi mật khẩu</a></li>
+
+            <!-- Chỉ hiện nếu là admin -->
+            <th:block sec:authorize="hasAuthority('ROLE_ADMIN')">
+              <li><a class="dropdown-item" href="/admin/products">🔧 Quản lý</a></li>
+            </th:block>
+
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" > <form th:action="@{/logout}" method="post">
+              <button class="dropdown-item" type="submit">🚪 Đăng xuất</button>
+          </form></a></li>
+          </th:block>
+        </ul>
+      </div>
+    </div>
   </div>
 </header>
