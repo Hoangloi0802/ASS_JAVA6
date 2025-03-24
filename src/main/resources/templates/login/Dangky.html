@@ -65,27 +65,7 @@
                                             <div th:if="${#fields.hasErrors('password')}" class="text-danger">
                                                 <span th:errors="*{password}"></span>
                                             </div>
-                                        </div>
-<<<<<<< HEAD
-                                        
-                                        <div data-mdb-input-init class="form-outline mb-4">
-                                            <label class="form-label" for="form3Example5">Xác nhận mật khẩu</label>
-                                            <div class="input-group">
-                                                <input type="password" th:field="*{confirmPassword}" id="form3Example5" class="form-control form-control-lg" />
-                                                <button type="button" class="btn btn-outline-secondary toggle-password" data-target="form3Example5">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                            </div>
-                                            <div th:if="${#fields.hasErrors('confirmPassword')}" class="text-danger">
-                                                <span th:errors="*{confirmPassword}"></span>
-                                            </div>
-                                        </div>
-=======
-                                      
->>>>>>> main
-                                        
-
-
+                                        </div>       
                                         <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg btn-block mb-4">
                                             Đăng ký
                                         </button>
