@@ -16,171 +16,48 @@
         </div>
         <section class="mt-5 mt-lg-0" id="page-cart" style="transform: translate(0px, 0px); opacity: 1;">
             <div class="container">
-
-                <div class="row border-bottom">
-                    <div class="col-7">
-                        <div class="row">
-
-                            <div class="col">
-                                <h6 class="fs-10 ls text-uppercase">Sản phẩm</h6>
-                            </div>
-                        </div>
+                <!-- Header Row -->
+                <div class="row border-bottom py-2">
+                    <div class="col-sm-6 col-12">
+                        <h6 class="fs-6 text-uppercase mb-0">Sản phẩm</h6>
                     </div>
-                    <div class="col-5">
-                        <div class="row">
-                            <div class="col-6 text-center">
-                                <h6 class="fs-10 ls text-uppercase">Số lượng</h6>
-                            </div>
-                            <div class="col-6 text-end">
-                                <h6 class="fs-10 ls text-uppercase">Giá</h6>
-                            </div>
+                    <div class="col-sm-6 col-12 d-flex justify-content-sm-end">
+                        <div class="col-sm-6 col-6 text-center">
+                            <h6 class="fs-6 text-uppercase mb-0">Số lượng</h6>
+                        </div>
+                        <div class="col-sm-6 col-6 text-end">
+                            <h6 class="fs-6 text-uppercase mb-0">Giá</h6>
                         </div>
                     </div>
                 </div>
+            
                 <!-- Item 1 -->
                 <div class="row align-items-center py-3 border-bottom">
-                    <div class="col-sm-7">
-                        <div class="row align-items-center">
-                            <div class="col">
-                                <div class="row g-0 align-items-center">
-                                    <div class="col-auto"><img class="me-3"
-                                            src="https://bizweb.dktcdn.net/100/446/974/products/ao-thun-mlb-new-era-heavy-cotton-new-york-yankees-black-13086578-1.jpg?v=1691318321487"
-                                            alt="" width="50"></div>
-                                    <div class="col-8 mt-2">
-                                        <a class="text-black" href="#!">
-                                            <h5 class="fw-bold mb-0">Áo len Sparrow - trắng & nâu</h5>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
+                    <!-- Image and Product Name -->
+                    <div class="col-sm-6 col-12 d-flex align-items-center">
+                        <img class="me-3" src="https://bizweb.dktcdn.net/100/446/974/products/ao-thun-mlb-new-era-heavy-cotton-new-york-yankees-black-13086578-1.jpg?v=1691318321487" alt="Áo len Sparrow" width="50">
+                        <div>
+                            <a class="text-black text-decoration-none" href="#!">
+                                <h5 class="fw-bold mb-0">Áo len Sparrow - trắng & nâu</h5>
+                            </a>
                         </div>
                     </div>
-                    <div class="col-sm-5 mt-4 mt-sm-0">
-                        <div class="row align-items-center justify-content-end">
-                            <div class="col-3 col-sm-6 text-end text-sm-center">
-                                <div class="form-group mb-0">
-                                    <select class="form-select font-secondary">
-                                        <option>1</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                        <option>4</option>
-                                    </select>
-                                </div>
+            
+                    <!-- Quantity Selector and Price -->
+                    <div class="col-sm-6 col-12 mt-3 mt-sm-0 d-flex align-items-center justify-content-sm-end">
+                        <div class="col-sm-6 col-6 text-center">
+                            <div class="d-flex align-items-center gap-2 justify-content-center">
+                                <button type="button" class="btn btn-outline-dark btn-sm px-3 py-2" onclick="decreaseQuantity()">-</button>
+                                <input type="number" id="quantityInput" name="quantity" value="1" min="1" class="form-control form-control-sm text-center" style="width: 80px; height: 40px;">
+                                <button type="button" class="btn btn-outline-dark btn-sm px-3 py-2" onclick="increaseQuantity()">+</button>
                             </div>
-                            <div class="col-3 col-sm-6 text-end">
-                                <h6 class="fs-9 fw-normal mb-0">500.000 VNĐ</h6>
-                            </div>
+                        </div>
+                        <div class="col-sm-6 col-6 text-end">
+                            <h6 class="fs-6 fw-normal mb-0">500.000 VNĐ</h6>
                         </div>
                     </div>
                 </div>
-                <!-- Item 2 -->
-                <div class="row align-items-center py-3 border-bottom">
-                    <div class="col-sm-7">
-                        <div class="row align-items-center">
-                            <div class="col">
-                                <div class="row g-0 align-items-center">
-                                    <div class="col-auto"><img class="me-3"
-                                            src="https://bizweb.dktcdn.net/100/415/697/products/ap001.png?v=1701403328933"
-                                            alt="" width="50"></div>
-                                    <div class="col-8 mt-2">
-                                        <a class="text-black" href="#!">
-                                            <h5 class="fw-bold mb-0">Áo khoác Sparrow - nữ</h5>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-5 mt-4 mt-sm-0">
-                        <div class="row align-items-center justify-content-end">
-                            <div class="col-3 col-sm-6 text-end text-sm-center">
-                                <div class="form-group mb-0">
-                                    <select class="form-select font-secondary">
-                                        <option>1</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                        <option>4</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-3 col-sm-6 text-end">
-                                <h6 class="fs-9 fw-normal mb-0">250.000 VNĐ</h6>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Item 3 -->
-                <div class="row align-items-center py-3 border-bottom">
-                    <div class="col-sm-7">
-                        <div class="row align-items-center">
-                            <div class="col">
-                                <div class="row g-0 align-items-center">
-                                    <div class="col-auto"><img class="me-3"
-                                            src="https://bizweb.dktcdn.net/100/415/697/products/ap001.png?v=1701403328933"
-                                            alt="" width="50"></div>
-                                    <div class="col-8 mt-2">
-                                        <a class="text-black" href="#!">
-                                            <h5 class="fw-bold mb-0">Áo Sparrow Charcoal - đen</h5>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-5 mt-4 mt-sm-0">
-                        <div class="row align-items-center justify-content-end">
-                            <div class="col-3 col-sm-6 text-end text-sm-center">
-                                <div class="form-group mb-0">
-                                    <select class="form-select font-secondary">
-                                        <option>1</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                        <option>4</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-3 col-sm-6 text-end">
-                                <h6 class="fs-9 fw-normal mb-0">400.000 VNĐ</h6>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Item 4 -->
-                <div class="row align-items-center py-3 border-bottom">
-                    <div class="col-sm-7">
-                        <div class="row align-items-center">
-                            <div class="col">
-                                <div class="row g-0 align-items-center">
-                                    <div class="col-auto"><img class="me-3"
-                                            src="https://bizweb.dktcdn.net/100/415/697/products/ap001.png?v=1701403328933"
-                                            alt="" width="50"></div>
-                                    <div class="col-8 mt-2">
-                                        <a class="text-black" href="#!">
-                                            <h5 class="fw-bold mb-0">Túi xách Sparrow - nâu</h5>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-5 mt-4 mt-sm-0">
-                        <div class="row align-items-center justify-content-end">
-                            <div class="col-3 col-sm-6 text-end text-sm-center">
-                                <div class="form-group mb-0">
-                                    <select class="form-select font-secondary">
-                                        <option>1</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                        <option>4</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-3 col-sm-6 text-end">
-                                <h6 class="fs-9 fw-normal mb-0">300.000 VNĐ</h6>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
                 <!-- Tổng kết -->
                 <div class="row justify-content-end text-end mt-4">
                     <div class="col-md-8 col-lg-6">

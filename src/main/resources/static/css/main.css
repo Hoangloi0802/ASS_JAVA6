@@ -1,27 +1,26 @@
-
 :root {
-  --default-font: "EB Garamond",  system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --heading-font: "EB Garamond",  sans-serif;
-  --nav-font: "Inter",  sans-serif;
+  --default-font: "EB Garamond", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --heading-font: "EB Garamond", sans-serif;
+  --nav-font: "Inter", sans-serif;
 }
 
-:root { 
-  --background-color: #ffffff; /* Background color for the entire website, including individual sections */
-  --default-color: #212529; /* Default color used for the majority of the text content across the entire website */
-  --heading-color: #535353; /* Color for headings, subheadings and title throughout the website */
-  --accent-color: #465367; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
-  --surface-color: #ffffff; /* The surface color is used as a background of boxed elements within sections, such as cards, icon boxes, or other elements that require a visual separation from the global background. */
-  --contrast-color: #ffffff; /* Contrast color for text, ensuring readability against backgrounds of accent, heading, or default colors. */
+:root {
+  --background-color: #ffffff;
+  --default-color: #212529;
+  --heading-color: #535353;
+  --accent-color: #465367;
+  --surface-color: #ffffff;
+  --contrast-color: #ffffff;
 }
 
-/* Nav Menu Colors - The following color variables are used specifically for the navigation menu. They are separate from the global colors to allow for more customization options */
+
 :root {
-  --nav-color: #6a6a6a;  /* The default color of the main navmenu links */
-  --nav-hover-color: #465367; /* Applied to main navmenu links when they are hovered over or active */
-  --nav-mobile-background-color: #ffffff; /* Used as the background color for mobile navigation menu */
-  --nav-dropdown-background-color: #ffffff; /* Used as the background color for dropdown items that appear when hovering over primary navigation items */
-  --nav-dropdown-color: #ccc; /* Used for navigation links of the dropdown items in the navigation menu. */
-  --nav-dropdown-hover-color: #465367; /* Similar to --nav-hover-color, this color is applied to dropdown navigation links when they are hovered over. */
+  --nav-color: #6a6a6a;
+  --nav-hover-color: #465367;
+  --nav-mobile-background-color: #ffffff;
+  --nav-dropdown-background-color: #ffffff;
+  --nav-dropdown-color: #ccc;
+  --nav-dropdown-hover-color: #465367;
 }
 
 .light-background {
@@ -37,7 +36,6 @@
   --contrast-color: #ffffff;
 }
 
-/* Smooth scroll */
 :root {
   scroll-behavior: smooth;
 }
@@ -154,7 +152,7 @@ h6 {
   .navmenu {
     padding: 0;
   }
-  
+
   .navmenu ul {
     margin: 0;
     padding: 0;
@@ -162,11 +160,11 @@ h6 {
     list-style: none;
     align-items: center;
   }
-  
+
   .navmenu li {
     position: relative;
   }
-  
+
   .navmenu a {
     color: var(--nav-color);
     padding: 15px 15px;
@@ -180,7 +178,7 @@ h6 {
     position: relative;
     transition: color 0.3s ease;
   }
-  
+
   /* Underline effect */
   .navmenu a::after {
     content: "";
@@ -193,28 +191,28 @@ h6 {
     transition: all 0.3s ease;
     transform: translateX(-50%);
   }
-  
-  .navmenu li:hover > a,
+
+  .navmenu li:hover>a,
   .navmenu .active {
     color: var(--nav-hover-color);
   }
-  
-  .navmenu li:hover > a::after,
+
+  .navmenu li:hover>a::after,
   .navmenu .active::after {
     width: 50%;
   }
-  
+
   .navmenu a i {
     font-size: 12px;
     margin-left: 5px;
     transition: transform 0.3s ease;
   }
-  
+
   /* Arrow rotate */
-  .navmenu li:hover > a i {
+  .navmenu li:hover>a i {
     transform: rotate(180deg);
   }
-  
+
   /* Dropdown menu */
   .navmenu .dropdown ul {
     margin: 0;
@@ -230,29 +228,29 @@ h6 {
     transition: all 0.4s ease;
     z-index: 99;
   }
-  
-  .navmenu .dropdown:hover > ul {
+
+  .navmenu .dropdown:hover>ul {
     visibility: visible;
     opacity: 1;
     top: 100%;
   }
-  
+
   .navmenu .dropdown ul li {
     min-width: 200px;
   }
-  
+
   .navmenu .dropdown ul a {
     padding: 12px 20px;
     font-size: 15px;
     color: var(--nav-dropdown-color);
     transition: background 0.3s, color 0.3s;
   }
-  
-  .navmenu .dropdown ul li:hover > a {
+
+  .navmenu .dropdown ul li:hover>a {
     color: var(--nav-dropdown-hover-color);
     background: rgba(0, 0, 0, 0.03);
   }
-  
+
   /* Multi-level dropdown */
   .navmenu .dropdown .dropdown ul {
     top: 0;
@@ -260,12 +258,12 @@ h6 {
     visibility: hidden;
     opacity: 0;
   }
-  
-  .navmenu .dropdown .dropdown:hover > ul {
+
+  .navmenu .dropdown .dropdown:hover>ul {
     visibility: visible;
     opacity: 1;
   }
-  
+
 }
 
 
@@ -331,7 +329,7 @@ section,
     scroll-margin-top: 66px;
   }
 }
- 
+
 .carousel-item img {
   height: 600px;
   width: 100%;
@@ -344,7 +342,8 @@ section,
 
 
 .carousel-caption {
-  z-index: 1; /* Đè lên hình */
+  z-index: 1;
+  /* Đè lên hình */
 }
 
 
@@ -410,29 +409,36 @@ section,
   border-radius: 4px;
   transition: background 0.3s;
 }
+
 .featurs-icon {
   width: 100px;
   height: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%; /* Làm tròn */
+  border-radius: 50%;
+  /* Làm tròn */
 }
 
 .product-card .btn:hover {
-  background-color: color-mix(in srgb, var(--accent-color),  15%);
+  background-color: color-mix(in srgb, var(--accent-color), 15%);
 }
+
 .product-item {
-  border: 2px solid transparent; /* Mặc định không có viền */
+  border: 2px solid transparent;
+  /* Mặc định không có viền */
   transition: all 0.3s ease-in-out;
   padding: 10px;
 
 }
 
 .product-item:hover {
-  border: 2px solid #465367; /* Màu viền khi hover */
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Đổ bóng khi hover */
-  transform: scale(1.05); /* Phóng to nhẹ */
+  border: 2px solid #465367;
+  /* Màu viền khi hover */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  /* Đổ bóng khi hover */
+  transform: scale(1.05);
+  /* Phóng to nhẹ */
 }
 
 .product-image {
@@ -440,7 +446,8 @@ section,
 }
 
 .product-item:hover .product-image {
-  transform: scale(1.1); /* Hiệu ứng phóng to ảnh khi hover */
+  transform: scale(1.1);
+  /* Hiệu ứng phóng to ảnh khi hover */
 }
 
 .page-header {
@@ -448,10 +455,13 @@ section,
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  color: #fff; /* Đảm bảo chữ trắng */
+  color: #fff;
+  /* Đảm bảo chữ trắng */
 }
+
 .breadcrumb-item a {
-  color: #fff; /* Link trong breadcrumb cũng trắng */
+  color: #fff;
+  /* Link trong breadcrumb cũng trắng */
   text-decoration: none;
 }
 
@@ -467,127 +477,96 @@ section,
     margin-right: 0;
   }
 }
+
 .carousel-img {
   width: 1200px !important;
   height: 600px !important;
   object-fit: cover !important;
-  margin: 0 auto; 
+  margin: 0 auto;
 }
 
 .overlay {
-  background-color: rgba(0, 0, 0, 0.322); /* Màu đen mờ, chỉnh alpha 0.4 */
-  z-index: 1; /* Đặt lớp dưới chữ */
+  background-color: rgba(0, 0, 0, 0.322);
+  /* Màu đen mờ, chỉnh alpha 0.4 */
+  z-index: 1;
+  /* Đặt lớp dưới chữ */
 }
+
 .carousel-caption {
-  z-index: 2; /* Đè lên lớp overlay */
+  z-index: 2;
+  /* Đè lên lớp overlay */
   position: absolute;
 }
 
-/* From Uiverse.io by LeonKohli */ 
-.ui-input-container {
-  position: relative;
-  width: 300px;
-}
-
-.ui-input {
+.image-holder {
   width: 100%;
-  padding: 10px 10px 10px 40px;
-  font-size: 1em;
-  border: none;
-  border-bottom: 2px solid #ccc;
-  outline: none;
-  background-color: transparent;
-  transition: border-color 0.3s;
+  height: 250px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.ui-input:focus {
-  border-color: #6c63ff;
-}
-
-.ui-input-underline {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 2px;
+.product-image {
   width: 100%;
-  background-color: #6c63ff;
-  transform: scaleX(0);
-  transition: transform 0.3s;
-}
-
-.ui-input:focus + .ui-input-underline {
-  transform: scaleX(1);
-}
-
-.ui-input-highlight {
-  position: absolute;
-  bottom: 0;
-  left: 0;
   height: 100%;
-  width: 0;
-  background-color: rgba(108, 99, 255, 0.1);
-  transition: width 0.3s;
+  object-fit: cover;
 }
 
-.ui-input:focus ~ .ui-input-highlight {
-  width: 100%;
+.input-group .form-control {
+  border-right: 0;
 }
 
-.ui-input-icon {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #999;
-  transition: color 0.3s;
+.eye-toggle {
+  padding: 0.5rem;
 }
 
-.ui-input:focus ~ .ui-input-icon {
-  color: #6c63ff;
-}
-
-.ui-input-icon svg {
-  width: 20px;
-  height: 20px;
-}
 .profile-img {
-  width: 100px; /* Giảm từ 150px xuống 100px */
+  width: 100px;
+  /* Giảm từ 150px xuống 100px */
   height: 100px;
   object-fit: cover;
   border-radius: 50%;
 }
+
 .product-img {
   width: 70px;
   height: 70px;
   object-fit: cover;
   border-radius: 8px;
 }
+
 .product-name {
   font-weight: 500;
 }
+
 .align-center {
   vertical-align: middle !important;
   text-align: center;
 }
-td, th {
+
+td,
+th {
   vertical-align: middle !important;
 }
 
 
 
-/* From Uiverse.io by ZAKARIAE48CHELLE */ 
+/* From Uiverse.io by ZAKARIAE48CHELLE */
 .input-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 50px;
   position: relative;
+  transition: all 0.5s ease;
 }
 
 .input {
   border-style: none;
   height: 40px;
-  width: 20px;
+  width: 40px;
+  /* chỉnh lại width ban đầu dễ click hơn */
   padding: 10px;
   outline: none;
   border-radius: 50%;
@@ -595,10 +574,28 @@ td, th {
   background-color: #000000;
   box-shadow: 0px 0px 3px #161616;
   padding-right: 30px;
+  color: #000000;
+  /* cho text dễ thấy */
 }
 
 .input::placeholder {
   color: #8f8f8f;
+}
+
+/* Main slider image */
+.slider-image {
+  width: 100%;
+  height: 580px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+/* Thumbs slider image */
+.thumb-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 5px;
 }
 
 .icon {
@@ -613,13 +610,12 @@ td, th {
   outline: none;
   border-style: none;
   border-radius: 50%;
-  pointer-events: painted;
   background-color: transparent;
   transition: 0.2s linear;
 }
 
-.icon:focus ~ .input,
-.input:focus {
+/* Khi input-wrapper có focus bên trong (input focus hoặc icon click), input mở rộng */
+.input-wrapper:focus-within .input {
   box-shadow: none;
   width: 250px;
   border-radius: 0px;
@@ -628,8 +624,33 @@ td, th {
   transition: all 500ms cubic-bezier(0, 0.11, 0.35, 2);
 }
 
+.input-wrapper:focus-within .icon {
+  background-color: transparent;
+}
+
 .otp-input {
   font-size: 1.5rem;
   text-align: center;
   letter-spacing: 10px;
+}
+
+.bw-page-link {
+  color: #000 !important; 
+  background-color: #fff !important; 
+  border: 1px solid #000 !important; 
+}
+
+
+.page-item.active .bw-page-link {
+  background-color: #ccc !important; 
+  color: #000 !important; 
+  border: 1px solid #000 !important; 
+}
+
+/* Trạng thái disabled */
+.page-item.disabled .bw-page-link {
+  color: #000 !important;
+  background-color: #fff !important; 
+  border: 1px solid #000 !important; 
+  opacity: 0.5; 
 }

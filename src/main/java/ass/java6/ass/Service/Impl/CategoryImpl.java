@@ -1,6 +1,8 @@
 package ass.java6.ass.Service.Impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+
+
 import org.springframework.stereotype.Service;
 
 import ass.java6.ass.Entity.Category;
@@ -11,7 +13,6 @@ import ass.java6.ass.Service.CategoryService;
 public class CategoryImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
 
-    @Autowired
     public CategoryImpl(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
     }
@@ -24,4 +25,8 @@ public class CategoryImpl implements CategoryService {
     public void deleteById(String id) {
         categoryRepository.deleteById(id);
     }
+     public List<Category> findAll() {
+        return categoryRepository.findAll();
+    }
 }
+

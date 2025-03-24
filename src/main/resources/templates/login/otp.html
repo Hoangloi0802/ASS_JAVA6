@@ -8,7 +8,7 @@
         </header>
         <main class="container">
             <div class="border-5 bg-light">
-                <section class="text-center text-lg-start">
+                <section class="text-center text-lg-start" data-aos="fade-up" data-aos-duration="1000">
                     <div class="container border rounded p-4 bg-light"> <!-- Thêm border và rounded -->
                         <div class="row h-100">
                             <div class="col-sm-6 text-black d-flex align-items-center">
@@ -29,7 +29,7 @@
                                         <!-- Form gửi lại mã OTP -->
                                     </form>
                                     <form id="resendOtpForm" style="max-width: 23rem; margin: auto; margin-top: 10px;" method="POST" th:action="@{/goilaiotp}">
-                                        <button type="submit" class="btn btn-link w-100">🔄 Gửi lại mã OTP</button>
+                                        <button type="submit" class="btn btn-secondary w-100"> Gửi lại mã OTP</button>
                                     </form>
                                 </div>
                             </div>

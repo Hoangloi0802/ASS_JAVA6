@@ -4,8 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+
 public class DangkyRequest {
     @NotBlank(message = "tài khoản không được để trống")
     @Size(min = 6,message = "tài khoản phải trên 6 kí tự")
