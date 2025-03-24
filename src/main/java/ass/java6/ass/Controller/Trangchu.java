@@ -1,30 +1,22 @@
 package ass.java6.ass.Controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import ch.qos.logback.core.model.Model;
+
+import jakarta.servlet.http.HttpSession;
 
 
 @Controller
 public class Trangchu {
     @GetMapping("/")
-    public String getMethodName(Model model) {
+    public String trangchu(Model model, HttpSession session) {
         return "home/trangchu";
     }
 
     @GetMapping("/shop")
     public String shop(Model model) {
         return "home/sanpham";
-    }
-
-    @GetMapping("/Dangnhap")
-    public String dangnhap() {
-        return "login/Dangnhap";
-    }
-
-    @GetMapping("/Dangky")
-    public String Dangky() {
-        return "login/Dangky";
     }
 
     @GetMapping("/thanhtoan")
@@ -56,21 +48,10 @@ public class Trangchu {
     public String donhang() {
         return "home/donhang";
     }
+
     @GetMapping("/chitietdonhang")
     public String ctdonhang() {
         return "home/chitietdonhang";
     }
-    @GetMapping("/checkotp")
-    public String check() {
-        return "login/otp";
-    }
-    @GetMapping("/quenmk")
-    public String quenmk() {
-        return "login/quenmk";
-    }
-    @GetMapping("/datlaimk")
-    public String datlaimk() {
-        return "login/datlaimatkhau";
-    }
-    
+
 }

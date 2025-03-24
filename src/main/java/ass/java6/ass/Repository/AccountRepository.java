@@ -12,11 +12,8 @@ public interface AccountRepository extends JpaRepository<Account, String> {
         Optional<Account> findByUsername(String username);
 
         Optional<Account> findByEmail(String email);
-
-        Optional<Account> findByUsernameAndPassword(String username, String password);
-
+        Optional<Account> findByUsernameAndPassword(String username,String password);
         Optional<Account> findById(String username);
-
         List<Account> findByUsernameContainingIgnoreCaseOrFullnameContainingIgnoreCase(String username,
                         String fullname);
 
@@ -24,3 +21,4 @@ public interface AccountRepository extends JpaRepository<Account, String> {
 
         List<Account> findByActivated(Boolean activated);
 }
+

@@ -17,39 +17,51 @@
                             <div class="card cascading-right bg-body-tertiary" style="backdrop-filter: blur(30px);">
                                 <div class="card-body p-5 shadow-5 text-center">
                                     <h2 class="fw-bold mb-5">Đăng ký ngay</h2>
-                                    <form>
+                                    <form th:action="@{/Dangky}" method="post" th:object="${dangkyaccout}">
+                                        <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
                                         <div class="row">
                                             <div class="col-md-6 mb-4">
                                                 <div data-mdb-input-init class="form-outline">
                                                     <label class="form-label" for="form3Example1">Tên tài khoản</label>
-                                                    <input type="text" id="form3Example1" class="form-control form-control-lg" />
-                                                    
+                                                    <input type="text" th:field="*{username}" id="form3Example1" class="form-control form-control-lg" />
+                                                    <div th:if="${#fields.hasErrors('username')}" class="text-danger">
+                                                        <span th:errors="*{username}"></span>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col-md-6 mb-4">
                                                 <div data-mdb-input-init class="form-outline">
                                                     <label class="form-label" for="form3Example2">Số điện thoại</label>
-                                                    <input type="text" id="form3Example2" class="form-control form-control-lg" />
-                                                    
+                                                    <input type="text" th:field="*{mobile}" id="form3Example2" class="form-control form-control-lg" />
+                                                    <div th:if="${#fields.hasErrors('mobile')}" class="text-danger">
+                                                        <span th:errors="*{mobile}"></span>
+                                                    </div>
                                                 </div>
+                                            </div>
+                                        </div>
+                                        <div data-mdb-input-init class="form-outline mb-4">
+                                            <label class="form-label" for="form3ExampleFullName">Họ và tên</label>
+                                            <input type="text" th:field="*{fullname}" id="form3ExampleFullName" class="form-control form-control-lg" />
+                                            <div th:if="${#fields.hasErrors('fullname')}" class="text-danger">
+                                                <span th:errors="*{fullname}"></span>
+                                            </div>
+                                        </div>
+                                        <div data-mdb-input-init class="form-outline mb-4">
+                                            <label class="form-label" for="form3Example3">Địa chỉ email</label>
+                                            <input type="email" th:field="*{email}" id="form3Example3" class="form-control form-control-lg" />
+                                            <div th:if="${#fields.hasErrors('email')}" class="text-danger">
+                                                <span th:errors="*{email}"></span>
                                             </div>
                                         </div>
 
                                         <div data-mdb-input-init class="form-outline mb-4">
-                                            <label class="form-label" for="form3Example3">Địa chỉ email</label>
-                                            <input type="email" id="form3Example3" class="form-control form-control-lg" />
-                                           
-                                        </div>
-
-                                        <div data-mdb-input-init class="form-outline mb-4">
                                             <label class="form-label" for="form3Example4">Mật khẩu</label>
-                                            <input type="password" id="form3Example4" class="form-control form-control-lg" />
-                                            
+                                            <input type="password" th:field="*{password}" id="form3Example4" class="form-control form-control-lg" />
+                                            <div th:if="${#fields.hasErrors('password')}" class="text-danger">
+                                                <span th:errors="*{password}"></span>
+                                            </div>
                                         </div>
-                                        <div data-mdb-input-init class="form-outline mb-4">
-                                            <label class="form-label" for="form3Example4"> Xác nhận mật khẩu</label>
-                                            <input type="password" id="form3Example4" class="form-control form-control-lg" />
-                                        </div>
+                                      
                                         
 
 

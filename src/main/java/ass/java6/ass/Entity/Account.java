@@ -1,36 +1,52 @@
 package ass.java6.ass.Entity;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
-import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Builder
+@Getter
+@Setter
 @Table(name = "accounts")
-public class Account implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
+public class Account implements Serializable, UserDetails {
     @Id
     private String username;
-
     private String password;
     private String fullname;
     private String email;
-    private String photo;
-    private String mobile;
     private String address;
-    private Boolean activated;
+    private String mobile;
+    private String photo;
+    boolean activated;
     @Enumerated(EnumType.STRING)
-    private Role role;
-    private String activationCode;
+    private Role role;  
     @OneToMany(mappedBy = "account")
-    @JsonIgnore
-    private List<Order> orders;
+    List<Order> orders;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
+
+   
 }

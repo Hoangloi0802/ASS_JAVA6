@@ -55,7 +55,7 @@ public class AccountController {
             if (status != null && !status.trim().isEmpty()) {
                 Boolean isActive = "active".equalsIgnoreCase(status);
                 accounts = accounts.stream()
-                        .filter(a -> a.getActivated() == isActive)
+                        .filter(a -> a.isActivated() == isActive)
                         .collect(Collectors.toList());
             }
 

@@ -2,8 +2,10 @@ package ass.java6.ass.Dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-
+import lombok.Getter;
+import lombok.Setter;
 public class DangkyRequest {
     @NotBlank(message = "tài khoản không được để trống")
     @Size(min = 6,message = "tài khoản phải trên 6 kí tự")
@@ -16,13 +18,23 @@ public class DangkyRequest {
     @NotBlank(message = "email không được để trống")
     @Email(message = "email không đúng định dạng")
     private String email;
+    @NotBlank(message = "số điện thoại không được để trống")
+    @Pattern(regexp = "^0[0-9]{9}$", message = "Số điện thoại không đúng định dạng")
+    private String mobile;
     public DangkyRequest() {
     }
-    public DangkyRequest( String username,String password,String fullname,String email) {
+    public DangkyRequest(
+           String username,
+           String password,
+           String fullname,
+           String email,
+           String mobile) {
         this.username = username;
         this.password = password;
         this.fullname = fullname;
         this.email = email;
+        this.mobile = mobile;
+
     }
     public String getUsername() {
         return username;
@@ -48,6 +60,16 @@ public class DangkyRequest {
     public void setEmail(String email) {
         this.email = email;
     }
-
+    public String getMobile() {
+        return mobile;
+    }
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+    
+    
+    
+    
+    
     
 }
