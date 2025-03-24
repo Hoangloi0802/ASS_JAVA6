@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,325 +14,408 @@
             --primary-color: #4f46e5;
             --secondary-color: #6366f1;
         }
+
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f3f4f6;
         }
+
         .nav-link.active {
             background-color: var(--primary-color) !important;
             color: white !important;
         }
+
         .badge-success-subtle {
             background-color: #dcfce7;
             color: #15803d;
             padding: 0.35em 0.65em;
             border-radius: 0.25rem;
         }
+
         .badge-danger-subtle {
             background-color: #fee2e2;
             color: #dc2626;
             padding: 0.35em 0.65em;
             border-radius: 0.25rem;
         }
+
         .admin-role {
             color: var(--primary-color);
             font-weight: 600;
         }
+
         .stats-card {
             transition: transform 0.2s;
         }
+
         .stats-card:hover {
             transform: translateY(-5px);
         }
+
+        modal-body .card {
+            background-color: #f8f9fa;
+            border: none;
+            border-radius: 10px;
+            transition: transform 0.2s;
+        }
+
+        .modal-body .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .modal-body .card .card-title {
+            font-size: 1rem;
+            color: #6c757d;
+        }
+
+        .modal-body .card .card-text {
+            font-weight: bold;
+            color: #343a40;
+        }
+
+        .modal-body .table th {
+            background-color: #e9ecef;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .modal-body .table td {
+            vertical-align: middle;
+        }
+
+        .custom-status-select {
+            border-radius: 20px;
+            padding: 0.25rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        .custom-status-select.bg-success {
+            background-color: #28a745 !important;
+            border-color: #28a745 !important;
+        }
+
+        .custom-status-select.bg-danger {
+            background-color: #dc3545 !important;
+            border-color: #dc3545 !important;
+        }
     </style>
 </head>
+
 <body>
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-auto p-3 min-vh-100 bg-white shadow-sm">
-            <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
-                <a href="/" class="d-flex align-items-center pb-3 mb-md-0 text-decoration-none">
-                    <span class="fs-5 d-none d-sm-inline" style="color: var(--primary-color); font-weight: 600;">Admin Dashboard</span>
-                </a>
-                <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start w-100">
-                    <li class="nav-item w-100">
-                        <a href="/" class="nav-link">
-                            <i class="fa-solid fa-house me-2"></i>
-                            <span class="ms-1 d-none d-sm-inline">Home</span>
-                        </a>
-                    </li>
-                    <li class="nav-item w-100">
-                        <a th:href="@{/admin/products}" class="nav-link">
-                            <i class="fa-solid fa-boxes-stacked me-2"></i>
-                            <span class="ms-1 d-none d-sm-inline">Quản Lý Sản Phẩm</span>
-                        </a>
-                    </li>
-                    <li class="nav-item w-100">
-                        <a th:href="@{/admin/categories}" class="nav-link">
-                            <i class="fa-solid fa-tags me-2"></i>
-                            <span class="ms-1 d-none d-sm-inline">Quản Lý Loại Sản Phẩm</span>
-                        </a>
-                    </li>
-                    <li class="nav-item w-100">
-                        <a th:href="@{/admin/bill}" class="nav-link">
-                            <i class="fa-solid fa-file-invoice-dollar me-2"></i>
-                            <span class="ms-1 d-none d-sm-inline">Quản Lý Hóa Đơn</span>
-                        </a>
-                    </li>
-                    <li class="nav-item w-100">
-                        <a th:href="@{/admin/account}" class="nav-link active">
-                            <i class="fa-solid fa-users me-2"></i>
-                            <span class="ms-1 d-none d-sm-inline">Quản Lý Người Dùng</span>
-                        </a>
-                    </li>
-                    <li class="nav-item w-100">
-                        <a th:href="@{/admin/nhansu}" class="nav-link">
-                            <i class="fa-solid fa-chart-pie me-2"></i>
-                            <span class="ms-1 d-none d-sm-inline">Quản Lý Nhân Sự</span>
-                        </a>
-                    </li>
-                    <li class="nav-item w-100">
-                        <a th:href="@{/admin/statistics}" class="nav-link">
-                            <i class="fa-solid fa-chart-pie me-2"></i>
-                            <span class="ms-1 d-none d-sm-inline">Thống Kê</span>
-                        </a>
-                    </li>
-                    
-                </ul>
-            </div>
-        </div>
-       
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-auto p-3 min-vh-100 bg-white shadow-sm">
+                <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
+                    <a href="/" class="d-flex align-items-center pb-3 mb-md-0 text-decoration-none">
+                        <span class="fs-5 d-none d-sm-inline"
+                            style="color: var(--primary-color); font-weight: 600;">Admin Dashboard</span>
+                    </a>
+                    <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start w-100">
+                        <li class="nav-item w-100">
+                            <a href="/" class="nav-link">
+                                <i class="fa-solid fa-house me-2"></i>
+                                <span class="ms-1 d-none d-sm-inline">Home</span>
+                            </a>
+                        </li>
+                        <li class="nav-item w-100">
+                            <a th:href="@{/admin/products}" class="nav-link">
+                                <i class="fa-solid fa-boxes-stacked me-2"></i>
+                                <span class="ms-1 d-none d-sm-inline">Quản Lý Sản Phẩm</span>
+                            </a>
+                        </li>
+                        <li class="nav-item w-100">
+                            <a th:href="@{/admin/categories}" class="nav-link">
+                                <i class="fa-solid fa-tags me-2"></i>
+                                <span class="ms-1 d-none d-sm-inline">Quản Lý Loại Sản Phẩm</span>
+                            </a>
+                        </li>
+                        <li class="nav-item w-100">
+                            <a th:href="@{/admin/bill}" class="nav-link">
+                                <i class="fa-solid fa-file-invoice-dollar me-2"></i>
+                                <span class="ms-1 d-none d-sm-inline">Quản Lý Hóa Đơn</span>
+                            </a>
+                        </li>
+                        <li class="nav-item w-100">
+                            <a th:href="@{/admin/account}" class="nav-link active">
+                                <i class="fa-solid fa-users me-2"></i>
+                                <span class="ms-1 d-none d-sm-inline">Quản Lý Người Dùng</span>
+                            </a>
+                        </li>
+                        <li class="nav-item w-100">
+                            <a th:href="@{/admin/nhansu}" class="nav-link">
+                                <i class="fa-solid fa-chart-pie me-2"></i>
+                                <span class="ms-1 d-none d-sm-inline">Quản Lý Nhân Sự</span>
+                            </a>
+                        </li>
+                        <li class="nav-item w-100">
+                            <a th:href="@{/admin/statistics}" class="nav-link">
+                                <i class="fa-solid fa-chart-pie me-2"></i>
+                                <span class="ms-1 d-none d-sm-inline">Thống Kê</span>
+                            </a>
+                        </li>
 
-        <!-- Main Content -->
-        <div class="col p-4">
-            <div class="container">
-                <!-- Header -->
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <div>
-                        <h4 class="mb-1 fw-bold">Quản Lý Người Dùng</h4>
-                        <nav aria-label="breadcrumb">
-                            <ol class="breadcrumb mb-0">
-                                <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Home</a></li>
-                                <li class="breadcrumb-item active">Quản Lý Người Dùng</li>
-                            </ol>
-                        </nav>
-                    </div>
-                   
+                    </ul>
                 </div>
-
-                <div class="card shadow-sm mb-4">
-                    <div class="card-body">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="Tìm kiếm người dùng...">
-                                    <button class="btn btn-outline-secondary" type="button">
-                                        <i class="fa-solid fa-search"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <select class="form-select">
-                                    <option value="">Tất cả vai trò</option>
-                                    <option value="admin">Admin</option>
-                                    <option value="user">User</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <select class="form-select">
-                                    <option value="">Tất cả trạng thái</option>
-                                    <option value="active">Đang hoạt động</option>
-                                    <option value="inactive">Ngừng hoạt động</option>
-                                </select>
-                            </div>
+            </div>
+            <div class="col p-4">
+                <div class="container">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h4 class="mb-1 fw-bold">Quản Lý Người Dùng</h4>
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb mb-0">
+                                    <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Home</a></li>
+                                    <li class="breadcrumb-item active">Quản Lý Người Dùng</li>
+                                </ol>
+                            </nav>
                         </div>
                     </div>
-                </div>
-    
-                <div class="card shadow-sm">
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle mb-0">
-                                <thead class="bg-light">
-                                    <tr>
-                                        <th>Username</th>
-                                        <th>Họ và Tên</th>
-                                        <th>Email</th>
-                                        <th>Ảnh</th>
-                                        <th>Trạng Thái</th>
-                                        <th class="text-center">Hành Động</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>johndoe</td>
-                                        <td>John Doe</td>
-                                        <td>john.doe@example.com</td>
-                                        <td>
-                                            <img src="https://ui-avatars.com/api/?name=John+Doe&background=4f46e5&color=fff" 
-                                                 alt="User Photo" class="rounded-circle" 
-                                                 style="width: 40px; height: 40px; object-fit: cover;">
-                                        </td>
-                                        <td><span class="badge-success-subtle">Hoạt động</span></td>
-                                        <td>
-                                            <div class="d-flex justify-content-center gap-2">
-                                                <button class="btn btn-primary btn-sm"
-                                                        data-bs-toggle="modal" 
-                                                        data-bs-target="#viewUserModal">
-                                                    <i class="fa-solid fa-eye"></i>
-                                                </button>
-                                                <button class="btn btn-danger btn-sm"
-                                                        onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
-                                                    <i class="fa-solid fa-trash"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- Add more user rows as needed -->
-                                </tbody>
-                            </table>
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-body">
+                            <form method="GET" action="/admin/account">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="keyword"
+                                                placeholder="Tìm kiếm người dùng...">
+                                            <button class="btn btn-outline-secondary" type="submit">
+                                                <i class="fa-solid fa-search"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-select" name="role" onchange="this.form.submit()">
+                                            <option value="">Tất cả vai trò</option>
+                                            <option value="admin">Admin</option>
+                                            <option value="user">User</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-select" name="status" onchange="this.form.submit()">
+                                            <option value="">Tất cả trạng thái</option>
+                                            <option value="active">Đang hoạt động</option>
+                                            <option value="inactive">Ngừng hoạt động</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="card shadow-sm">
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead class="bg-light">
+                                        <tr>
+                                            <th>Username</th>
+                                            <th>Họ và Tên</th>
+                                            <th>Email</th>
+                                            <th>Ảnh</th>
+                                            <th>Trạng Thái</th>
+                                            <th class="text-center">Hành Động</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="account : ${accounts}">
+                                            <td th:text="${account.username}"></td>
+                                            <td th:text="${account.fullname}"></td>
+                                            <td th:text="${account.email}"></td>
+                                            <td>
+                                                <img th:src="${account.photo} != null and ${account.photo} != '' 
+                                                    ? @{'/img/' + ${account.photo}} 
+                                                    : 'https://ui-avatars.com/api/?name=' + ${account.username}"
+                                                    class="rounded-circle" style="width: 40px; height: 40px;">
+                                            </td>
+                                            <td>
+                                                <span
+                                                    th:classappend="${account.activated} ? 'badge bg-success' : 'badge bg-danger'"
+                                                    th:text="${account.activated} ? 'Hoạt động' : 'Ngừng hoạt động'"></span>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex justify-content-center gap-2">
+                                                    <a th:href="@{/admin/account(username=${account.username})}"
+                                                        class="btn btn-primary btn-sm">
+                                                        <i class="fa-solid fa-eye"></i>
+                                                    </a>
+                                                    <a th:href="@{/admin/account/delete/{username}(username=${account.username})}"
+                                                        onclick="return confirm('Bạn có chắc chắn muốn xóa?');"
+                                                        class="btn btn-danger btn-sm">
+                                                        <i class="fa-solid fa-trash"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
-<!-- View User Modal -->
-<div class="modal fade" id="viewUserModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Chi Tiết Người Dùng</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <!-- User Info Section -->
-                <div class="row mb-4">
-                    <div class="col-md-3 text-center">
-                        <img src="https://ui-avatars.com/api/?name=John+Doe&background=4f46e5&color=fff" 
-                             alt="User Photo" class="rounded-circle mb-3" 
-                             style="width: 100px; height: 100px; object-fit: cover;">
-                       
-                    </div>
-                    <div class="col-md-9">
-                        <h6 class="fw-bold mb-3">Thông tin cá nhân</h6>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <p class="mb-1"><strong>Họ và tên:</strong> John Doe</p>
-                                <p class="mb-1"><strong>Email:</strong> john.doe@example.com</p>
-                                <p class="mb-1"><strong>Username:</strong> johndoe</p>
-                            </div>
-                            <div class="col-md-6">
-                                <p class="mb-1"><strong>Ngày tham gia:</strong> 01/01/2024</p>
-                                <p class="mb-1">
-                                    <strong>Trạng thái:</strong>
-                                    <select class="form-select form-select-sm d-inline-block w-auto ms-2">
-                                        <option value="active">Hoạt động</option>
-                                        <option value="inactive">Khóa</option>
-                                    </select>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+    <div class="modal fade" id="viewUserModal" tabindex="-1" th:classappend="${selectedAccount} ? 'show d-block' : ''"
+        th:style="${selectedAccount} ? 'display: block; background: rgba(0, 0, 0, 0.5);' : ''">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">Chi Tiết Người Dùng</h5>
+                    <a href="/admin/account" class="btn-close btn-close-white"></a>
                 </div>
-
-                <!-- Statistics Cards -->
-                <div class="row g-3 mb-4">
-                    <div class="col-md-4">
-                        <div class="card stats-card bg-primary bg-opacity-10 border-0">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="card-title text-primary mb-2">Tổng đơn hàng</h6>
-                                        <h3 class="mb-0">25</h3>
-                                    </div>
-                                    <i class="fa-solid fa-shopping-cart fa-2x text-primary opacity-25"></i>
+                <div class="modal-body">
+                    <div class="row mb-4">
+                        <div class="col-md-3 text-center">
+                            <img th:src="@{https://ui-avatars.com/api/?name=__${selectedAccount.fullname}__&background=4f46e5&color=fff}"
+                                alt="User Photo" class="rounded-circle mb-3"
+                                style="width: 100px; height: 100px; object-fit: cover;">
+                        </div>
+                        <div class="col-md-9">
+                            <h6 class="fw-bold mb-3">Thông tin cá nhân</h6>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <p class="mb-1"><strong>Họ và tên:</strong> <span
+                                            th:text="${selectedAccount.fullname}"></span></p>
+                                    <p class="mb-1"><strong>Email:</strong> <span
+                                            th:text="${selectedAccount.email}"></span></p>
+                                    <p class="mb-1"><strong>Username:</strong> <span id="username"
+                                            th:text="${selectedAccount.username}"></span></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-1"><strong>SĐT:</strong> <span
+                                            th:text="${selectedAccount.mobile}"></span></p>
+                                    <p class="mb-1"><strong>Địa chỉ:</strong> <span
+                                            th:text="${selectedAccount.address}"></span></p>
+                                    <p class="mb-1 mt-2">
+                                        <strong>Trạng thái:</strong>
+                                        <select id="statusSelect"
+                                            class="form-select form-select-sm d-inline-block w-auto ms-2"
+                                            th:value="${selectedAccount.activated}">
+                                            <option value="true" th:selected="${selectedAccount.activated}">Hoạt động
+                                            </option>
+                                            <option value="false" th:selected="${!selectedAccount.activated}">Khóa
+                                            </option>
+                                        </select>
+                                    </p>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="card stats-card bg-success bg-opacity-10 border-0">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="card-title text-success mb-2">Tổng chi tiêu</h6>
-                                        <h3 class="mb-0">5,250,000đ</h3>
+                    <div class="row g-3 mb-4">
+                        <!-- Tổng đơn hàng -->
+                        <div class="col-md-4">
+                            <div class="card stats-card bg-primary bg-opacity-10 border-0">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="card-title text-primary mb-2">Tổng đơn hàng</h6>
+                                            <h5 class="mb-0" th:text="${totalOrders}"></h5>
+                                        </div>
+                                        <i class="fa-solid fa-shopping-cart fa-2x text-primary opacity-25"></i>
                                     </div>
-                                    <i class="fa-solid fa-wallet fa-2x text-success opacity-25"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tổng chi tiêu -->
+                        <div class="col-md-4">
+                            <div class="card stats-card bg-success bg-opacity-10 border-0">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="card-title text-success mb-2">Tổng chi tiêu</h6>
+                                            <h5 class="mb-0"
+                                                th:text="${#numbers.formatDecimal(totalSpending, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">
+                                            </h5>
+                                        </div>
+                                        <i class="fa-solid fa-wallet fa-2x text-success opacity-25"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                
-                </div>
 
-                <!-- Most Ordered Products -->
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-white">
-                        <h6 class="fw-bold mb-0">Sản phẩm đặt nhiều nhất</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-sm">
-                                <thead>
-                                    <tr>
-                                        <th>Sản phẩm</th>
-                                        <th>Số lượng</th>
-                                        <th>Tổng tiền</th>
-                                        <th>Lần cuối mua</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Sản phẩm A</td>
-                                        <td>10</td>
-                                        <td>1,500,000đ</td>
-                                        <td>10/03/2024</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Sản phẩm B</td>
-                                        <td>8</td>
-                                        <td>1,200,000đ</td>
-                                        <td>05/03/2024</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Sản phẩm C</td>
-                                        <td>5</td>
-                                        <td>750,000đ</td>
-                                        <td>01/03/2024</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                    <!-- Sản phẩm đặt nhiều nhất -->
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white">
+                            <h6 class="fw-bold mb-0">Top 3 sản phẩm đặt nhiều nhất</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Sản phẩm</th>
+                                            <th>Số lượng</th>
+                                            <th>Tổng tiền</th>
+                                            <th>Lần mua cuối </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="product : ${topProducts}">
+                                            <td th:text="${product.key}"></td>
+                                            <td th:text="${product.value[0]}"></td>
+                                            <td
+                                                th:text="${#numbers.formatDecimal(product.value[1], 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">
+                                            </td>
+                                            <td th:text="${#temporals.format(product.value[2], 'dd/MM/yyyy')}"></td>
+                                        </tr>
+                                        <tr th:if="${#lists.isEmpty(topProducts)}">
+                                            <td colspan="2" class="text-center text-muted">Không có sản phẩm nào</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                <button type="button" class="btn btn-primary">Lưu thay đổi</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> <a href="/admin/account"
+                            class="btn-close btn-close-white"></a>Đóng</button>
+                    <button id="saveStatusBtn" type="button" class="btn btn-primary">Lưu thay đổi</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<script src="/bootstrap-5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    // Handle status change
-    document.querySelectorAll('.form-select').forEach(select => {
-        select.addEventListener('change', function() {
-            // Add your status update logic here
-            console.log('Status changed to:', this.value);
+    <script>
+        document.getElementById("saveStatusBtn").addEventListener("click", function () {
+            var username = document.getElementById("username").textContent.trim();
+            var isActive = document.getElementById("statusSelect").value === "true";
+
+            fetch("/admin/account/update-status", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: new URLSearchParams({
+                    "username": username,
+                    "isActive": isActive
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message || data.error);
+                    if (!data.error) {
+                        window.location.reload();
+                    }
+                })
+                .catch(error => {
+                    console.error("Lỗi:", error);
+                    alert("Có lỗi xảy ra, vui lòng thử lại!");
+                });
         });
-    });
 
-    // Initialize tooltips
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl)
-    });
-</script>
+        document.getElementById("statusSelect").addEventListener('change', function () {
+            if (this.value === "true") {
+                this.classList.remove("bg-danger");
+                this.classList.add("bg-success", "text-white");
+            } else {
+                this.classList.remove("bg-success");
+                this.classList.add("bg-danger", "text-white");
+            }
+        });
+    </script>
+
 </body>
+
 </html>
