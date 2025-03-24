@@ -10,7 +10,8 @@
     </header>
     <main class="container">
         <div class="container py-5 h-100">
-            <div class="row d-flex justify-content-center align-items-center h-100 "data-aos="fade-up" data-aos-duration="1000">
+            <div class="row d-flex justify-content-center align-items-center h-100 " data-aos="fade-up"
+                data-aos-duration="1000">
                 <div class="col col-xl-10">
                     <div class="card" style="border-radius: 1rem;">
                         <div class="row g-0">
@@ -22,16 +23,18 @@
                                 <div class="card-body p-4 p-lg-5 text-black">
 
                                     <form th:action="@{/Dangnhap}" method="post" th:object="${dangnhapRequest}">
-                                        
+
                                         <div class="d-flex align-items-center mb-3 pb-1">
                                             <span class="h1 fw-bold mb-0">ĐĂNG NHẬP</span>
                                         </div>
                                         <!-- Hiển thị lỗi từ server -->
                                         <div th:if="${param.error != null}" class="alert alert-danger">
                                             <span th:switch="${param.error[0]}">
-                                                <span th:case="'true'">Tên tài khoản hoặc mật khẩu không đúng <br>Cũng có thể chưa kích hoạt vui lòng liên hệ admin để được hỗ trợ</span>
+                                                <span th:case="'true'">Tên tài khoản hoặc mật khẩu không đúng <br>Cũng
+                                                    có thể chưa kích hoạt vui lòng liên hệ admin để được hỗ trợ</span>
                                                 <span th:case="'userNotFound'">Tài khoản không tồn tại.</span>
-                                                <span th:case="'notActivated'">Tài khoản chưa được kích hoạt, vui lòng liên hệ admin.</span>
+                                                <span th:case="'notActivated'">Tài khoản chưa được kích hoạt, vui lòng
+                                                    liên hệ admin.</span>
                                             </span>
                                         </div>
                                         <div data-mdb-input-init class="form-outline mb-4">
@@ -45,19 +48,26 @@
                                         <div data-mdb-input-init class="form-outline mb-4">
                                             <label class="form-label" for="form2Example27">Mật khẩu</label>
                                             <div class="input-group">
-                                            <input type="password" th:field="*{password}" id="form3Example5"
-                                                class="form-control form-control-lg" />
-                                            <div th:if="${#fields.hasErrors('password')}" class="text-danger">
-                                                <span th:errors="*{password}"></span>
+                                                <input type="password" th:field="*{password}" id="form3Example5"
+                                                    class="form-control form-control-lg" />
+                                                <button type="button" class="btn btn-outline-secondary toggle-password"
+                                                    data-target="form3Example5">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <div th:if="${#fields.hasErrors('password')}" class="text-danger">
+                                                    <span th:errors="*{password}"></span>
+                                                </div>
                                             </div>
+                                            <div class="pt-1 mb-4">
+                                                <button data-mdb-button-init data-mdb-ripple-init
+                                                    class="btn btn-dark btn-lg btn-block" type="submit">Đăng
+                                                    nhập</button>
+                                            </div>
+                                            <a class="small text-muted" href="/quenmk">Quên mật khẩu ?</a>
+                                            <p class="mb-5 pb-lg-2" style="color: #393f81;">
+                                                Bạn chưa có tài khoản? <a href="#!" style="color: #393f81;">Đăng ký </a>
+                                            </p>
                                         </div>
-                                        <div class="pt-1 mb-4">
-                                            <button data-mdb-button-init data-mdb-ripple-init
-                                                class="btn btn-dark btn-lg btn-block" type="submit">Đăng nhập</button>
-                                        </div>
-                                        <a class="small text-muted" href="/quenmk">Quên mật khẩu ?</a>
-                                        <p class="mb-5 pb-lg-2" style="color: #393f81;">
-                                            Bạn chưa có tài khoản? <a href="#!" style="color: #393f81;">Đăng ký </a></p>
                                     </form>
 
                                 </div>
@@ -72,24 +82,24 @@
     </div>
 
     <script>
-        document.querySelector('form').addEventListener('submit', function(event) {
-            event.preventDefault(); 
+        document.querySelector('form').addEventListener('submit', function (event) {
+            event.preventDefault();
             const username = document.getElementById('form2Example17').value.trim();
             const password = document.getElementById('form2Example27').value.trim();
             let isValid = true;
 
-           
+
             const existingErrors = document.querySelectorAll('.client-error');
             existingErrors.forEach(error => error.remove());
 
             if (!username) {
                 const usernameField = document.getElementById('form2Example17');
-                usernameField.insertAdjacentHTML('afterend', 
+                usernameField.insertAdjacentHTML('afterend',
                     '<div class="text-danger client-error">Tài khoản không được để trống</div>');
                 isValid = false;
             } else if (username.length < 6) {
                 const usernameField = document.getElementById('form2Example17');
-                usernameField.insertAdjacentHTML('afterend', 
+                usernameField.insertAdjacentHTML('afterend',
                     '<div class="text-danger client-error">Tài khoản phải trên 6 ký tự</div>');
                 isValid = false;
             }
@@ -97,12 +107,12 @@
             // Kiểm tra password
             if (!password) {
                 const passwordField = document.getElementById('form2Example27');
-                passwordField.insertAdjacentHTML('afterend', 
+                passwordField.insertAdjacentHTML('afterend',
                     '<div class="text-danger client-error">Mật khẩu không được để trống</div>');
                 isValid = false;
             } else if (password.length < 6) {
                 const passwordField = document.getElementById('form2Example27');
-                passwordField.insertAdjacentHTML('afterend', 
+                passwordField.insertAdjacentHTML('afterend',
                     '<div class="text-danger client-error">Mật khẩu phải trên 6 ký tự</div>');
                 isValid = false;
             }
