@@ -13,6 +13,8 @@ import lombok.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class Order implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,7 +23,6 @@ public class Order implements Serializable {
     private String address;
 
     private boolean status;
-
     @Column(name = "createdate")
     private LocalDateTime createDate = LocalDateTime.now();
 

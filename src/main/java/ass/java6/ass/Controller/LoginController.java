@@ -170,9 +170,7 @@ public String resendOtp(HttpSession session, Model model) {
         if (account == null) {
             model.addAttribute("errorMessage", "Không tìm thấy tài khoản để gửi lại OTP.");
             return "login/otp";
-        }
-
-        // Xóa OTP cũ khỏi session
+        }  
         session.removeAttribute("otp");
 
         // Tạo OTP mới

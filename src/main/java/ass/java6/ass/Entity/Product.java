@@ -34,6 +34,7 @@ public class Product implements Serializable {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<ProductImage> productImages;
 
+
     @Transient  // Không lưu vào DB, chỉ dùng cho View
     public String getFirstImage() {
         if (productImages != null && !productImages.isEmpty()) {
@@ -42,3 +43,5 @@ public class Product implements Serializable {
         return "/img/no-image.jpg"; // Nếu không có ảnh, dùng ảnh mặc định
     }
 }
+
+

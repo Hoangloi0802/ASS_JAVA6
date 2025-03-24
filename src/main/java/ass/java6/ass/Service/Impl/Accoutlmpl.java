@@ -9,6 +9,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import ass.java6.ass.Config.SendEmailConfig;
+import ass.java6.ass.AssApplication;
 import ass.java6.ass.Dto.DangkyRequest;
 import ass.java6.ass.Dto.DangnhapRequest;
 import ass.java6.ass.Entity.Account;
