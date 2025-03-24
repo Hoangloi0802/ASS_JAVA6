@@ -1,4 +1,8 @@
 <header id="header" class="header d-flex align-items-center sticky-top">
+<<<<<<< HEAD
+
+=======
+>>>>>>> main
   <div class="container position-relative d-flex align-items-center justify-content-between">
     <a href="index.html" class="logo d-flex align-items-center me-auto me-xl-0">
       <h1 class="sitename fs-3">Shop AOT</h1>
@@ -6,13 +10,42 @@
 
     <nav id="navmenu" class="navmenu">
       <ul class="fs-5">
+<<<<<<< HEAD
+        <li>
+            <a th:href="@{/}" th:class="${currentPage == 'home' ? 'active' : ''}">TRANG CHỦ</a>
+        </li>
+        <li>
+          <a th:href="@{/shop}" th:class="${currentPageName == 'shop' ? 'active' : ''}">SẢN PHẨM</a>
+        </li>
+    </ul>
+
+=======
         <li><a href="/" class="active">TRANG CHỦ</a></li>
         <li><a href="/shop">SẢN PHẨM</a></li>
       </ul>
+>>>>>>> main
       <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
     </nav>
 
     <div class="header-social-links d-flex align-items-center">
+<<<<<<< HEAD
+      
+      <form id="searchForm" action="/shop" method="get">
+        <div class="input-wrapper me-3">
+          <button type="button" class="icon" id="searchButton"> <!-- Đổi type="button" -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#fff"
+              stroke-width="2">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+          </button>
+          <input type="text" name="keyword" class="input" id="searchInput" placeholder="Tên sản phẩm" />
+        </div>
+      </form>
+      
+      
+      
+=======
       <div class="input-wrapper me-3">
         <button class="icon">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#fff" stroke-width="2">
@@ -22,21 +55,37 @@
         </button>
         <input type="text" name="text" class="input" placeholder="Tên sản phẩm" />
       </div>
+>>>>>>> main
 
       <!-- Icon giỏ hàng -->
-      <a href="/giohang" class="position-relative me-3">
+      <a href="/giohang/view" class="position-relative me-3">
         <i class="bi bi-cart fs-4"></i>
         <span class="position-absolute bg-danger rounded-circle text-white px-2"
-          style="top: -5px; left: 15px; height: 20px; min-width: 20px; font-size: 12px; line-height: 20px;">
-          0
-        </span>
-      </a>
+          style="top: -5px; left: 15px; height: 20px; min-width: 20px; font-size: 12px; line-height: 20px;"
+          th:text="${cartCount}">0</span>
+    </a>
+    
+
 
       <!-- Dropdown người dùng -->
       <div class="nav-item dropdown">
         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button"
           data-bs-toggle="dropdown" aria-expanded="false">
           <!-- Hiển thị icon nếu chưa đăng nhập, ảnh nếu đã đăng nhập -->
+<<<<<<< HEAD
+          <th:block th:if="${user == null}">
+            <i class="bi bi-person fs-4"></i>
+          </th:block>
+          <th:block th:if="${user != null}">
+            <img th:src="'/img/' + ${user.photo}" class="rounded-circle"
+              style="width: 30px; height: 30px; object-fit: cover;" alt="Avatar">
+          </th:block>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="userDropdown">
+
+          <!-- Chưa đăng nhập -->
+          <th:block th:if="${user == null}">
+=======
           <th:block th:if="${session.currentUser == null}">
             <i class="bi bi-person fs-4"></i>
           </th:block>
@@ -49,18 +98,42 @@
         <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="userDropdown">
           <!-- Chưa đăng nhập -->
           <th:block th:if="${session.currentUser == null}">
+>>>>>>> main
             <li><a class="dropdown-item" href="/Dangnhap">Đăng nhập</a></li>
             <li><a class="dropdown-item" href="/Dangky">Đăng ký</a></li>
             <li><a class="dropdown-item" href="/forgot-password">Quên mật khẩu</a></li>
           </th:block>
 
           <!-- Đã đăng nhập -->
+<<<<<<< HEAD
+          <th:block th:if="${user != null}">
+            <li><a class="dropdown-item" href="/profile" th:text="${user.fullname}">Tên người dùng</a></li>
+=======
           <th:block th:if="${session.currentUser != null}">
             <li><a class="dropdown-item" href="/profile" th:text="${session.currentUser.fullname}">Tên người dùng</a></li>
+>>>>>>> main
             <li><a class="dropdown-item" href="/donhang">Đơn hàng của bạn</a></li>
             <li><a class="dropdown-item" href="/doimk">Đổi mật khẩu</a></li>
 
             <!-- Chỉ hiện nếu là admin -->
+<<<<<<< HEAD
+            <th:block th:if="${user.role == 'ROLE_ADMIN'}">
+              <li><a class="dropdown-item" href="/admin/products">Quản Lý</a></li>
+            </th:block>
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li><a class="dropdown-item" href="/logout">Đăng xuất</a></li>
+          </th:block>
+
+        </ul>
+      </div>
+
+    </div>
+
+</header>
+=======
             <th:block sec:authorize="hasAuthority('ROLE_ADMIN')">
               <li><a class="dropdown-item" href="/admin/products">🔧 Quản lý</a></li>
             </th:block>
@@ -75,3 +148,4 @@
     </div>
   </div>
 </header>
+>>>>>>> main

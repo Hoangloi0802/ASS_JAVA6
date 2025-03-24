@@ -72,7 +72,6 @@ public class LoginController {
     }    
     @GetMapping("/checkotp")
     public String check() {
-
         return "login/otp";
     }
     @PostMapping("/checkotp")

@@ -8,7 +8,7 @@
         </header>
         <main class="container">
             <section class="text-center text-lg-start">
-                <div class="container-fluid h-100 border border-secondary rounded p-3 bg-light"> <!-- Border bằng Bootstrap -->
+                <div class="container-fluid h-100 border border-secondary rounded p-3 bg-light" data-aos="fade-up" data-aos-duration="1000"> <!-- Border bằng Bootstrap -->
                     <div class="row h-100">
                         <div class="col-sm-6 text-black d-flex align-items-center">
                             <div class="px-5 ms-xl-4 mt-5 pt-5 pt-xl-0 mt-xl-n5 w-100">
@@ -17,12 +17,30 @@
                                     <p class="text-center text-muted mb-4">Nhập mật khẩu mới để hoàn tất quá trình đặt lại.</p>
                                     
                                     <div class="mb-3">
+<<<<<<< HEAD
+                                        <div class="input-group">
+                                        <input type="password" class="form-control" id="form3Example5" placeholder="Mật khẩu mới" required>
+                                        <button type="button" class="btn btn-outline-secondary toggle-password" data-target="form3Example5">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    </div>
+                                    <div class="mb-3">
+                                
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="form3Example5" placeholder="Xác nhận mật khẩu" required>
+                                        <button type="button" class="btn btn-outline-secondary toggle-password" data-target="form3Example5">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+=======
                                         <input type="password" class="form-control" id="password" th:field="*{password}" placeholder="Mật khẩu mới" required>
                                         <p class="text-danger" th:errors="*{password}"></p>
                                     </div>
                                     <div class="mb-3">
                                         <input type="password" class="form-control" id="confirmPassword" th:field="*{confirmPassword}" placeholder="Xác nhận mật khẩu" required>
                                         <p class="text-danger" th:errors="*{confirmPassword}"></p>
+>>>>>>> main
                                     </div>
                                     <button type="submit" class="btn btn-primary w-100">Xác Nhận</button>
                                 

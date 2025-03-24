@@ -10,7 +10,7 @@
     </header>
     <main class="container">
         <div class="container py-5 h-100">
-            <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100 "data-aos="fade-up" data-aos-duration="1000">
                 <div class="col col-xl-10">
                     <div class="card" style="border-radius: 1rem;">
                         <div class="row g-0">
@@ -44,11 +44,22 @@
                                         </div>
                                         <div data-mdb-input-init class="form-outline mb-4">
                                             <label class="form-label" for="form2Example27">Mật khẩu</label>
-                                            <input type="password" th:field="*{password}" id="form2Example27"
+                                            <div class="input-group">
+                                            <input type="password" th:field="*{password}" id="form3Example5"
                                                 class="form-control form-control-lg" />
+<<<<<<< HEAD
+                                                <button type="button" class="btn btn-outline-secondary toggle-password" data-target="form3Example5">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </div>
+                                                <div th:if="${#fields.hasErrors('password')}" class="text-danger">
+                                                    <span th:errors="*{password}"></span>
+                                                </div>
+=======
                                             <div th:if="${#fields.hasErrors('password')}" class="text-danger">
                                                 <span th:errors="*{password}"></span>
                                             </div>
+>>>>>>> main
                                         </div>
                                         <div class="pt-1 mb-4">
                                             <button data-mdb-button-init data-mdb-ripple-init
