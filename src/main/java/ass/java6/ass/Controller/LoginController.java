@@ -134,19 +134,22 @@ public class LoginController {
     }
     
     @PostMapping("/datlaimk")
-    public String datlaimkPost(@Valid @ModelAttribute("datlaimkRequest") DatlaimkRequest datlaimkRequest ,BindingResult result, HttpSession session, Model model) {
-        if(result.hasErrors()){
-             return "login/datlaimatkhau";
-        }
-        String email = (String) session.getAttribute("emailcheck");
-        if (email == null) {
-            model.addAttribute("message", "Không tìm thấy email, vui lòng thử lại.");
+    public String datlaimkPost(@Valid @ModelAttribute("datlaimkRequest") DatlaimkRequest datlaimkRequest,
+                               BindingResult result, HttpSession session, Model model) {
+        if (result.hasErrors()) {
             return "login/datlaimatkhau";
         }
+        
+        String email = (String) session.getAttribute("emailcheck");
+        if (email == null) {
+            return "redirect:/quenmatkhau"; // Chuyển về trang quên mật khẩu nếu email bị mất
+        }
+        
         if (!datlaimkRequest.getPassword().equals(datlaimkRequest.getConfirmPassword())) {
             model.addAttribute("message", "Mật khẩu xác nhận không khớp.");
             return "login/datlaimatkhau";
         }
+        
         try {
             accoutService.doiMatKhau(email, datlaimkRequest.getPassword());
             session.removeAttribute("emailcheck");
@@ -156,6 +159,7 @@ public class LoginController {
             return "login/datlaimatkhau";
         }
     }
+    
         @GetMapping("/datlaimk")
     public String datlaimk(Model model) {
         model.addAttribute("datlaimkRequest", new DatlaimkRequest());
