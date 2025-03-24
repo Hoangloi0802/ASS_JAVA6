@@ -1,73 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head th:replace="~{/layouts/header}">
-        <title>Home</title>
-    </head>
-    <body>
-        <header th:replace="~{/layouts/nav}">
-        </header>
-        <main class="container my-5">
-            <form>
-              <div class="row">
-                <div class="col-md-4 mb-4">
-                  <div class="card text-center p-3">
-                    <img src="https://sm.ign.com/ign_nordic/cover/a/avatar-gen/avatar-generations_prsz.jpg" id="previewImg" alt="Avatar" class="profile-img mx-auto mb-3">
-                    <h4 class="mb-1">Nguyễn Văn A</h4>
-                    <p class="text-muted">Thành viên VIP</p>
-                    <div class="mb-2">
-                      <input class="form-control form-control-sm" type="file" id="formFile" accept="image/*">
-                    </div>
-                    <button type="submit" class="btn btn-outline-dark btn-sm mt-2">Lưu ảnh</button>
-                  </div>
-                </div>
 
-                <div class="col-md-8 mb-4">
-                  <div class="card p-4">
-                    <h4 class="mb-3">Thông tin cá nhân</h4>
-        
-                    <div class="mb-3 row">
-                      <label class="col-sm-3 col-form-label">Họ và tên:</label>
-                      <div class="col-sm-9">
-                        <input type="text" class="form-control" value="Nguyễn Văn A">
-                      </div>
-                    </div>
-        
-                    <div class="mb-3 row">
-                      <label class="col-sm-3 col-form-label">Email:</label>
-                      <div class="col-sm-9">
-                        <input type="email" class="form-control" value="nguyenvana@gmail.com">
-                      </div>
-                    </div>
-        
-                    <div class="mb-3 row">
-                      <label class="col-sm-3 col-form-label">Số điện thoại:</label>
-                      <div class="col-sm-9">
-                        <input type="tel" class="form-control" value="0901234567">
-                      </div>
-                    </div>
-        
-                    <div class="mb-3 row">
-                      <label class="col-sm-3 col-form-label">Tên Đăng nhập :</label>
-                      <div class="col-sm-9">
-                        <input type="text" class="form-control" value="hoangloi0802">
-                      </div>
-                    </div>
-                    <div class="mb-3 row">
-                        <label class="col-sm-3 col-form-label">Mật khẩu :</label>
-                        <div class="col-sm-9">
-                          <input type="password" class="form-control" value="hoangloi0802">
-                        </div>
-                      </div>
-                    <div class="text-end">
-                      <button type="submit" class="btn btn-dark">Lưu thông tin</button>
-                    </div>
-        
-                  </div>
-                </div>
-              </div>
-            </form>
-          </main>
-        <div th:replace="~{/layouts/footer}">
+<head th:replace="~{/layouts/header}">
+  <title>Home</title>
+</head>
+
+<body>
+  <header th:replace="~{/layouts/nav}">
+  </header>
+  <main class="container my-5">
+    <!-- Sửa form -->
+    <form th:action="@{/profile/update}" method="post" enctype="multipart/form-data" th:object="${user}">
+      <div class="row">
+        <!-- Avatar & Upload -->
+        <div class="col-md-4 mb-4">
+          <div class="card text-center p-3">
+            <img
+              th:src="${user.photo != null ? user.photo : 'https://sm.ign.com/ign_nordic/cover/a/avatar-gen/avatar-generations_prsz.jpg'}"
+              id="previewImg" alt="Avatar" class="profile-img mx-auto mb-3"
+              style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover;">
+
+            <h4 class="mb-1" th:text="${user.fullname}">Nguyễn Văn A</h4>
+            <p class="text-muted" th:text="${user.role}">Thành viên VIP</p>
+
+            <div class="mb-2">
+              <input class="form-control form-control-sm" type="file" name="file" id="formFile" accept="image/*"
+                onchange="previewImage(event)">
+            </div>
+            <button type="submit" class="btn btn-outline-dark btn-sm mt-2">Lưu ảnh</button>
+          </div>
         </div>
-    </body>
+
+        <!-- Thông tin cá nhân -->
+        <div class="col-md-8 mb-4">
+          <div class="card p-4">
+            <h4 class="mb-3">Thông tin cá nhân</h4>
+
+            <div class="mb-3 row">
+              <label class="col-sm-3 col-form-label">Tên Đăng nhập :</label>
+              <div class="col-sm-9">
+                <input type="text" class="form-control" th:field="*{username}" readonly>
+              </div>
+            </div> 
+            
+            <div class="mb-3 row">
+              <label class="col-sm-3 col-form-label">Họ và tên:</label>
+              <div class="col-sm-9">
+                <input type="text" class="form-control" th:field="*{fullname}">
+              </div>
+            </div>
+
+            <div class="mb-3 row">
+              <label class="col-sm-3 col-form-label">Email:</label>
+              <div class="col-sm-9">
+                <input type="email" class="form-control" th:field="*{email}">
+              </div>
+            </div>
+
+            <div class="mb-3 row">
+              <label class="col-sm-3 col-form-label">Số điện thoại:</label>
+              <div class="col-sm-9">
+                <input type="tel" class="form-control" th:field="*{mobile}">
+              </div>
+            </div>
+
+            
+
+            <!-- Nếu bạn muốn đổi mật khẩu thì làm trang riêng -->
+            <div class="text-end">
+              <button type="submit" class="btn btn-dark">Lưu thông tin</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </form>
+  </main>
+  <div th:replace="~{/layouts/footer}">
+  </div>
+</body>
+
 </html>
