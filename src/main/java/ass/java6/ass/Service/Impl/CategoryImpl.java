@@ -2,7 +2,7 @@ package ass.java6.ass.Service.Impl;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
 import ass.java6.ass.Entity.Category;
@@ -13,7 +13,6 @@ import ass.java6.ass.Service.CategoryService;
 public class CategoryImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
 
-    @Autowired
     public CategoryImpl(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
     }
