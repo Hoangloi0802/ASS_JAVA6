@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,42 +13,53 @@
             --primary-color: #4f46e5;
             --secondary-color: #6366f1;
         }
+
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f3f4f6;
         }
+
         .sidebar {
             background: white;
             box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
         }
+
         .nav-link {
             color: #4b5563;
             border-radius: 8px;
             padding: 0.75rem 1rem;
             margin-bottom: 0.5rem;
         }
-        .nav-link:hover, .nav-link.active {
+
+        .nav-link:hover,
+        .nav-link.active {
             background-color: var(--primary-color);
             color: white;
         }
+
         .card {
             border: none;
             border-radius: 12px;
             box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
         }
-        .form-control, .form-select {
+
+        .form-control,
+        .form-select {
             border-radius: 8px;
             padding: 0.75rem 1rem;
         }
+
         .btn {
             padding: 0.75rem 1.5rem;
             border-radius: 8px;
             font-weight: 500;
         }
+
         .table {
             border-radius: 8px;
             overflow: hidden;
         }
+
         .table thead th {
             background-color: #f8fafc;
             font-weight: 600;
@@ -55,6 +67,7 @@
             font-size: 0.875rem;
             letter-spacing: 0.05em;
         }
+
         .btn-action {
             width: 36px;
             height: 36px;
@@ -66,37 +79,37 @@
         }
 
         image-upload-box {
-    height: 200px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
+            height: 200px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
 
-.image-upload-box:hover {
-    border-color: var(--primary-color) !important;
-}
+        .image-upload-box:hover {
+            border-color: var(--primary-color) !important;
+        }
 
-.upload-placeholder {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
+        .upload-placeholder {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
 
-.image-preview img {
-    max-height: 140px;
-    object-fit: cover;
-}
+        .image-preview img {
+            max-height: 140px;
+            object-fit: cover;
+        }
 
-.cursor-pointer {
-    cursor: pointer;
-}
+        .cursor-pointer {
+            cursor: pointer;
+        }
     </style>
 </head>
+
 <body>
     <div class="container-fluid">
         <div class="row g-0">
-            <!-- Sidebar -->
             <div class="col-auto p-3 min-vh-100 bg-white shadow-sm">
                 <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
                     <a href="/" class="d-flex align-items-center pb-3 mb-md-0 text-decoration-none">
@@ -148,16 +161,15 @@
                     </ul>
                 </div>
             </div>
-            <!-- Main Content -->
             <div class="col p-4">
                 <div class="container-fluid">
-                    <!-- Header -->
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div>
                             <h4 class="fw-bold mb-1">Quản Lý Sản Phẩm</h4>
                             <nav aria-label="breadcrumb">
                                 <ol class="breadcrumb mb-0">
-                                    <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Dashboard</a></li>
+                                    <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Dashboard</a>
+                                    </li>
                                     <li class="breadcrumb-item active">Sản phẩm</li>
                                 </ol>
                             </nav>
@@ -166,15 +178,12 @@
                             <i class="fa-solid fa-plus me-2"></i>Thêm sản phẩm mới
                         </button>
                     </div>
-
-                    <!-- Filter Section -->
                     <div class="card mb-4">
                         <div class="card-body">
                             <div class="row g-3">
                                 <div class="col-md-3">
                                     <select class="form-select">
                                         <option>Tất cả danh mục</option>
-                                        <!-- Categories... -->
                                     </select>
                                 </div>
                                 <div class="col-md-3">
@@ -196,8 +205,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Products Table -->
                     <div class="card">
                         <div class="card-body p-0">
                             <div class="table-responsive">
@@ -216,7 +223,8 @@
                                     <tbody>
                                         <tr>
                                             <td>
-                                                <img src="product-image.jpg" class="rounded" width="50" height="50" alt="">
+                                                <img src="product-image.jpg" class="rounded" width="50" height="50"
+                                                    alt="">
                                             </td>
                                             <td>
                                                 <div class="fw-semibold">Tên sản phẩm</div>
@@ -248,8 +256,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Add/Edit Product Modal -->
     <div class="modal fade" id="addProductModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -287,20 +293,22 @@
                                 <div class="row" id="imagePreviewContainer">
                                     <div class="col-md-3 mb-3">
                                         <div class="image-upload-box border rounded p-2 text-center">
-                                            <input type="file" class="hidden-file-input" accept="image/*" onchange="previewImage(this)" style="display: none;">
-                                            <div class="upload-placeholder cursor-pointer" onclick="triggerFileInput(this)">
+                                            <input type="file" class="hidden-file-input" accept="image/*"
+                                                onchange="previewImage(this)" style="display: none;">
+                                            <div class="upload-placeholder cursor-pointer"
+                                                onclick="triggerFileInput(this)">
                                                 <i class="fa-solid fa-plus fa-2x text-muted"></i>
                                                 <p class="mt-2 mb-0 small text-muted">Thêm ảnh</p>
                                             </div>
                                             <div class="image-preview" style="display: none;">
                                                 <img src="" alt="Preview" class="img-fluid mb-2">
-                                                <button type="button" class="btn btn-sm btn-danger w-100" onclick="removeImage(this)">
+                                                <button type="button" class="btn btn-sm btn-danger w-100"
+                                                    onclick="removeImage(this)">
                                                     <i class="fa-solid fa-trash-alt"></i> Xóa
                                                 </button>
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- Additional upload boxes will be added dynamically -->
                                 </div>
                             </div>
                         </div>
@@ -316,10 +324,10 @@
     <script>
         let imageCount = 0;
         const MAX_IMAGES = 4;
-        
+
         function createImageUploadBox() {
             if (imageCount >= MAX_IMAGES) return;
-            
+
             const template = `
                 <div class="col-md-3 mb-3">
                     <div class="image-upload-box border rounded p-2 text-center">
@@ -337,25 +345,25 @@
                     </div>
                 </div>
             `;
-            
+
             document.getElementById('imagePreviewContainer').insertAdjacentHTML('beforeend', template);
         }
-        
+
         function triggerFileInput(element) {
             const fileInput = element.closest('.image-upload-box').querySelector('.hidden-file-input');
             fileInput.click();
         }
-        
+
         function previewImage(input) {
             const box = input.closest('.image-upload-box');
             const preview = box.querySelector('.image-preview');
             const placeholder = box.querySelector('.upload-placeholder');
             const img = preview.querySelector('img');
-        
+
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
-                
-                reader.onload = function(e) {
+
+                reader.onload = function (e) {
                     img.src = e.target.result;
                     placeholder.style.display = 'none';
                     preview.style.display = 'block';
@@ -364,11 +372,11 @@
                         createImageUploadBox();
                     }
                 }
-                
+
                 reader.readAsDataURL(input.files[0]);
             }
         }
-        
+
         function removeImage(button) {
             const box = button.closest('.col-md-3');
             box.remove();
@@ -377,10 +385,9 @@
                 createImageUploadBox();
             }
         }
-        
-        // Initialize first upload box
         createImageUploadBox();
-        </script>
+    </script>
     <script src="/bootstrap-5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

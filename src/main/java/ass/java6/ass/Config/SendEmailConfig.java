@@ -19,15 +19,16 @@ public class SendEmailConfig {
 
     public void sendEmail(String to, String subject, String htmlContent) {
         MimeMessage message = mailSender.createMimeMessage();
-
+    
         try {
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
             helper.setTo(to);
             helper.setSubject(subject);
-            helper.setText(htmlContent, true);
+            helper.setText(htmlContent, true); // true = gửi HTML
             mailSender.send(message);
         } catch (MessagingException e) {
             e.printStackTrace();
+            // Có thể log thêm hoặc throw lỗi tùy bạn
         }
     }
 
@@ -48,8 +49,8 @@ public class SendEmailConfig {
 
     public String generateOtp() {
         Random random = new Random();
-        int otp = random.nextInt(999999); // Tạo một số ngẫu nhiên từ 0 đến 999999
-        return String.format("%06d", otp); // Đảm bảo OTP có 6 chữ số
+        int otp = random.nextInt(999999); 
+        return String.format("%06d", otp); 
     }
 
 }

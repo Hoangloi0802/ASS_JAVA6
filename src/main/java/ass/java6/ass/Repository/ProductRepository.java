@@ -2,6 +2,7 @@ package ass.java6.ass.Repository;
 
 import java.util.List;
 
+import org.hibernate.query.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

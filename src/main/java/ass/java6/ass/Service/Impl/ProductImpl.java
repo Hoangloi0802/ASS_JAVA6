@@ -82,5 +82,15 @@ public class ProductImpl implements ProductService {
         Pageable pageable = PageRequest.of(0, limit);
         return productRepository.findLatestProducts(pageable);
     }
+    @Override
+    public Product add(Product product) {
+       
+        throw new UnsupportedOperationException("Unimplemented method 'add'");
+    }
 
+    @Override
+    public List<Product> Danhsach() {
+        productRepository.findAll();
+        throw new UnsupportedOperationException("Unimplemented method 'Danhsach'");
+    }
 }

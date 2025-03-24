@@ -13,5 +13,6 @@ public interface ProductService {
     Page<Product> filterSortAndPaginate(String keyword, Double priceFilter, String categoryId, String sort, Pageable pageable);
     List<Product> findTopSellingProducts(int limit);
     List<Product> findLatestProducts(int limit);
-
+    Product add(Product product);
+    List<Product> Danhsach();
 }
