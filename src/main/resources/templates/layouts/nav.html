@@ -1,18 +1,18 @@
 <header id="header" class="header d-flex align-items-center sticky-top">
   <div class="container position-relative d-flex align-items-center justify-content-between">
-    <a href="index.html" class="logo d-flex align-items-center me-auto me-xl-0">
-      <h1 class="sitename fs-3">Shop AOT</h1>
+    <a href="/" class="logo d-flex align-items-center me-auto me-xl-0">
+      <img src="/img/logo.png" alt="" class="img-fluid ">
     </a>
-
+   
     <nav id="navmenu" class="navmenu">
       <ul class="fs-5">
         <li>
-            <a th:href="@{/}" th:class="${currentPage == 'home' ? 'active' : ''}">TRANG CHỦ</a>
+          <a th:href="@{/}" th:class="${currentPage == 'home' ? 'active' : ''}">TRANG CHỦ</a>
         </li>
         <li>
           <a th:href="@{/shop}" th:class="${currentPageName == 'shop' ? 'active' : ''}">SẢN PHẨM</a>
         </li>
-    </ul>
+      </ul>
 
       <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
     </nav>
@@ -20,7 +20,8 @@
     <div class="header-social-links d-flex align-items-center">
       <div class="input-wrapper me-3">
         <button class="icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#fff" stroke-width="2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#fff"
+            stroke-width="2">
             <circle cx="11" cy="11" r="8" />
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
@@ -34,18 +35,35 @@
         <span class="position-absolute bg-danger rounded-circle text-white px-2"
           style="top: -5px; left: 15px; height: 20px; min-width: 20px; font-size: 12px; line-height: 20px;"
           th:text="${cartCount}">0</span>
-    </a>
-    
+      </a>
+
 
 
       <!-- Dropdown người dùng -->
       <div class="nav-item dropdown">
         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button"
           data-bs-toggle="dropdown" aria-expanded="false">
+
+          <!-- Chưa đăng nhập -->
+          <th:block th:if="${session.currentUser == null}">
             <i class="bi bi-person fs-4"></i>
+          </th:block>
+
+          <!-- Đã đăng nhập -->
+          <th:block th:if="${currentUser != null}">
+            <img th:src="${currentUser.photo != null and currentUser.photo != ''} 
+                         ? ${currentUser.photo} 
+                         : 'https://ui-avatars.com/api/?name=' + ${currentUser.fullname}"
+                 class="rounded-circle" style="width: 40px; height: 40px;">
+          </th:block>
+          
+
+
         </a>
 
-        <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="userDropdown">
+
+
+        <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="userDropdown" data-aos="zoom-out-down" >
           <!-- Chưa đăng nhập -->
           <th:block th:if="${session.currentUser == null}">
             <li>
@@ -64,16 +82,17 @@
               </a>
             </li>
           </th:block>
-        
+
           <!-- Đã đăng nhập -->
           <th:block th:if="${session.currentUser != null}">
             <li>
               <a class="dropdown-item fw-bold" href="/profile" th:text="${session.currentUser.fullname}">
                 <i class="bi bi-person-circle me-1"></i> Tên người dùng
               </a>
-             
+
             </li>
-            <hr class="dropdown-divider my-1"></li>
+            <hr class="dropdown-divider my-1">
+            </li>
             <li>
               <a class="dropdown-item" href="/donhang">
                 <i class="bi bi-cart-check me-1"></i> Đơn hàng của bạn
@@ -84,18 +103,22 @@
                 <i class="bi bi-lock me-1"></i> Đổi mật khẩu
               </a>
             </li>
-        
+
             <!-- Chỉ hiện nếu là admin -->
             <th:block sec:authorize="hasAuthority('ROLE_ADMIN')">
-              <li><hr class="dropdown-divider my-1"></li>
+              <li>
+                <hr class="dropdown-divider my-1">
+              </li>
               <li>
                 <a class="dropdown-item text-primary" href="/admin/products">
                   <i class="bi bi-gear me-1"></i> Quản lý
                 </a>
               </li>
             </th:block>
-        
-            <li><hr class="dropdown-divider my-1"></li>
+
+            <li>
+              <hr class="dropdown-divider my-1">
+            </li>
             <li>
               <form th:action="@{/logout}" method="post" class="m-0">
                 <button class="dropdown-item text-danger" type="submit">

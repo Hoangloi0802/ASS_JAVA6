@@ -35,8 +35,8 @@ public class SecurityConfig {
         "/", "/Dangnhap", "/Dangky",
         "/profile/update","/profile",
         "/donmua", "/donhang", "/chitietdonhang", "/shop",
-        "/giohang", "/thanhtoan",
-        "/chitiet",
+        "/giohang/**", "/thanhtoan",
+        "/product/**",
         "/quenmk", "/datlaimk", "/checkotp","/otpquenmk","/datlaimk","/datlaimatkhau","/goilaiotp",
 
         "/css/**", "/js/**", "/img/**", "/bootstrap-5.3.3/dist/**", "/fonts/**","/logout","/doimk",

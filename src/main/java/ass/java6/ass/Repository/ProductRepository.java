@@ -1,6 +1,7 @@
 package ass.java6.ass.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.hibernate.query.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,4 +19,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     @Query("SELECT p FROM Product p ORDER BY p.createDate DESC")
     List<Product> findLatestProducts(Pageable pageable);
+
+    Optional<Product> findById(Long id);
 }

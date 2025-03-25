@@ -1,13 +1,19 @@
 package ass.java6.ass.Repository;
+
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import ass.java6.ass.Entity.Account;
 import ass.java6.ass.Entity.Order;
+
+
+
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT od.product.name, SUM(od.quantity) as totalQuantity, SUM(od.price * od.quantity) as totalPrice, MAX(o.createDate) as lastOrderDate "
@@ -39,4 +45,5 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             @Param("endDate") LocalDateTime endDate,
             @Param("timeFormat") String timeFormat);
 
+   Optional<Order> findByAccountAndStatus(Account account, boolean status);
 }

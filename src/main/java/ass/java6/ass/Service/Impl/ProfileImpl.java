@@ -15,7 +15,7 @@ import ass.java6.ass.Service.ProfileService;
 import java.util.Optional;
 
 @Service
-public class ProfileServiceImpl implements ProfileService {
+public class ProfileImpl implements ProfileService {
 
     @Autowired
     private AccountRepository accountRepository;

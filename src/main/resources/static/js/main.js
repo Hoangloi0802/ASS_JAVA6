@@ -74,17 +74,7 @@
   });
 
 })();
-function increaseQuantity() {
-  var qtyInput = document.getElementById("quantityInput");
-  qtyInput.value = parseInt(qtyInput.value) + 1;
-}
 
-function decreaseQuantity() {
-  var qtyInput = document.getElementById("quantityInput");
-  if (parseInt(qtyInput.value) > 1) {
-    qtyInput.value = parseInt(qtyInput.value) - 1;
-  }
-}
 
 document.addEventListener('DOMContentLoaded', function () {
   const toggleButtons = document.querySelectorAll('.toggle-password');
@@ -141,4 +131,7 @@ function previewImage(event) {
     output.src = reader.result;
   };
   reader.readAsDataURL(event.target.files[0]);
+  
 }
+
+

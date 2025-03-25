@@ -15,11 +15,10 @@
         <!-- Avatar & Upload -->
         <div class="col-md-4 mb-4">
           <div class="card text-center p-3">
-            <img
+              <img id="previewImg"
               th:src="${user.photo != null ? user.photo : 'https://sm.ign.com/ign_nordic/cover/a/avatar-gen/avatar-generations_prsz.jpg'}"
-              id="previewImg" alt="Avatar" class="profile-img mx-auto mb-3"
+              alt="Avatar"class="profile-img mx-auto mb-3"
               style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover;">
-
             <h4 class="mb-1" th:text="${user.fullname}">Nguyễn Văn A</h4>
             <p class="text-muted" th:text="${user.role}">Thành viên VIP</p>
 

@@ -43,19 +43,20 @@
             <p th:text="${product.description}" class="text-secondary mb-4"></p>
 
             <form th:action="@{/giohang/add}" method="post" class="mt-4">
-                <!-- Hidden Product ID -->
-                <input type="hidden" name="productId" th:value="${product.id}">
-
-                <!-- Quantity Selector -->
-                <div class="d-flex align-items-center gap-2 mb-4">
-                  <button type="button" class="btn btn-outline-dark btn-sm px-3 py-2" onclick="decreaseQuantity()">-</button>
+              <!-- Hidden Product ID -->
+              <input type="hidden" name="productId" th:value="${product.id}">
+          
+              <!-- Quantity Selector -->
+              <div class="d-flex align-items-center gap-2 mb-4">
+                  <button type="button" class="btn btn-outline-dark btn-sm px-3 py-2" onclick="changeQuantity(-1, 'quantityInput')">-</button>
                   <input type="number" id="quantityInput" name="quantity" value="1" min="1" class="form-control form-control-sm text-center" style="width: 80px; height: 40px;">
-                  <button type="button" class="btn btn-outline-dark btn-sm px-3 py-2" onclick="increaseQuantity()">+</button>
+                  <button type="button" class="btn btn-outline-dark btn-sm px-3 py-2" onclick="changeQuantity(1, 'quantityInput')">+</button>
               </div>
-
-                <!-- Submit Button -->
-                <button type="submit" class="btn btn-dark">Add to Cart</button>
-            </form>
+          
+              <!-- Submit Button -->
+              <button type="submit" class="btn btn-dark">Add to Cart</button>
+          </form>
+          
         </div>
         </div>
       </div>

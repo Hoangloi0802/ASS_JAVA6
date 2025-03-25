@@ -222,7 +222,7 @@
                                             <td th:text="${account.email}"></td>
                                             <td>
                                                 <img th:src="${account.photo} != null and ${account.photo} != '' 
-                                                    ? @{'/img/' + ${account.photo}} 
+                                                    ? ${account.photo}
                                                     : 'https://ui-avatars.com/api/?name=' + ${account.username}"
                                                     class="rounded-circle" style="width: 40px; height: 40px;">
                                             </td>

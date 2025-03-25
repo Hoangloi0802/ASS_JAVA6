@@ -12,20 +12,22 @@ import org.springframework.web.bind.annotation.PathVariable;
 import ass.java6.ass.Entity.Product;
 import ass.java6.ass.Service.ProductService;
 
-
 @Controller
+
+
 public class Trangchu {
     @Autowired
     private ProductService productService;
+
     @GetMapping("/")
     public String home(Model model) {
-       // Sản phẩm bán chạy
-       List<Product> topSellingProducts = productService.findTopSellingProducts(8);
-       model.addAttribute("topSellingProducts", topSellingProducts);
-       model.addAttribute("currentPage", "home");
-       // Sản phẩm mới nhất
-       List<Product> latestProducts = productService.findLatestProducts(8);
-       model.addAttribute("latestProducts", latestProducts);
+        // Sản phẩm bán chạy
+        List<Product> topSellingProducts = productService.findTopSellingProducts(8);
+        model.addAttribute("topSellingProducts", topSellingProducts);
+        model.addAttribute("currentPage", "home");
+        // Sản phẩm mới nhất
+        List<Product> latestProducts = productService.findLatestProducts(8);
+        model.addAttribute("latestProducts", latestProducts);
         return "home/trangchu"; // view name
     }
 
@@ -33,12 +35,11 @@ public class Trangchu {
     public String productDetail(@PathVariable("id") Integer id, Model model) {
         Product product = productService.findById(id);
         if (product == null) {
-            return "redirect:/"; // Không tìm thấy thì về Home
+            return "redirect:/"; 
         }
         model.addAttribute("product", product);
-        return "home/chitiet"; // Tên file HTML chi tiết
+        return "home/chitiet"; 
     }
 
-
-
+ 
 }
