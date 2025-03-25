@@ -3,6 +3,8 @@ package ass.java6.ass.Entity;
 import java.io.Serializable;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
@@ -23,5 +25,15 @@ public class Category implements Serializable {
     private String id;
     String name;
     @OneToMany(mappedBy = "category")
+    @JsonIgnore
     List<Product> products;
+    @Override
+    public String toString() {
+        return "Category{" +
+               "id='" + id + '\'' +
+               ", name='" + name + '\'' +
+               // Không include products để tránh vòng lặp
+               '}';
+    }
+
 }

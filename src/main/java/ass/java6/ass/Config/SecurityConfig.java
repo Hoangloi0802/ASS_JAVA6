@@ -38,6 +38,7 @@ public class SecurityConfig {
         "/giohang/**", "/thanhtoan",
         "/product/**",
         "/quenmk", "/datlaimk", "/checkotp","/otpquenmk","/datlaimk","/datlaimatkhau","/goilaiotp",
+        "/uploads/**","/admin/products/**",
 
         "/css/**", "/js/**", "/img/**", "/bootstrap-5.3.3/dist/**", "/fonts/**","/logout","/doimk",
     };

@@ -52,13 +52,12 @@
       <div class="container">
         <div class="row g-4">
           <!-- Lặp qua danh sách products -->
-          <div th:each="product : ${topSellingProducts}" class="col-md-3 mb-4">
+          <div th:each="product : ${latestProducts}" class="col-md-3 mb-4">
             <div class="product-item">
               <div class="image-holder">
                 <a th:href="@{/product/{id}(id=${product.id})}">
-                  <img th:if="${product.productImages.size() > 0}"
-                    th:src="@{'/img/' + ${product.productImages[0].imageUrl}}" alt="Product Image"
-                    class="product-image img-fluid">
+                  <img th:if="${product.productImages != null and not product.productImages.isEmpty()}"
+                    th:src="${product.productImages[0].imageUrl}" alt="Product Image" class="product-image img-fluid">
                 </a>
               </div>
               <div class="product-content">
@@ -66,9 +65,13 @@
                   <a th:href="@{/product/{id}(id=${product.id})}" th:text="${product.name}">Product Name</a>
                 </h5>
                 <div class="d-flex justify-content-between align-items-center">
-                  <span
-                    th:text="${#numbers.formatDecimal(product.price, 1, 'POINT', 0, 'POINT')} + ' VND'">$55.00</span>
-                  <button class="btn btn-dark">Add to Cart</button>
+                  <span th:text="${#numbers.formatDecimal(product.price, 1, 'POINT', 0, 'POINT')} + ' VND'"></span>
+
+                  <!-- Nếu là ADMIN thì hiển thị số lượng sản phẩm -->
+                  <span th:if="${isAdmin}" th:text="'Số lượng: ' + ${product.quantity}"></span>
+
+                  <!-- Nếu không phải ADMIN thì hiển thị nút Add to Cart -->
+                  <button th:unless="${isAdmin}" class="btn btn-dark">Add to Cart</button>
                 </div>
               </div>
             </div>
@@ -86,9 +89,8 @@
             <div class="product-item">
               <div class="image-holder">
                 <a th:href="@{/product/{id}(id=${product.id})}">
-                  <img th:if="${product.productImages.size() > 0}"
-                    th:src="@{'/img/' + ${product.productImages[0].imageUrl}}" alt="Product Image"
-                    class="product-image img-fluid">
+                  <img th:if="${product.productImages != null and not product.productImages.isEmpty()}"
+                    th:src="${product.productImages[0].imageUrl}" alt="Product Image" class="product-image img-fluid">
                 </a>
               </div>
               <div class="product-content">
@@ -96,11 +98,16 @@
                   <a th:href="@{/product/{id}(id=${product.id})}" th:text="${product.name}">Product Name</a>
                 </h5>
                 <div class="d-flex justify-content-between align-items-center">
-                  <span
-                    th:text="${#numbers.formatDecimal(product.price, 1, 'POINT', 0, 'POINT')} + ' VND'">$55.00</span>
-                  <button class="btn btn-dark">Add to Cart</button>
+                  <span th:text="${#numbers.formatDecimal(product.price, 1, 'POINT', 0, 'POINT')} + ' VND'"></span>
+
+                  <!-- Nếu là ADMIN thì hiển thị số lượng sản phẩm -->
+                  <span th:if="${isAdmin}" th:text="'Số lượng: ' + ${product.quantity}"></span>
+
+                  <!-- Nếu không phải ADMIN thì hiển thị nút Add to Cart -->
+                  <button th:unless="${isAdmin}" class="btn btn-dark">Add to Cart</button>
                 </div>
               </div>
+            </div>
             </div>
           </div>
 

@@ -5,6 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,33 +25,42 @@ public class ShopController {
     @Autowired
     CategoryService categoryService;
 
-    @GetMapping("/shop")
-    public String shop(
-            @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) Double priceFilter,
-            @RequestParam(required = false) String categoryId,
-            @RequestParam(required = false) String sort,
-            @RequestParam(defaultValue = "0") int page,
-            Model model) {
+   
+@GetMapping("/shop")
+public String shop(
+        @RequestParam(required = false) String keyword,
+        @RequestParam(required = false) Double priceFilter,
+        @RequestParam(required = false) String categoryId,
+        @RequestParam(required = false) String sort,
+        @RequestParam(defaultValue = "0") int page,
+        Model model) {
 
-        int pageSize = 12;
-        Pageable pageable = PageRequest.of(page, pageSize);
+    int pageSize = 12;
+    Pageable pageable = PageRequest.of(page, pageSize);
 
-        Page<Product> productPage = productService.filterSortAndPaginate(keyword, priceFilter, categoryId, sort,
-                pageable);
+    Page<Product> productPage = productService.filterSortAndPaginate(keyword, priceFilter, categoryId, sort, pageable);
+    List<Category> categories = categoryService.findAll();
 
-        List<Category> categories = categoryService.findAll();
+    // Lấy thông tin user từ SecurityContextHolder
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    boolean isAdmin = authentication.getAuthorities().stream()
+                      .map(GrantedAuthority::getAuthority)
+                      .anyMatch(role -> role.equals("ROLE_ADMIN"));
 
-        model.addAttribute("products", productPage.getContent());
-        model.addAttribute("categories", categories);
-        model.addAttribute("priceFilter", priceFilter);
-        model.addAttribute("categoryId", categoryId);
-        model.addAttribute("sort", sort);
-        model.addAttribute("keyword", keyword);
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", productPage.getTotalPages());
-        model.addAttribute("currentPageName", "shop");
+    // Truyền dữ liệu vào model
+    model.addAttribute("products", productPage.getContent());
+    model.addAttribute("categories", categories);
+    model.addAttribute("priceFilter", priceFilter);
+    model.addAttribute("categoryId", categoryId);
+    model.addAttribute("sort", sort);
+    model.addAttribute("keyword", keyword);
+    model.addAttribute("currentPage", page);
+    model.addAttribute("totalPages", productPage.getTotalPages());
+    model.addAttribute("currentPageName", "shop");
 
-        return "home/sanpham";
-    }
+    // Truyền thông tin quyền admin vào Thymeleaf
+    model.addAttribute("isAdmin", isAdmin);
+
+    return "home/sanpham";
+}
 }

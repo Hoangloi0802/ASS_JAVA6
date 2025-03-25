@@ -36,7 +36,7 @@
                 <th:block th:each="item : ${cartItems}">
                     <div class="row align-items-center py-3 border-bottom">
                         <div class="col-sm-6 col-12 d-flex align-items-center">
-                            <img class="me-3" th:src="@{${'/img/' + item.product.productImages[0].imageUrl}}"
+                            <img class="me-3"  th:src="${item.product.productImages[0].imageUrl}" 
                                 alt="Product Image" width="50">
                             <div>
                                 <h5 class="fw-bold mb-0" th:text="${item.product.name}"></h5>

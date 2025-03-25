@@ -17,7 +17,7 @@
               <div class="swiper main-slider">
                 <div class="swiper-wrapper">
                   <div th:each="img : ${product.productImages}" class="swiper-slide">
-                    <img class="img-thumbnail slider-image" th:src="@{'/img/' + ${img.imageUrl}}" alt="">
+                    <img class="img-thumbnail slider-image" th:src="${img.imageUrl}" alt="">
                   </div>
                 </div>
                 <div class="swiper-button-next"></div>
@@ -28,7 +28,7 @@
               <div class="swiper thumbs-slider mt-3">
                 <div class="swiper-wrapper">
                   <div th:each="img : ${product.productImages}" class="swiper-slide">
-                    <img class="img-fluid thumb-image" th:src="@{'/img/' + ${img.imageUrl}}" alt="">
+                    <img class="img-fluid thumb-image" th:src=" ${img.imageUrl}" alt="">
                   </div>
                 </div>
               </div>
