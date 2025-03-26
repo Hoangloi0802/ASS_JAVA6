@@ -1,6 +1,9 @@
 package ass.java6.ass.Entity;
 
 import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,10 +18,11 @@ public class ProductImage implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "ImageUrl", nullable = false)
+    @Column(name = "image_url")
     private String imageUrl;
 
     @ManyToOne
-    @JoinColumn(name = "ProductId", nullable = false) 
+    @JoinColumn(name = "product_id")
+    @JsonBackReference
     private Product product;
 }

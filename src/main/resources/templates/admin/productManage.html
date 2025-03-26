@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản Lý Sản Phẩm</title>
-    <link rel="stylesheet" href="/bootstrap-5.3.3/dist/css/bootstrap.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -106,7 +108,6 @@
         }
     </style>
 </head>
-
 <body>
     <div class="container-fluid">
         <div class="row g-0">
@@ -143,13 +144,13 @@
                         <li class="nav-item w-100">
                             <a th:href="@{/admin/account}" class="nav-link">
                                 <i class="fa-solid fa-users me-2"></i>
-                                <span class="ms-1 d-none d-sm-inline">Quản Lý Người Dùng</span>
+                                <span class="ms-1 d-none d-sm-inline">Quản Lý Voucher</span>
                             </a>
                         </li>
                         <li class="nav-item w-100">
                             <a th:href="@{/admin/nhansu}" class="nav-link">
-                                <i class="fa-solid fa-chart-pie me-2"></i>
-                                <span class="ms-1 d-none d-sm-inline">Quản Lý Nhân Sự</span>
+                                <i class="fa-solid fa-ticket-alt me-2"></i>
+                                <span class="ms-1 d-none d-sm-inline">Quản Lý Voucher</span>
                             </a>
                         </li>
                         <li class="nav-item w-100">
@@ -168,43 +169,21 @@
                             <h4 class="fw-bold mb-1">Quản Lý Sản Phẩm</h4>
                             <nav aria-label="breadcrumb">
                                 <ol class="breadcrumb mb-0">
-                                    <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Dashboard</a>
-                                    </li>
+                                    <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Dashboard</a></li>
                                     <li class="breadcrumb-item active">Sản phẩm</li>
                                 </ol>
                             </nav>
                         </div>
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal" onclick="resetModal()">
                             <i class="fa-solid fa-plus me-2"></i>Thêm sản phẩm mới
                         </button>
                     </div>
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <div class="row g-3">
-                                <div class="col-md-3">
-                                    <select class="form-select">
-                                        <option>Tất cả danh mục</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3">
-                                    <select class="form-select">
-                                        <option>Sắp xếp theo</option>
-                                        <option>Giá: Thấp đến cao</option>
-                                        <option>Giá: Cao đến thấp</option>
-                                        <option>Mới nhất</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" placeholder="Tìm kiếm sản phẩm...">
-                                        <button class="btn btn-outline-secondary" type="button">
-                                            <i class="fa-solid fa-search"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
+                    <!-- Thông báo -->
+                    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+                    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+                    <!-- Products Table -->
                     <div class="card">
                         <div class="card-body p-0">
                             <div class="table-responsive">
@@ -221,29 +200,35 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
+                                        <tr th:each="product : ${products}">
                                             <td>
-                                                <img src="product-image.jpg" class="rounded" width="50" height="50"
-                                                    alt="">
+                                                <img th:src="${product.getFirstImage()}" class="rounded" width="50" height="50" alt="Product Image" 
+                                                     th:unless="${product.getFirstImage() == null}" 
+                                                     src="/images/default-product.png" />
                                             </td>
                                             <td>
-                                                <div class="fw-semibold">Tên sản phẩm</div>
-                                                <small class="text-muted">#SP001</small>
+                                                <div class="fw-semibold" th:text="${product.name}"></div>
+                                                <small class="text-muted" th:text="'#' + ${product.id}"></small>
                                             </td>
-                                            <td>Rau củ</td>
-                                            <td>120.000đ</td>
-                                            <td>50</td>
+                                            <td th:text="${product.category != null ? product.category.name : 'N/A'}"></td>
+                                            <td th:text="${#numbers.formatCurrency(product.price)} + 'đ'"></td>
+                                            <td th:text="${product.quantity}"></td>
                                             <td>
-                                                <span class="badge bg-success">Còn hàng</span>
+                                                <span th:classappend="${product.available} ? 'badge bg-success' : 'badge bg-danger'"
+                                                      th:text="${product.available} ? 'Còn hàng' : 'Hết hàng'"></span>
                                             </td>
                                             <td>
                                                 <div class="d-flex gap-2">
-                                                    <button class="btn btn-sm btn-info btn-action">
+                                                    <button class="btn btn-sm btn-info btn-action edit-btn" 
+                                                            data-bs-toggle="modal" 
+                                                            data-bs-target="#addProductModal" 
+                                                            th:attr="data-id=${product.id}">
                                                         <i class="fa-solid fa-pen-to-square"></i>
                                                     </button>
-                                                    <button class="btn btn-sm btn-danger btn-action">
+                                                    <a th:href="@{/admin/products/delete/{id}(id=${product.id})}" 
+                                                       class="btn btn-sm btn-danger btn-action">
                                                         <i class="fa-solid fa-trash"></i>
-                                                    </button>
+                                                    </a>
                                                 </div>
                                             </td>
                                         </tr>
@@ -256,82 +241,194 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="addProductModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Thêm sản phẩm mới</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Tên sản phẩm</label>
-                            <input type="text" class="form-control" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Danh mục</label>
-                            <select class="form-select" required>
-                                <option value="">Chọn danh mục</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Giá</label>
-                            <input type="number" class="form-control" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Số lượng</label>
-                            <input type="number" class="form-control" required>
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label">Mô tả</label>
-                            <textarea class="form-control" rows="3"></textarea>
-                        </div>
-                        <div class="col-12 mb-3">
-                            <label class="form-label">Hình ảnh sản phẩm (Tối đa 4 ảnh)</label>
-                            <div class="image-upload-container">
-                                <div class="row" id="imagePreviewContainer">
-                                    <div class="col-md-3 mb-3">
-                                        <div class="image-upload-box border rounded p-2 text-center">
-                                            <input type="file" class="hidden-file-input" accept="image/*"
-                                                onchange="previewImage(this)" style="display: none;">
-                                            <div class="upload-placeholder cursor-pointer"
-                                                onclick="triggerFileInput(this)">
-                                                <i class="fa-solid fa-plus fa-2x text-muted"></i>
-                                                <p class="mt-2 mb-0 small text-muted">Thêm ảnh</p>
-                                            </div>
-                                            <div class="image-preview" style="display: none;">
-                                                <img src="" alt="Preview" class="img-fluid mb-2">
-                                                <button type="button" class="btn btn-sm btn-danger w-100"
+
+    <!-- Add/Edit Product Modal -->
+    <!-- Add/Edit Product Modal -->
+<div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addProductModalLabel">Thêm sản phẩm mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="productForm" 
+                      th:action="@{/admin/products}" 
+                      method="post" 
+                      enctype="multipart/form-data" 
+                      class="row g-3">
+                    <input type="hidden" name="id" id="productId" />
+                    <div class="col-md-6">
+                        <label class="form-label">Tên sản phẩm</label>
+                        <input type="text" class="form-control" name="name" id="productName" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Danh mục</label>
+                        <select class="form-select" name="category.id" id="productCategory" required>
+                            <option value="">Chọn danh mục</option>
+                            <option th:each="category : ${categories}" 
+                                    th:value="${category.id}" 
+                                    th:text="${category.name}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Giá</label>
+                        <input type="number" class="form-control" name="price" id="productPrice" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Số lượng</label>
+                        <input type="number" class="form-control" name="quantity" id="productQuantity" required>
+                    </div>
+                    <!-- Thêm trường select cho trạng thái -->
+                    <div class="col-md-6">
+                        <label class="form-label">Trạng thái</label>
+                        <select class="form-select" name="available" id="productAvailable" required>
+                            <option value="">Chọn trạng thái</option>
+                            <option value="true">Có hàng</option>
+                            <option value="false">Hết hàng</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Mô tả</label>
+                        <textarea class="form-control" rows="3" name="description" id="productDescription"></textarea>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label class="form-label">Hình ảnh sản phẩm (Tối đa 4 ảnh)</label>
+                        <div class="image-upload-container">
+                            <div class="row" id="imagePreviewContainer">
+                                <div class="col-md-3 mb-3" id="newImageUpload">
+                                    <div class="image-upload-box border rounded p-2 text-center">
+                                        <input type="file" name="images" class="hidden-file-input" accept="image/*" 
+                                               onchange="previewImage(this)" style="display: none;" multiple>
+                                        <div class="upload-placeholder cursor-pointer" onclick="triggerFileInput(this)">
+                                            <i class="fa-solid fa-plus fa-2x text-muted"></i>
+                                            <p class="mt-2 mb-0 small text-muted">Thêm ảnh</p>
+                                        </div>
+                                        <div class="image-preview" style="display: none;">
+                                            <img src="" alt="Preview" class="img-fluid mb-2">
+                                            <button type="button" class="btn btn-sm btn-danger w-100" 
                                                     onclick="removeImage(this)">
-                                                    <i class="fa-solid fa-trash-alt"></i> Xóa
-                                                </button>
-                                            </div>
+                                                <i class="fa-solid fa-trash-alt"></i> Xóa
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="button" class="btn btn-primary">Lưu</button>
-                </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="button" class="btn btn-warning" onclick="resetModal()">Reset</button>
+                        <button type="submit" class="btn btn-primary">Lưu</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+</div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom JavaScript -->
     <script>
         let imageCount = 0;
         const MAX_IMAGES = 4;
 
-        function createImageUploadBox() {
-            if (imageCount >= MAX_IMAGES) return;
+        // Khi modal được mở, lấy dữ liệu sản phẩm nếu có
+        // Khi modal được mở, lấy dữ liệu sản phẩm nếu có
+document.getElementById('addProductModal').addEventListener('show.bs.modal', function (event) {
+    const button = event.relatedTarget;
+    const productId = button.getAttribute('data-id');
+    const form = document.getElementById('productForm');
 
+    if (productId) {
+        fetch(`/admin/products/get/${productId}`)
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(text || 'Không tìm thấy sản phẩm');
+                    });
+                }
+                return response.json();
+            })
+            .then(product => {
+                console.log("Dữ liệu sản phẩm nhận được:", product);
+                document.getElementById('productId').value = product.id;
+                document.getElementById('productName').value = product.name;
+                document.getElementById('productCategory').value = product.category ? product.category.id : '';
+                document.getElementById('productPrice').value = product.price;
+                document.getElementById('productQuantity').value = product.quantity || 0;
+                document.getElementById('productDescription').value = product.description || '';
+                // Điền giá trị cho trạng thái
+                document.getElementById('productAvailable').value = product.available != null ? product.available.toString() : '';
+                document.getElementById('addProductModalLabel').textContent = 'Sửa sản phẩm';
+
+                // Cập nhật action của form
+                form.action = `/admin/products/update/${product.id}`;
+
+                const imageContainer = document.getElementById('imagePreviewContainer');
+                imageContainer.innerHTML = '';
+                imageCount = 0;
+
+                if (product.productImages && product.productImages.length > 0) {
+                    product.productImages.forEach(img => {
+                        const imageBox = `
+                            <div class="col-md-3 mb-3">
+                                <div class="image-upload-box border rounded p-2 text-center">
+                                    <div class="image-preview">
+                                        <img src="${img.imageUrl}" alt="Preview" class="img-fluid mb-2">
+                                        <button type="button" class="btn btn-sm btn-danger w-100" 
+                                                onclick="removeExistingImage(${img.id})">
+                                            <i class="fa-solid fa-trash-alt"></i> Xóa
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        imageContainer.insertAdjacentHTML('beforeend', imageBox);
+                        imageCount++;
+                    });
+                }
+
+                if (imageCount < MAX_IMAGES) {
+                    createImageUploadBox();
+                }
+            })
+            .catch(error => {
+                console.error("Lỗi khi lấy dữ liệu sản phẩm:", error);
+                alert("Không thể lấy dữ liệu sản phẩm: " + error.message);
+            });
+    } else {
+        resetModal();
+        form.action = '/admin/products';
+    }
+});
+
+// Reset form
+function resetModal() {
+    const form = document.getElementById('productForm');
+    form.reset();
+    document.getElementById('imagePreviewContainer').innerHTML = '';
+    imageCount = 0;
+    createImageUploadBox();
+    document.getElementById('addProductModalLabel').textContent = 'Thêm sản phẩm mới';
+    document.getElementById('productId').value = '';
+    document.getElementById('productAvailable').value = ''; // Reset trạng thái
+    form.action = '/admin/products';
+    console.log("Form đã được reset");
+}
+
+        // Tạo box upload ảnh mới
+        function createImageUploadBox() {
+            if (imageCount >= MAX_IMAGES) {
+                console.log("Đã đạt tối đa số lượng ảnh: ", MAX_IMAGES);
+                return;
+            }
             const template = `
                 <div class="col-md-3 mb-3">
                     <div class="image-upload-box border rounded p-2 text-center">
-                        <input type="file" class="hidden-file-input" accept="image/*" onchange="previewImage(this)" style="display: none;">
+                        <input type="file" name="images" class="hidden-file-input" accept="image/*" onchange="previewImage(this)" style="display: none;">
                         <div class="upload-placeholder cursor-pointer" onclick="triggerFileInput(this)">
                             <i class="fa-solid fa-plus fa-2x text-muted"></i>
                             <p class="mt-2 mb-0 small text-muted">Thêm ảnh</p>
@@ -345,15 +442,16 @@
                     </div>
                 </div>
             `;
-
             document.getElementById('imagePreviewContainer').insertAdjacentHTML('beforeend', template);
         }
 
+        // Kích hoạt input file
         function triggerFileInput(element) {
             const fileInput = element.closest('.image-upload-box').querySelector('.hidden-file-input');
             fileInput.click();
         }
 
+        // Xem trước ảnh
         function previewImage(input) {
             const box = input.closest('.image-upload-box');
             const preview = box.querySelector('.image-preview');
@@ -362,32 +460,56 @@
 
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
-
                 reader.onload = function (e) {
                     img.src = e.target.result;
                     placeholder.style.display = 'none';
                     preview.style.display = 'block';
                     imageCount++;
+                    console.log("Đã thêm ảnh mới, imageCount: ", imageCount);
                     if (imageCount < MAX_IMAGES) {
                         createImageUploadBox();
                     }
-                }
-
+                };
                 reader.readAsDataURL(input.files[0]);
             }
         }
 
+        // Xóa ảnh mới
         function removeImage(button) {
             const box = button.closest('.col-md-3');
             box.remove();
             imageCount--;
-            if (imageCount < MAX_IMAGES && !document.querySelector('.upload-placeholder')) {
+            console.log("Đã xóa ảnh, imageCount: ", imageCount);
+            if (imageCount < MAX_IMAGES && !document.querySelector('#newImageUpload')) {
                 createImageUploadBox();
             }
         }
-        createImageUploadBox();
-    </script>
-    <script src="/bootstrap-5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
 
+        // Xóa ảnh hiện có
+        function removeExistingImage(imageId) {
+            console.log("Xóa ảnh hiện có, Image ID: ", imageId);
+            fetch('/admin/products/image/' + imageId, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data);
+                const box = document.querySelector(`button[onclick="removeExistingImage(${imageId})"]`).closest('.col-md-3');
+                box.remove();
+                imageCount--;
+                console.log("Đã xóa ảnh hiện có, imageCount: ", imageCount);
+                if (imageCount < MAX_IMAGES && !document.querySelector('#newImageUpload')) {
+                    createImageUploadBox();
+                }
+            })
+            .catch(error => {
+                console.error('Lỗi khi xóa ảnh:', error);
+                alert('Lỗi khi xóa ảnh!');
+            });
+        }
+
+        
+    </script>
+</body>
 </html>

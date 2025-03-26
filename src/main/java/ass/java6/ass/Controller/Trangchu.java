@@ -31,7 +31,7 @@ public class Trangchu {
 
     @GetMapping("/product/{id}")
     public String productDetail(@PathVariable("id") Integer id, Model model) {
-        Product product = productService.findById(id);
+        Product product = productService.findById1(id).orElse(null);
         if (product == null) {
             return "redirect:/"; // Không tìm thấy thì về Home
         }
@@ -39,10 +39,6 @@ public class Trangchu {
         return "home/chitiet"; // Tên file HTML chi tiết
     }
 
-    @GetMapping("/profile")
-    public String profile() {
-        return "home/profile";
-    }
 
 
 }

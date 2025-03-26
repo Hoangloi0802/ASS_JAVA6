@@ -1,4 +1,4 @@
- package ass.java6.ass.Controller;
+package ass.java6.ass.Controller;
 
 import org.springframework.ui.Model;
 import java.util.Optional;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/admin/categories")
@@ -44,21 +44,27 @@ public class CategoryController {
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute Category item) {
+    public String create(@ModelAttribute Category item, RedirectAttributes redirectAttributes) {
         categoryService.save(item);
+        redirectAttributes.addFlashAttribute("message", "Thêm danh mục thành công!");
+        redirectAttributes.addFlashAttribute("type", "success");
         return "redirect:/admin/categories";
     }
 
     @PostMapping("/update")
-    public String update(@ModelAttribute Category item) {
+    public String update(@ModelAttribute Category item, RedirectAttributes redirectAttributes) {
         categoryService.save(item);
+        redirectAttributes.addFlashAttribute("message", "Cập nhật danh mục thành công!");
+        redirectAttributes.addFlashAttribute("type", "success");
         return "redirect:/admin/categories";
     }
 
     @PostMapping("/delete")
-    public String delete(@RequestParam("id") String id) {
+    public String delete(@RequestParam("id") String id, RedirectAttributes redirectAttributes) {
         categoryService.deleteById(id);
+        redirectAttributes.addFlashAttribute("message", "Xóa danh mục thành công!");
+        redirectAttributes.addFlashAttribute("type", "success");
         return "redirect:/admin/categories";
     }
-}
 
+}
