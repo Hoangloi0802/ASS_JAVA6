@@ -33,6 +33,10 @@ public class Accoutlmpl implements AccoutService {
         return accountRepository.findByUsername(username);
     }
 
+    @Override
+    public Account save(Account account) {
+        return accountRepository.save(account);
+    }
 
     @Override
     public Account Dangky(@Valid @ModelAttribute("accoutDangky") DangkyRequest newaccout) {
@@ -60,32 +64,31 @@ public class Accoutlmpl implements AccoutService {
 
     @Override
     public Account Xacthuc(HttpSession session, Integer otpinput) {
-    
-    Object otpObj = session.getAttribute("otp");
-    if (otpObj == null) {
-        throw new IllegalArgumentException("OTP đã hết hạn hoặc không tồn tại.");
-    }
-    int otpFromSession;
-    try {
-        otpFromSession = Integer.parseInt(otpObj.toString());
-    } catch (NumberFormatException e) {
-        throw new IllegalArgumentException("OTP không hợp lệ.");
-    }
-    Account account = (Account) session.getAttribute("account");
-    if (account == null) {
-        throw new IllegalArgumentException("Không tìm thấy tài khoản trong session.");
-    }
-    if (otpinput != otpFromSession) {
-        throw new IllegalArgumentException("❌ Mã OTP không đúng. Vui lòng thử lại.");
-        
-    } else {
-        account.setActivated(true);
-        accountRepository.save(account);
-        session.removeAttribute("otp"); 
-        return account;
-    }
-}
 
+        Object otpObj = session.getAttribute("otp");
+        if (otpObj == null) {
+            throw new IllegalArgumentException("OTP đã hết hạn hoặc không tồn tại.");
+        }
+        int otpFromSession;
+        try {
+            otpFromSession = Integer.parseInt(otpObj.toString());
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("OTP không hợp lệ.");
+        }
+        Account account = (Account) session.getAttribute("account");
+        if (account == null) {
+            throw new IllegalArgumentException("Không tìm thấy tài khoản trong session.");
+        }
+        if (otpinput != otpFromSession) {
+            throw new IllegalArgumentException("❌ Mã OTP không đúng. Vui lòng thử lại.");
+
+        } else {
+            account.setActivated(true);
+            accountRepository.save(account);
+            session.removeAttribute("otp");
+            return account;
+        }
+    }
 
     @Override
     public void Checkotpquenmk(HttpSession session, String otpInput) {
@@ -94,14 +97,13 @@ public class Accoutlmpl implements AccoutService {
         if (otpObj == null) {
             throw new IllegalArgumentException("OTP đã hết hạn hoặc không tồn tại.");
         }
-    
+
         String otpFromSession = otpObj.toString().trim();
         if (!otpFromSession.equals(otpInput.trim())) {
             throw new IllegalArgumentException("OTP không đúng.");
         }
-        session.removeAttribute("otp");   
+        session.removeAttribute("otp");
     }
-
 
     @Override
     public void doiMatKhau(String email, String password) {

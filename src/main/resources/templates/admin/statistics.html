@@ -132,11 +132,6 @@
                             <div class="col-md-3">
                                 <label class="form-label">Loại sản phẩm</label>
                                 <select class="form-select" id="categoryFilter">
-                                    <option value="">Tất cả loại</option>
-                                    <option value="Điện thoại">Điện thoại</option>
-                                    <option value="Laptop">Laptop</option>
-                                    <option value="Tablet">Tablet</option>
-                                    <option value="Phụ kiện">Phụ kiện</option>
                                 </select>
                             </div>
                             <div class="col-md-3">
@@ -167,31 +162,33 @@
                             <div class="stats-card summary-card">
                                 <i class="fas fa-money-bill-wave fa-2x mb-3 text-primary"></i>
                                 <h4>Tổng Doanh Thu</h4>
-                                <p id="totalRevenue">0 ₫</p>
+                                <p id="totalRevenue" th:text="${totalRevenue} + ' ₫'">0 ₫</p>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="stats-card summary-card">
                                 <i class="fas fa-shopping-cart fa-2x mb-3 text-success"></i>
                                 <h4>Tổng Đơn Hàng</h4>
-                                <p id="totalOrders">0</p>
+                                <p id="totalOrders" th:text="${totalOrders}">0</p>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="stats-card summary-card">
                                 <i class="fas fa-box fa-2x mb-3 text-warning"></i>
                                 <h4>Sản Phẩm Đã Bán</h4>
-                                <p id="totalProducts">0</p>
+                                <p id="totalProducts" th:text="${totalProducts}">0</p>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="stats-card summary-card">
                                 <i class="fas fa-users fa-2x mb-3 text-info"></i>
                                 <h4>Khách Hàng Mới</h4>
-                                <p id="newCustomers">0</p>
+                                <p id="newCustomers" th:text="${newCustomers}">0</p>
                             </div>
                         </div>
                     </div>
+                    <h4 class="mb-4">Thống Kê Doanh Thu Theo Loại Sản Phẩm</h4>
+                    <canvas id="categoryRevenueChart"></canvas>
                     <div class="stats-card">
                         <h4 class="mb-4">Chi Tiết Thống Kê</h4>
                         <div class="table-responsive">
@@ -205,7 +202,18 @@
                                         <th>Trung Bình/Đơn</th>
                                     </tr>
                                 </thead>
-                                <tbody id="statsTableBody">
+                                <tbody>
+                                    <tr th:each="i : ${#numbers.sequence(0, labels.size()-1)}">
+                                        <td th:text="${labels[i]}"></td>
+                                        <td th:text="${totalProducts[i]}"></td>
+                                        <td th:text="${totalOrders[i]}"></td>
+                                        <td
+                                            th:text="${#numbers.formatDecimal(revenue[i], 0, 'COMMA', 0, 'POINT')} + ' ₫'">
+                                        </td>
+                                        <td
+                                            th:text="${totalOrders[i] != 0 ? #numbers.formatDecimal(revenue[i] / totalOrders[i], 0, 'COMMA', 0, 'POINT') + ' ₫' : '0 ₫'}">
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -216,129 +224,51 @@
     </div>
 
     <script th:src="@{/bootstrap-5.3.3/dist/js/bootstrap.bundle.min.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script>
-        // Sample data
-        const sampleData = {
-            categories: ['Điện thoại', 'Laptop', 'Tablet', 'Phụ kiện'],
-            revenue: [50000000, 80000000, 30000000, 20000000],
-            quantity: [150, 100, 80, 200]
-        };
+        document.addEventListener("DOMContentLoaded", async () => {
+            try {
+                const response = await fetch('/admin/statistics/revenueByCategory');
+                const data = await response.json();
+                console.log("✅ Dữ liệu từ API:", data);
 
-        // Initialize charts
-        let revenueChart, categoryPieChart;
+                if (!data.categories || !data.revenue || data.categories.length === 0 || data.revenue.length === 0) {
+                    console.error("⚠ Dữ liệu biểu đồ trống hoặc không hợp lệ!");
+                    return;
+                }
 
-        function initCharts() {
-            // Revenue Chart
-            const ctxRevenue = document.getElementById('revenueChart').getContext('2d');
-            revenueChart = new Chart(ctxRevenue, {
-                type: 'line',
-                data: {
-                    labels: sampleData.categories,
-                    datasets: [{
-                        label: 'Doanh thu (VNĐ)',
-                        data: sampleData.revenue,
-                        borderColor: '#4f46e5',
-                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: value => value.toLocaleString('vi-VN', {
-                                    style: 'currency',
-                                    currency: 'VND'
-                                })
-                            }
-                        }
+                const ctx = document.getElementById('categoryRevenueChart');
+                if (!ctx) {
+                    console.error("⚠ Không tìm thấy <canvas> để vẽ biểu đồ!");
+                    return;
+                }
+
+                if (window.categoryChart) {
+                    window.categoryChart.destroy();
+                }
+
+                window.categoryChart = new Chart(ctx.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: data.categories,
+                        datasets: [{
+                            label: 'Doanh Thu (₫)',
+                            data: data.revenue,
+                            backgroundColor: ['#ff6384', '#36a2eb', '#ffce56', '#4bc0c0']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: { y: { beginAtZero: true } }
                     }
-                }
-            });
+                });
 
-            // Category Pie Chart
-            const ctxPie = document.getElementById('categoryPieChart').getContext('2d');
-            categoryPieChart = new Chart(ctxPie, {
-                type: 'doughnut',
-                data: {
-                    labels: sampleData.categories,
-                    datasets: [{
-                        data: sampleData.revenue,
-                        backgroundColor: [
-                            '#4f46e5',
-                            '#10b981',
-                            '#f59e0b',
-                            '#ef4444'
-                        ]
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            });
-        }
-
-        function updateStatistics() {
-            const category = document.getElementById('categoryFilter').value;
-            const startDate = document.getElementById('startDate').value;
-            const endDate = document.getElementById('endDate').value;
-            const timeUnit = document.getElementById('timeUnit').value;
-
-            fetch(`/admin/statistics/revenue?category=${category}&startDate=${startDate}&endDate=${endDate}&timeUnit=${timeUnit}`)
-                .then(response => response.json())
-                .then(data => {
-                    // Hiển thị tổng quan
-                    document.getElementById('totalRevenue').textContent =
-                        data.revenue.reduce((a, b) => a + b, 0).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
-
-                    document.getElementById('totalOrders').textContent = data.totalOrders.reduce((a, b) => a + b, 0);
-                    document.getElementById('totalProducts').textContent = data.totalProducts.reduce((a, b) => a + b, 0);
-                    document.getElementById('newCustomers').textContent = data.newCustomers.reduce((a, b) => a + b, 0);
-
-                    // Cập nhật biểu đồ
-                    updateCharts(data);
-
-                    // Cập nhật bảng chi tiết
-                    updateStatsTable(data);
-                })
-                .catch(error => console.error("Error fetching statistics:", error));
-        }
-
-        function updateCharts(data) {
-            // Cập nhật biểu đồ doanh thu
-            revenueChart.data.labels = data.labels;
-            revenueChart.data.datasets[0].data = data.revenue;
-            revenueChart.update();
-
-            // Cập nhật biểu đồ phân bố theo loại
-            categoryPieChart.data.labels = data.labels;
-            categoryPieChart.data.datasets[0].data = data.revenue;
-            categoryPieChart.update();
-        }
-
-        function updateStatsTable(data) {
-            const tbody = document.getElementById('statsTableBody');
-            tbody.innerHTML = ''; // Xóa nội dung cũ
-
-            for (let i = 0; i < data.labels.length; i++) {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-            <td>${data.labels[i]}</td>
-            <td>${data.totalProducts[i]}</td>
-            <td>${data.totalOrders[i]}</td>
-            <td>${data.revenue[i].toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</td>
-            <td>${(data.revenue[i] / data.totalOrders[i]).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</td>
-        `;
-                tbody.appendChild(row);
+            } catch (error) {
+                console.error("⚠ Lỗi tải dữ liệu:", error);
             }
-        }
-
-        // Gọi hàm khi trang được tải
-        document.addEventListener('DOMContentLoaded', updateStatistics);
+        });
 
     </script>
 </body>

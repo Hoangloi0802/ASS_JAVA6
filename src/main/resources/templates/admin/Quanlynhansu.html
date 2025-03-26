@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,41 +8,54 @@
     <link rel="stylesheet" href="/bootstrap-5.3.3/dist/css/bootstrap.css">
     <link rel="stylesheet" href="/css/admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         :root {
             --primary-color: #4f46e5;
             --secondary-color: #6366f1;
         }
+
         body {
             background-color: #f3f4f6;
             font-family: 'Segoe UI', sans-serif;
         }
+
         .role-badge {
             padding: 0.35em 0.65em;
             border-radius: 0.25rem;
             font-size: 0.875em;
         }
+
         .role-admin {
             background-color: #fee2e2;
             color: #dc2626;
         }
+
         .role-manager {
             background-color: #e0e7ff;
             color: #4f46e5;
         }
+
         .role-staff {
             background-color: #dcfce7;
             color: #15803d;
         }
+
+        .role-admin {
+            color: red;
+            font-weight: bold;
+        }
     </style>
 </head>
+
 <body>
     <div class="container-fluid">
         <div class="row">
             <div class="col-auto p-3 min-vh-100 bg-white shadow-sm">
                 <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
                     <a href="/" class="d-flex align-items-center pb-3 mb-md-0 text-decoration-none">
-                        <span class="fs-5 d-none d-sm-inline" style="color: var(--primary-color); font-weight: 600;">Admin Dashboard</span>
+                        <span class="fs-5 d-none d-sm-inline"
+                            style="color: var(--primary-color); font-weight: 600;">Admin Dashboard</span>
                     </a>
                     <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start w-100">
                         <li class="nav-item w-100">
@@ -92,21 +106,19 @@
             <!-- Main Content -->
             <div class="col p-4">
                 <div class="container">
-                    <!-- Header -->
+
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div>
                             <h4 class="mb-1 fw-bold">Quản Lý Nhân Sự</h4>
                             <nav aria-label="breadcrumb">
                                 <ol class="breadcrumb mb-0">
-                                    <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Dashboard</a></li>
+                                    <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Dashboard</a>
+                                    </li>
                                     <li class="breadcrumb-item active">Quản Lý Nhân Sự</li>
                                 </ol>
                             </nav>
                         </div>
-                    
                     </div>
-
-                    <!-- Search and Filter -->
                     <div class="card shadow-sm mb-4">
                         <div class="card-body">
                             <div class="row g-3">
@@ -118,13 +130,9 @@
                                         </button>
                                     </div>
                                 </div>
-                                
-                                
                             </div>
                         </div>
                     </div>
-
-                    <!-- Staff List -->
                     <div class="card shadow-sm">
                         <div class="card-body p-0">
                             <div class="table-responsive">
@@ -133,7 +141,6 @@
                                         <tr>
                                             <th>Nhân viên</th>
                                             <th>Mã NV</th>
-                                            <th>Phòng ban</th>
                                             <th>Email</th>
                                             <th>Số điện thoại</th>
                                             <th>Vai trò</th>
@@ -141,42 +148,48 @@
                                             <th class="text-center">Thao tác</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <th:block th:each="account : ${accounts}">
                                         <tr>
                                             <td>
                                                 <div class="d-flex align-items-center">
-                                                    <img src="https://ui-avatars.com/api/?name=John+Doe" 
-                                                         class="rounded-circle me-2" width="40" height="40">
+                                                    <img th:src="@{|https://ui-avatars.com/api/?name=${account.fullname}|}"
+                                                        class="rounded-circle me-2" width="40" height="40">
                                                     <div>
-                                                        <div class="fw-bold">John Doe</div>
-                                                        <div class="text-muted small">Trưởng phòng</div>
+                                                        <div class="fw-bold" th:text="${account.fullname}"></div>
+                                                        <div class="text-muted small" th:text="${account.address}">
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td>NV001</td>
-                                            <td>Phòng Kinh Doanh</td>
-                                            <td>john.doe@company.com</td>
-                                            <td>0123456789</td>
+                                            <td th:text="${account.username}"></td>
+                                            <td th:text="${account.email}"></td>
+                                            <td th:text="${account.mobile}"></td>
                                             <td>
-                                                <span class="role-badge role-manager">Manager</span>
+                                                <span class="role-badge"
+                                                    th:classappend="${account.role.name() == 'ROLE_ADMIN' ? 'role-admin' : 'role-staff'}"
+                                                    th:text="${account.role.name()}">
+                                                </span>
                                             </td>
                                             <td>
-                                                <span class="badge bg-success">Đang làm việc</span>
+                                                <span class="badge"
+                                                    th:classappend="${account.activated ? 'bg-success' : 'bg-danger'}"
+                                                    th:text="${account.activated ? 'Đang làm việc' : 'Ngừng hoạt động'}"></span>
                                             </td>
                                             <td>
                                                 <div class="d-flex justify-content-center gap-2">
-                                                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" 
-                                                            data-bs-target="#editRoleModal">
-                                                        <i class="fa-solid fa-user-gear"></i>
+                                                    <button class="btn btn-primary btn-sm"
+                                                        onclick="showDetails(this.getAttribute('data-username'))"
+                                                        th:attr="data-username=${account.username}">
+                                                        <i class="fa-solid fa-eye"></i>
                                                     </button>
-                                                
-                                                    <button class="btn btn-danger btn-sm">
+                                                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                                        data-bs-target="#confirmDeleteModal">
                                                         <i class="fa-solid fa-trash"></i>
                                                     </button>
                                                 </div>
                                             </td>
                                         </tr>
-                                    </tbody>
+                                    </th:block>
                                 </table>
                             </div>
                         </div>
@@ -185,92 +198,102 @@
             </div>
         </div>
     </div>
-
-    <!-- Edit Role Modal -->
-    <div class="modal fade" id="editRoleModal" tabindex="-1">
+    <div class="modal fade" id="showDetailModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Phân Quyền Nhân Viên</h5>
+                    <h5 class="modal-title">Phân quyền nhân viên</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="mb-4">
-                        <h6 class="fw-bold mb-3">Thông tin nhân viên</h6>
-                        <p class="mb-1"><strong>Tên:</strong> John Doe</p>
-                        <p class="mb-1"><strong>Mã NV:</strong> NV001</p>
-                        <p class="mb-1"><strong>Phòng ban:</strong> Phòng Kinh Doanh</p>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Vai trò</label>
-                        <select class="form-select" id="roleSelect">
-                            <option value="Nhân Viên">Nhân viên</option>
-                            <option value="Admin" selected>Admin</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Quyền hạn</label>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="manageUsers">
-                            <label class="form-check-label" for="manageUsers">
-                                Quản lý người dùng
-                            </label>
+                    <form id="updateRoleForm" action="/admin/nhansu/update" method="post">
+                        <input type="hidden" id="detailUsername" name="username">
+                        <p><strong>Họ và tên:</strong> <span id="detailFullname"></span></p>
+                        <p><strong>Email:</strong> <span id="detailEmail"></span></p>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Vai trò</label>
+                            <select class="form-select" id="detailRoleSelect" name="role">
+                                <option value="ROLE_USER">Nhân viên</option>
+                                <option value="ROLE_ADMIN">Admin</option>
+                            </select>
                         </div>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="manageProducts">
-                            <label class="form-check-label" for="manageProducts">
-                                Quản lý sản phẩm
-                            </label>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
                         </div>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="manageOrders">
-                            <label class="form-check-label" for="manageOrders">
-                                Quản lý đơn hàng
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="viewReports">
-                            <label class="form-check-label" for="viewReports">
-                                Xem báo cáo
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="button" class="btn btn-primary">Lưu thay đổi</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-
-    <script src="/bootstrap-5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Handle role change
-        document.getElementById('roleSelect').addEventListener('change', function() {
-            const role = this.value;
-            const checkboxes = document.querySelectorAll('.form-check-input');
-            
-            // Set permissions based on role
-            if (role === 'ADMIN') {
-                checkboxes.forEach(cb => {
-                    cb.checked = true;
-                    cb.disabled = true;
-                });
-            } else if (role === 'MANAGER') {
-                checkboxes.forEach(cb => {
-                    cb.disabled = false;
-                    cb.checked = cb.id !== 'manageUsers';
-                });
-            } else {
-                checkboxes.forEach(cb => {
-                    cb.disabled = false;
-                    cb.checked = cb.id === 'viewReports';
-                });
+        function showDetails(username) {
+            if (!username?.trim()) {
+                alert("Username không hợp lệ!");
+                return;
             }
+
+            fetch(`/nhansu/detail/${username.trim()}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Không thể tải thông tin nhân viên');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (!data || data.error) {
+                        throw new Error(data?.error || 'Dữ liệu không hợp lệ');
+                    }
+
+                    document.getElementById('detailUsername').value = data.username || '';
+                    document.getElementById('detailFullname').textContent = data.fullname || 'N/A';
+                    document.getElementById('detailEmail').textContent = data.email || 'N/A';
+                    document.getElementById('detailRoleSelect').value = data.role || 'ROLE_USER';
+
+                    const detailModal = new bootstrap.Modal(document.getElementById('showDetailModal'));
+                    detailModal.show();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert(`Lỗi: ${error.message}`);
+                });
+        }
+        document.getElementById('updateRoleForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            const username = formData.get('username')?.trim();
+            const role = formData.get('role')?.trim();
+
+            if (!username || !role) {
+                alert('Thông tin không hợp lệ!');
+                return;
+            }
+            fetch('/admin/nhansu/update', {
+                method: 'POST',
+                body: formData,
+                headers: { 'Accept': 'application/json' },
+                credentials: 'include' // Gửi cookie session
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error(err.error || `HTTP error ${response.status}`);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert(data.message || 'Cập nhật thành công!');
+                    bootstrap.Modal.getInstance(document.getElementById('showDetailModal')).hide();
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                    alert(`Lỗi: ${error.message}`);
+                });
         });
     </script>
 </body>
+
 </html>
