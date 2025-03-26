@@ -104,26 +104,9 @@ const inputWrapper = document.querySelector('.input-wrapper');
 
 let expanded = false;
 
-searchButton.addEventListener('click', function () {
-  if (!expanded) {
-    inputWrapper.classList.add('expanded');
-    searchInput.focus();
-    expanded = true;
-  } else {
-    if (searchInput.value.trim() !== '') {
-      searchForm.submit();
-    } else {
-      searchInput.focus();
-    }
-  }
-});
 
-searchInput.addEventListener('blur', function () {
-  if (searchInput.value.trim() === '') {
-    inputWrapper.classList.remove('expanded');
-    expanded = false;
-  }
-});
+
+
 function previewImage(event) {
   var reader = new FileReader();
   reader.onload = function(){
@@ -133,5 +116,100 @@ function previewImage(event) {
   reader.readAsDataURL(event.target.files[0]);
   
 }
+
+
+function changeQuantity(change, inputId) {
+  let input = document.getElementById(inputId);
+  let currentValue = parseInt(input.value);
+  let newValue = currentValue + change;
+
+  if (newValue >= 1) {
+      input.value = newValue;
+  }
+}
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll('.update-cart').forEach(button => {
+      button.addEventListener('click', function () {
+          let productId = this.getAttribute('data-product-id');
+          let change = parseInt(this.getAttribute('data-change'));
+          let inputField = this.closest('.d-flex')?.querySelector('.quantity-display');
+          let priceDisplay = this.closest('.row')?.querySelector('.price-display');
+          let unitPrice = parseInt(this.getAttribute('data-unit-price'));
+
+          if (!inputField || !priceDisplay || isNaN(unitPrice)) return; // Kiểm tra nếu bị lỗi truy vấn
+
+          let newQuantity = parseInt(inputField.value) + change;
+          if (newQuantity >= 1) {
+              inputField.value = newQuantity;
+              priceDisplay.textContent = (unitPrice * newQuantity).toLocaleString() + ' VNĐ';
+
+              fetch('/giohang/update', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                  body: `productId=${productId}&quantity=${newQuantity}`
+              })
+          }
+      });
+  });
+
+  // Xử lý xóa sản phẩm khỏi giỏ hàng
+  document.querySelectorAll('.remove-cart-item').forEach(button => {
+    button.addEventListener('click', function () {
+        let productId = this.getAttribute('data-product-id');
+
+        Swal.fire({
+            title: "Bạn có chắc chắn?",
+            text: "Sản phẩm sẽ bị xóa khỏi giỏ hàng!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#6c757d",
+            confirmButtonText: "Xóa",
+            cancelButtonText: "Hủy"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`/giohang?action=remove&productId=${productId}`, {
+                    method: 'GET'
+                }).then(response => {
+                    if (response.ok) {
+                        Swal.fire({
+                            title: "Đã xóa!",
+                            text: "Sản phẩm đã bị xóa khỏi giỏ hàng.",
+                            icon: "success",
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire("Lỗi!", "Không thể xóa sản phẩm. Vui lòng thử lại!", "error");
+                    }
+                });
+            }
+        });
+    });
+});
+});
+function openAddressModal() {
+  var addressModal = new bootstrap.Modal(document.getElementById('addressModal'));
+  addressModal.show();
+}
+
+function saveAddress() {
+  var addressDetail = document.getElementById('modalAddressDetail').value;
+  document.getElementById('addressInput').value = addressDetail;
+  var addressModal = bootstrap.Modal.getInstance(document.getElementById('addressModal'));
+  addressModal.hide();
+}
+
+function previewImage(event) {
+  var reader = new FileReader();
+  reader.onload = function() {
+    var output = document.getElementById('previewImg');
+    output.src = reader.result;
+  };
+  reader.readAsDataURL(event.target.files[0]);
+}
+
 
 

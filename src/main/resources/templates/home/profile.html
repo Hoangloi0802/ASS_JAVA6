@@ -15,9 +15,9 @@
         <!-- Avatar & Upload -->
         <div class="col-md-4 mb-4">
           <div class="card text-center p-3">
-              <img id="previewImg"
+            <img id="previewImg"
               th:src="${user.photo != null ? user.photo : 'https://sm.ign.com/ign_nordic/cover/a/avatar-gen/avatar-generations_prsz.jpg'}"
-              alt="Avatar"class="profile-img mx-auto mb-3"
+              alt="Avatar" class="profile-img mx-auto mb-3"
               style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover;">
             <h4 class="mb-1" th:text="${user.fullname}">Nguyễn Văn A</h4>
             <p class="text-muted" th:text="${user.role}">Thành viên VIP</p>
@@ -63,7 +63,57 @@
               </div>
             </div>
 
-            
+            <div class="mb-3 row">
+              <label class="col-sm-3 col-form-label">Địa chỉ hiện tại:</label>
+              <div class="col-sm-9">
+                <input type="text" class="form-control" id="addressInput" th:field="*{address}" placeholder="Nhập địa chỉ của bạn" readonly>
+                <button type="button" class="btn btn-link mt-2" onclick="openAddressModal()">Cập nhật</button>
+              </div>
+            </div>
+
+            <div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="addressModalLabel">Cập nhật địa chỉ</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <!-- Tỉnh/Thành phố -->
+                    <div class="mb-3">
+                      <label for="modalProvince" class="form-label">Tỉnh/Thành phố</label>
+                      <select class="form-select" id="modalProvince" onchange="updateModalDistricts()">
+                        <option value="">Chọn Tỉnh/Thành phố</option>
+                      </select>
+                    </div>
+                    <!-- Quận/Huyện -->
+                    <div class="mb-3">
+                      <label for="modalDistrict" class="form-label">Quận/Huyện</label>
+                      <select class="form-select" id="modalDistrict" onchange="updateModalWards()" disabled>
+                        <option value="">Chọn Quận/Huyện</option>
+                      </select>
+                    </div>
+                    <!-- Phường/Xã -->
+                    <div class="mb-3">
+                      <label for="modalWard" class="form-label">Phường/Xã</label>
+                      <select class="form-select" id="modalWard" disabled>
+                        <option value="">Chọn Phường/Xã</option>
+                      </select>
+                    </div>
+                    <!-- Địa chỉ chi tiết -->
+                    <div class="mb-3">
+                      <label for="modalAddressDetail" class="form-label">Địa chỉ chi tiết</label>
+                      <input type="text" class="form-control" id="modalAddressDetail" placeholder="Số nhà, tên đường...">
+                    </div>
+                  
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Trở Lại</button>
+                    <button type="button" class="btn btn-danger" onclick="saveAddress()">Hoàn thành</button>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <!-- Nếu bạn muốn đổi mật khẩu thì làm trang riêng -->
             <div class="text-end">
@@ -77,6 +127,9 @@
   </main>
   <div th:replace="~{/layouts/footer}">
   </div>
+  <script src="@{/js/map.js}"></script>
+  <!-- JavaScript để xử lý dropdown và địa chỉ -->
+  
 </body>
 
 </html>

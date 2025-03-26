@@ -41,12 +41,6 @@ public String shop(
     Page<Product> productPage = productService.filterSortAndPaginate(keyword, priceFilter, categoryId, sort, pageable);
     List<Category> categories = categoryService.findAll();
 
-    // Lấy thông tin user từ SecurityContextHolder
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    boolean isAdmin = authentication.getAuthorities().stream()
-                      .map(GrantedAuthority::getAuthority)
-                      .anyMatch(role -> role.equals("ROLE_ADMIN"));
-
     // Truyền dữ liệu vào model
     model.addAttribute("products", productPage.getContent());
     model.addAttribute("categories", categories);
@@ -58,8 +52,6 @@ public String shop(
     model.addAttribute("totalPages", productPage.getTotalPages());
     model.addAttribute("currentPageName", "shop");
 
-    // Truyền thông tin quyền admin vào Thymeleaf
-    model.addAttribute("isAdmin", isAdmin);
 
     return "home/sanpham";
 }

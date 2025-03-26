@@ -34,7 +34,7 @@ public class ProfileImpl implements ProfileService {
             account.setFullname(updatedUser.getFullname());
             account.setEmail(updatedUser.getEmail());
             account.setMobile(updatedUser.getMobile());
-
+            account.setAddress(updatedUser.getAddress());
             // Xử lý avatar upload
             if (file != null && !file.isEmpty()) {
                 try {

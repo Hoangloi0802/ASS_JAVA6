@@ -44,5 +44,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate,
             @Param("timeFormat") String timeFormat);
-
+            Optional<Order> findByAccountAndStatus(Account account, boolean status);
+    
 }

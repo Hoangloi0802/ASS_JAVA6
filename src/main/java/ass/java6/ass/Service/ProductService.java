@@ -17,4 +17,5 @@ public interface ProductService {
     Product save(Product product);
     Optional<Product> findById1(Integer id);
     Product update(Product product, MultipartFile mainImageFile, List<MultipartFile> additionalImageFiles);
+    
 }

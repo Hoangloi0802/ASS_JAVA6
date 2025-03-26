@@ -17,105 +17,152 @@
 
         <section class="mt-5 mt-lg-0" id="page-cart">
             <div class="container">
-                <div class="row border-bottom py-2">
-                    <div class="col-sm-6 col-12">
-                        <h6 class="fs-6 text-uppercase mb-0">Sản phẩm</h6>
-                    </div>
-                    <div class="col-sm-6 col-12 d-flex justify-content-sm-end">
-                        <div class="col-sm-4 col-4 text-center">
-                            <h6 class="fs-6 text-uppercase mb-0">Số lượng</h6>
-                        </div>
-                        <div class="col-sm-4 col-4 text-center">
-                            <h6 class="fs-6 text-uppercase mb-0">Giá</h6>
-                        </div>
-                        <div class="col-sm-4 col-4 text-center">
-                            <h6 class="fs-6 text-uppercase mb-0">Hành động</h6>
-                        </div>
-                    </div>
-                </div>
-                <th:block th:each="item : ${cartItems}">
-                    <div class="row align-items-center py-3 border-bottom">
-                        <div class="col-sm-6 col-12 d-flex align-items-center">
-                            <img class="me-3"  th:src="${item.product.productImages[0].imageUrl}" 
-                                alt="Product Image" width="50">
-                            <div>
-                                <h5 class="fw-bold mb-0" th:text="${item.product.name}"></h5>
-                            </div>
-                        </div>
-                
-                        <div class="col-sm-6 col-12 mt-3 mt-sm-0 d-flex align-items-center justify-content-sm-end">
-                            <div class="col-sm-6 col-6 text-center">
-                                <form th:action="@{/giohang/update}" method="post">
-                                    <input type="hidden" name="productId" th:value="${item.product.id}" />
-                
-                                    <div class="d-flex align-items-center gap-2 justify-content-center">
-                                        <!-- Nút giảm số lượng -->
-                                        <button type="submit" name="change" value="-1"
-                                            class="btn btn-outline-dark btn-sm px-3 py-2">-</button>
-                
-                                        <!-- Hiển thị số lượng -->
-                                        <input type="text" name="quantity" th:value="${item.quantity}"
-                                            class="form-control form-control-sm text-center"
-                                            style="width: 80px; height: 40px;" readonly />
-                
-                                        <!-- Nút tăng số lượng -->
-                                        <button type="submit" name="change" value="1"
-                                            class="btn btn-outline-dark btn-sm px-3 py-2">+</button>
+                <div class="row">
+                    <!-- Cột trái: Danh sách sản phẩm -->
+                    <div class="col-lg-8 col-12">
+                        <div class="cart-items">
+                            <!-- Tiêu đề cột -->
+                            <div class="row border-bottom py-2">
+                                <div class="col-5">
+                                    <h6 class="fs-6 text-uppercase mb-0">Sản phẩm</h6>
+                                </div>
+                                <div class="col-7 d-flex justify-content-end">
+                                    <div class="col-4 text-center">
+                                        <h6 class="fs-6 text-uppercase mb-0">Số lượng</h6>
                                     </div>
-                                </form>
+                                    <div class="col-4 text-center">
+                                        <h6 class="fs-6 text-uppercase mb-0">Giá</h6>
+                                    </div>
+                                    <div class="col-4 text-center">
+                                        <h6 class="fs-6 text-uppercase mb-0">Hành động</h6>
+                                    </div>
+                                </div>
                             </div>
-                
-                            <div class="col-sm-3 col-3 text-end">
-                                <h6 class="fs-6 fw-normal mb-0"
-                                    th:text="${#numbers.formatDecimal(item.price * item.quantity, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">
-                                </h6>
-                            </div>
-                
-                            <!-- Nút xóa sản phẩm -->
-                            <div class="col-sm-3 col-3 text-end">
-                                <form th:action="@{/giohang/remove}" method="post">
-                                    <input type="hidden" name="productId" th:value="${item.product.id}" />
-                                    <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
-                                </form>
-                            </div>
+        
+                            <!-- Danh sách sản phẩm -->
+                            <th:block th:each="item : ${cartItems}">
+                                <div class="row align-items-center py-3 border-bottom">
+                                    <div class="col-5 d-flex align-items-center">
+                                        <img class="me-3" th:src="${item.product.productImages[0].imageUrl}" 
+                                            alt="Product Image" width="50">
+                                        <div>
+                                            <h5 class="fw-bold mb-0" th:text="${item.product.name}"></h5>
+                                        </div>
+                                    </div>
+                                    <div class="col-7 mt-3 mt-sm-0 d-flex align-items-center justify-content-end">
+                                        <div class="col-4 text-center">
+                                            <div class="d-flex align-items-center gap-2 justify-content-center">
+                                                <button type="button" class="btn btn-outline-dark btn-sm px-2 py-1 update-cart"
+                                                    th:attr="data-product-id=${item.product.id}, data-unit-price=${item.product.price}, data-change='-1'">-</button>
+                                                <input type="number" th:value="${item.quantity}"
+                                                    class="form-control form-control-sm text-center quantity-display"
+                                                    style="width: 50px; height: 35px;" readonly>
+                                                <button type="button" class="btn btn-outline-dark btn-sm px-2 py-1 update-cart"
+                                                    th:attr="data-product-id=${item.product.id}, data-unit-price=${item.product.price}, data-change='1'">+</button>
+                                            </div>
+                                        </div>
+                                        <div class="col-4 text-center">
+                                            <h6 class="fs-6 fw-normal mb-0 price-display"
+                                                th:text="${#numbers.formatDecimal(item.price * item.quantity, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">
+                                            </h6>
+                                        </div>
+                                        <div class="col-4 text-center">
+                                            <button type="button" class="btn btn-sm btn-danger remove-cart-item"
+                                                th:attr="data-product-id=${item.product.id}">Xóa</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
                         </div>
                     </div>
-                </th:block>
-                
-
-
-                <div class="row justify-content-end text-end mt-4">
-                    <div class="col-md-8 col-lg-6">
-                        <div class="row justify-content-end mt-2">
-                            <div class="col-6">
-                                <h4 class="fw-normal text-body">Tạm tính:</h4>
+        
+                    <!-- Cột phải: Thông tin thanh toán (giữ nguyên) -->
+                    <div class="col-lg-4 col-12 mt-4 mt-lg-0">
+                        <div class="card">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Thông tin thanh toán</h5>
                             </div>
-                            <div class="col-4">
-                                <h4 class="fw-normal" id="totalPrice"
-                                    th:text="${#numbers.formatDecimal(totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">
-                                </h4>
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Tổng tiền hàng:</span>
+                                    <span id="subtotal" class="subtotal-amount">0 VNĐ</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>
+                                        Voucher giảm giá 
+                                        <button class="btn btn-link p-0 ms-2" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#voucherModal">
+                                            (Chọn voucher)
+                                        </button>:
+                                    </span>
+                                    <span id="voucher-discount">0 VNĐ</span>
+                                </div>
+                                <div class="d-flex justify-content-between border-top pt-2">
+                                    <strong>Tổng thanh toán:</strong>
+                                    <strong id="total-amount" class="text-danger">0 VNĐ</strong>
+                                </div>
+                                <button class="btn btn-danger w-100 mt-3" 
+                                        id="checkout-btn"
+                                        onclick="proceedToCheckout()">
+                                    ĐẶT HÀNG
+                                </button>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-12 px-0">
-                        <hr class="mb-0">
-                        <hr class="mt-1">
-                    </div>
-                    <div class="col-md-8 col-lg-6">
-                        <div class="row justify-content-end mt-4">
-                            <div class="col-10 col-sm-8 d-grid">
-                                <a class="btn btn-lg btn-danger" href="#!">Đặt hàng ⟶</a>
-                            </div>
-                        </div>
+                        </ "`div>
                     </div>
                 </div>
             </div>
         </section>
+        
+        <!-- Modal chọn voucher (đã cải tiến) -->
+        <div class="modal fade" id="voucherModal" tabindex="-1" aria-labelledby="voucherModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="voucherModalLabel">Chọn Voucher</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="voucher-list">
+                            <!-- Voucher 1 -->
+                            <div class="voucher-card d-flex justify-content-between align-items-center mb-3 p-2 border rounded">
+                                <div>
+                                    <p class="mb-1 text-success fw-bold">Giảm tối đa 50.000 VNĐ</p>
+                                    <small>Đơn tối thiểu 500.000 VNĐ - HSD: 31/03/2025</small>
+                                </div>
+                                <button class="btn btn-sm btn-outline-primary apply-voucher"
+                                        data-discount="50000"
+                                        data-min-order="500000"
+                                        data-code="VOUCHER50K">
+                                    Áp dụng
+                                </button>
+                            </div>
+        
+                            <!-- Voucher 2 -->
+                            <div class="voucher-card d-flex justify-content-between align-items-center mb-3 p-2 border rounded">
+                                <div>
+                                    <p class="mb-1 text-success fw-bold">Giảm tối đa 30.000 VNĐ</p>
+                                    <small>Đơn tối thiểu 0 VNĐ - HSD: 31/03/2025</small>
+                                </div>
+                                <button class="btn btn-sm btn-outline-primary apply-voucher"
+                                        data-discount="30000"
+                                        data-min-order="0"
+                                        data-code="VOUCHER30K">
+                                    Áp dụng
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
     <div th:replace="~{/layouts/footer}">
     </div>
-    
 </body>
 
 </html>

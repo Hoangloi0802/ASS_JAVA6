@@ -42,20 +42,24 @@
             <h6 class="mt-4 mb-3">Product Details</h6>
             <p th:text="${product.description}" class="text-secondary mb-4"></p>
 
-            <form th:action="@{/giohang/add}" method="post" class="mt-4">
+            <form th:action="@{/giohang}" method="get" class="mt-4">
               <!-- Hidden Product ID -->
               <input type="hidden" name="productId" th:value="${product.id}">
+          
+              <!-- Hidden action -->
+              <input type="hidden" name="action" value="add">
           
               <!-- Quantity Selector -->
               <div class="d-flex align-items-center gap-2 mb-4">
                   <button type="button" class="btn btn-outline-dark btn-sm px-3 py-2" onclick="changeQuantity(-1, 'quantityInput')">-</button>
-                  <input type="number" id="quantityInput" name="quantity" value="1" min="1" class="form-control form-control-sm text-center" style="width: 80px; height: 40px;">
+                  <input type="number" id="quantityInput" name="quantity" value="1" min="1" class="form-control form-control-sm text-center" style="width: 80px; height: 40px;" readonly>
                   <button type="button" class="btn btn-outline-dark btn-sm px-3 py-2" onclick="changeQuantity(1, 'quantityInput')">+</button>
               </div>
           
               <!-- Submit Button -->
               <button type="submit" class="btn btn-dark">Add to Cart</button>
           </form>
+          
           
         </div>
         </div>
@@ -64,6 +68,11 @@
   </main>
 
   <div th:replace="~{/layouts/footer}"></div>
+
+  <script>
+    
+</script>
+
 </body>
 
 </html>

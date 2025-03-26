@@ -22,21 +22,12 @@ public class Trangchu {
 
     @GetMapping("/")
     public String home(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        boolean isAdmin = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .anyMatch(role -> role.equals("ROLE_ADMIN"));
-
         List<Product> topSellingProducts = productService.findTopSellingProducts(8);
         model.addAttribute("topSellingProducts", topSellingProducts);
         model.addAttribute("currentPage", "home");
 
         List<Product> latestProducts = productService.findLatestProducts(8);
         model.addAttribute("latestProducts", latestProducts);
-
-        model.addAttribute("isAdmin", isAdmin);
-
         return "home/trangchu"; // view name
     }
 
