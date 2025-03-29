@@ -63,7 +63,7 @@
                                             </div>
                                         </div>
                                         <div class="col-4 text-center">
-                                            <span  class="subtotal-amount" th:text="${item.product.price}">0 VNĐ</span>
+                                            <span class="subtotal-amount" th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}">0 VNĐ</span>
                                         </div>
                                         <div class="col-4 text-center">
                                             <button type="button" class="btn btn-sm btn-danger remove-cart-item"

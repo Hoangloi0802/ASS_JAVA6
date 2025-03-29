@@ -137,27 +137,42 @@
       // Cart removal
       document.querySelectorAll('.remove-cart-item').forEach(button => {
         button.addEventListener('click', async () => {
-          const productId = button.dataset.productId;
-          const result = await utils.showAlert('Bạn có chắc chắn?', 'Sản phẩm sẽ bị xóa khỏi giỏ hàng!', 'warning', {
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#6c757d',
-            confirmButtonText: 'Xóa',
-            cancelButtonText: 'Hủy'
-          });
-
-          if (result.isConfirmed) {
+            const productId = button.dataset.productId;
+    
+            // Hiển thị hộp thoại xác nhận
+            const result = await utils.showAlert('Bạn có chắc chắn?', 'Sản phẩm sẽ bị xóa khỏi giỏ hàng!', 'warning', {
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Xóa',
+                cancelButtonText: 'Hủy'
+            });
+    
+            if (!result.isConfirmed) return; // Nếu người dùng bấm "Hủy" thì dừng lại
+    
             try {
-              await utils.fetchData(`/cart?action=remove&productId=${productId}`, 'Failed to remove item');
-              await utils.showAlert('Đã xóa!', 'Sản phẩm đã bị xóa khỏi giỏ hàng.', 'success', { timer: 1500, showConfirmButton: false });
-              location.reload();
+                // Gửi request xóa sản phẩm
+                const response = await fetch(`/cart?action=remove&productId=${productId}`, { method: 'GET' });
+    
+                if (!response.ok) {
+                    throw new Error('Không thể xóa sản phẩm.');
+                }
+    
+                // Hiển thị thông báo thành công
+                await utils.showAlert('Đã xóa!', 'Sản phẩm đã bị xóa khỏi giỏ hàng.', 'success', { 
+                    timer: 1500, 
+                    showConfirmButton: false 
+                });
+    
+                // Reload lại trang
+                location.reload();
             } catch (error) {
-              console.error('Remove item error:', error);
-              utils.showAlert('Lỗi!', 'Không thể xóa sản phẩm!', 'error');
+                console.error('Lỗi xóa sản phẩm:', error);
+                utils.showAlert('Lỗi!', 'Không thể xóa sản phẩm!', 'error');
             }
-          }
         });
-      });
+    });
+    
 
       // Voucher application
       document.querySelectorAll('.apply-voucher').forEach(button => {
