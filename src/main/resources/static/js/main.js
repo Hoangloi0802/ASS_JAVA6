@@ -194,27 +194,7 @@
           }
         });
       });
-
-      // Payment method handling
-      document.querySelectorAll("input[name='paymentMethod']").forEach(input => {
-        input.addEventListener("change", async () => {
-          if (input.value === "momo") {
-            try {
-              const data = await utils.fetchData('/thanhtoan/momo', 'Failed to get MoMo QR');
-              if (data.qrCodeUrl) {
-                const qrContainer = document.getElementById("momoQrCode");
-                qrContainer.innerHTML = "";
-                new QRCode(qrContainer, { text: data.qrCodeUrl, width: 200, height: 200 });
-                new bootstrap.Modal(document.getElementById("momoModal")).show();
-              } else {
-                utils.showAlert('Lỗi!', 'Không thể tạo mã QR cho MoMo!', 'error');
-              }
-            } catch (error) {
-              console.error("MoMo QR error:", error);
-            }
-          }
-        });
-      });
+   
     },
     changeQuantity(change, inputId) {
       var input = document.getElementById(inputId);
