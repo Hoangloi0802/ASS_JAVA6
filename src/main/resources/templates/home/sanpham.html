@@ -65,7 +65,8 @@
                   </h5>
                   <div class="d-flex justify-content-between align-items-center">
                       <span th:text="${#numbers.formatDecimal(product.price, 1, 'POINT', 0, 'POINT')} + ' VND'"></span>
-                      <span  th:text="'Sản phẩm có sẳn: ' + ${product.quantity}"></span>
+                      <span th:text="'Đã bán: ' + ${product.soldQuantity}"></span>
+
                   </div>
               </div>
           </div>

@@ -9,7 +9,8 @@
     <header th:replace="~{/layouts/nav}">
     </header>
     <main>
-        <div class="row mb-3">
+
+        <div class=" mb-3">
             <div class="container-fluid page-header py-5">
                 <h1 class="text-center text-white display-6">GIỎ HÀNG CỦA BẠN</h1>
             </div>
@@ -62,9 +63,7 @@
                                             </div>
                                         </div>
                                         <div class="col-4 text-center">
-                                            <h6 class="fs-6 fw-normal mb-0 price-display"
-                                                th:text="${#numbers.formatDecimal(item.price * item.quantity, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">
-                                            </h6>
+                                            <span  class="subtotal-amount" th:text="${item.product.price}">0 VNĐ</span>
                                         </div>
                                         <div class="col-4 text-center">
                                             <button type="button" class="btn btn-sm btn-danger remove-cart-item"
@@ -85,30 +84,27 @@
                             <div class="card-body">
                                 <div class="d-flex justify-content-between mb-2">
                                     <span>Tổng tiền hàng:</span>
-                                    <span id="subtotal" class="subtotal-amount">0 VNĐ</span>
+                                    <span id="subtotal" class="subtotal-amount" th:text="${#numbers.formatDecimal(subtotal, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">0 VNĐ</span>
                                 </div>
                                 <div class="d-flex justify-content-between mb-2">
                                     <span>
                                         Voucher giảm giá 
-                                        <button class="btn btn-link p-0 ms-2" 
-                                            data-bs-toggle="modal" 
-                                            data-bs-target="#voucherModal">
+                                        <button class="btn btn-link p-0 ms-2" data-bs-toggle="modal" data-bs-target="#voucherModal">
                                             (Chọn voucher)
                                         </button>:
                                     </span>
-                                    <span id="voucher-discount">0 VNĐ</span>
+                                    <span id="voucher-discount" th:text = "${#numbers.formatDecimal(discount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">0 VNĐ</span>
                                 </div>
+                               
+                                
                                 <div class="d-flex justify-content-between border-top pt-2">
                                     <strong>Tổng thanh toán:</strong>
-                                    <strong id="total-amount" class="text-danger">0 VNĐ</strong>
+                                    <span id="total-amount" class="text-danger" th:text="${#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"> VNĐ</span>
+                                    
                                 </div>
-                                <button class="btn btn-danger w-100 mt-3" 
-                                        id="checkout-btn"
-                                        onclick="proceedToCheckout()">
-                                    ĐẶT HÀNG
-                                </button>
+                                <a th:href="@{/cart/checkout}" class="btn btn-danger w-100 mt-3">ĐẶT HÀNG</a>
                             </div>
-                        </ "`div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -124,35 +120,27 @@
                     </div>
                     <div class="modal-body">
                         <div class="voucher-list">
-                            <!-- Voucher 1 -->
-                            <div class="voucher-card d-flex justify-content-between align-items-center mb-3 p-2 border rounded">
-                                <div>
-                                    <p class="mb-1 text-success fw-bold">Giảm tối đa 50.000 VNĐ</p>
-                                    <small>Đơn tối thiểu 500.000 VNĐ - HSD: 31/03/2025</small>
+                            <th:block th:each="voucher : ${vouchers}">
+                                <div class="voucher-card d-flex justify-content-between align-items-center mb-3 p-2 border rounded">
+                                    <div>
+                                        <p class="mb-1 text-success fw-bold voucher-name"
+                                            th:text="'Giảm tối đa ' + ${#numbers.formatDecimal(voucher.discountAmount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">
+                                        </p>
+                                        <small th:text="'Đơn tối thiểu ' + ${#numbers.formatDecimal(voucher.minOrderValue, 0, 'COMMA', 0, 'POINT')} + ' VNĐ - HSD: ' + ${voucher.expiryDate}">
+                                        </small>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-primary apply-voucher"
+                                        th:attr="data-discount=${voucher.discountAmount}, 
+                                                 data-min-order=${voucher.minOrderValue}, 
+                                                 data-code=${voucher.code}">
+                                        Áp dụng
+                                    </button>
                                 </div>
-                                <button class="btn btn-sm btn-outline-primary apply-voucher"
-                                        data-discount="50000"
-                                        data-min-order="500000"
-                                        data-code="VOUCHER50K">
-                                    Áp dụng
-                                </button>
-                            </div>
-        
-                            <!-- Voucher 2 -->
-                            <div class="voucher-card d-flex justify-content-between align-items-center mb-3 p-2 border rounded">
-                                <div>
-                                    <p class="mb-1 text-success fw-bold">Giảm tối đa 30.000 VNĐ</p>
-                                    <small>Đơn tối thiểu 0 VNĐ - HSD: 31/03/2025</small>
-                                </div>
-                                <button class="btn btn-sm btn-outline-primary apply-voucher"
-                                        data-discount="30000"
-                                        data-min-order="0"
-                                        data-code="VOUCHER30K">
-                                    Áp dụng
-                                </button>
-                            </div>
+                                
+                            </th:block>
                         </div>
                     </div>
+                    
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
                     </div>

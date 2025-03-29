@@ -1,215 +1,255 @@
 (function () {
   "use strict";
 
-  /** Toggle class when scrolling **/
-  function toggleScrolled() {
-    document.body.classList.toggle('scrolled', window.scrollY > 100);
-  }
-  document.addEventListener('scroll', toggleScrolled);
-  window.addEventListener('load', toggleScrolled);
-
-  /** Mobile nav toggle **/
-  const mobileNavToggleBtn = document.querySelector('.mobile-nav-toggle');
-  if (mobileNavToggleBtn) {
-    mobileNavToggleBtn.addEventListener('click', () => {
-      document.body.classList.toggle('mobile-nav-active');
-      mobileNavToggleBtn.classList.toggle('bi-list');
-      mobileNavToggleBtn.classList.toggle('bi-x');
-    });
-  }
-
-  /** Preloader removal **/
-  const preloader = document.querySelector('#preloader');
-  if (preloader) {
-    window.addEventListener('load', () => preloader.remove());
-  }
-
-  /** Scroll to top **/
-  const scrollTop = document.querySelector('.scroll-top');
-  if (scrollTop) {
-    function toggleScrollTop() {
-      scrollTop.classList.toggle('active', window.scrollY > 100);
-    }
-    scrollTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-    window.addEventListener('scroll', toggleScrollTop);
-    window.addEventListener('load', toggleScrollTop);
-  }
-
-  /** Swiper Initialization after load **/
-  window.addEventListener('load', () => {
-    // Khởi tạo Thumbs Swiper
-    const thumbsSwiper = new Swiper('.thumbs-slider', {
-      loop: true,
-      spaceBetween: 10,
-      slidesPerView: 4,
-      freeMode: true,
-      watchSlidesProgress: true,
-      centeredSlides: true,
-      slideToClickedSlide: true,
-      breakpoints: {
-        0: {
-          slidesPerView: 4,
-        },
-        768: {
-          slidesPerView: 6,
-        },
-        992: {
-          slidesPerView: 8,
-        },
-      },
-    });
-
-    // Khởi tạo Main Swiper
-    const mainSwiper = new Swiper('.main-slider', {
-      loop: true,
-      spaceBetween: 10,
-      navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev',
-      },
-      thumbs: {
-        swiper: thumbsSwiper,
-      },
-    });
-  });
-
-})();
-
-
-document.addEventListener('DOMContentLoaded', function () {
-  const toggleButtons = document.querySelectorAll('.toggle-password');
-
-  toggleButtons.forEach(button => {
-    button.addEventListener('click', function () {
-      const targetId = this.getAttribute('data-target');
-      const input = document.getElementById(targetId);
-      const icon = this.querySelector('i');
-
-      if (input.type === 'password') {
-        input.type = 'text';
-        icon.classList.remove('fa-eye');
-        icon.classList.add('fa-eye-slash');
-      } else {
-        input.type = 'password';
-        icon.classList.remove('fa-eye-slash');
-        icon.classList.add('fa-eye');
-      }
-    });
-  });
-});
-const searchForm = document.getElementById('searchForm');
-const searchInput = document.getElementById('searchInput');
-const searchButton = document.getElementById('searchButton');
-const inputWrapper = document.querySelector('.input-wrapper');
-
-let expanded = false;
-
-
-
-
-function previewImage(event) {
-  var reader = new FileReader();
-  reader.onload = function(){
-    var output = document.getElementById('previewImg');
-    output.src = reader.result;
+  // Utility functions
+  const utils = {
+    toggleClass: (element, className, condition) => element?.classList.toggle(className, condition),
+    formatVND: (number) => new Intl.NumberFormat('vi-VN', { style: 'decimal', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(number) + ' VNĐ',
+    fetchData: async (url, errorMessage) => {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(errorMessage);
+      return response.json();
+    },
+    showAlert: (title, text, icon, options = {}) => Swal.fire({ title, text, icon, ...options })
   };
-  reader.readAsDataURL(event.target.files[0]);
-  
-}
 
+  // Core functionality
+  const app = {
+    // Scroll handling
+    handleScroll() {
+      const scrollY = window.scrollY > 100;
+      utils.toggleClass(document.body, 'scrolled', scrollY);
+      utils.toggleClass(document.querySelector('.scroll-top'), 'active', scrollY);
+    },
 
-function changeQuantity(change, inputId) {
-  let input = document.getElementById(inputId);
-  let currentValue = parseInt(input.value);
-  let newValue = currentValue + change;
-
-  if (newValue >= 1) {
-      input.value = newValue;
-  }
-}
-document.addEventListener("DOMContentLoaded", function () {
-  document.querySelectorAll('.update-cart').forEach(button => {
-      button.addEventListener('click', function () {
-          let productId = this.getAttribute('data-product-id');
-          let change = parseInt(this.getAttribute('data-change'));
-          let inputField = this.closest('.d-flex')?.querySelector('.quantity-display');
-          let priceDisplay = this.closest('.row')?.querySelector('.price-display');
-          let unitPrice = parseInt(this.getAttribute('data-unit-price'));
-
-          if (!inputField || !priceDisplay || isNaN(unitPrice)) return; // Kiểm tra nếu bị lỗi truy vấn
-
-          let newQuantity = parseInt(inputField.value) + change;
-          if (newQuantity >= 1) {
-              inputField.value = newQuantity;
-              priceDisplay.textContent = (unitPrice * newQuantity).toLocaleString() + ' VNĐ';
-
-              fetch('/giohang/update', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                  body: `productId=${productId}&quantity=${newQuantity}`
-              })
-          }
+    // Swiper initialization
+    initSwipers() {
+      const thumbsSwiper = new Swiper('.thumbs-slider', {
+        loop: true,
+        spaceBetween: 10,
+        slidesPerView: 4,
+        freeMode: true,
+        watchSlidesProgress: true,
+        centeredSlides: true,
+        slideToClickedSlide: true,
+        breakpoints: { 0: { slidesPerView: 4 }, 768: { slidesPerView: 6 }, 992: { slidesPerView: 8 } }
       });
-  });
 
-  // Xử lý xóa sản phẩm khỏi giỏ hàng
-  document.querySelectorAll('.remove-cart-item').forEach(button => {
-    button.addEventListener('click', function () {
-        let productId = this.getAttribute('data-product-id');
+      new Swiper('.main-slider', {
+        loop: true,
+        spaceBetween: 10,
+        navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+        thumbs: { swiper: thumbsSwiper }
+      });
+    },
 
-        Swal.fire({
-            title: "Bạn có chắc chắn?",
-            text: "Sản phẩm sẽ bị xóa khỏi giỏ hàng!",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#d33",
-            cancelButtonColor: "#6c757d",
-            confirmButtonText: "Xóa",
-            cancelButtonText: "Hủy"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                fetch(`/giohang?action=remove&productId=${productId}`, {
-                    method: 'GET'
-                }).then(response => {
-                    if (response.ok) {
-                        Swal.fire({
-                            title: "Đã xóa!",
-                            text: "Sản phẩm đã bị xóa khỏi giỏ hàng.",
-                            icon: "success",
-                            timer: 1500,
-                            showConfirmButton: false
-                        }).then(() => {
-                            location.reload();
-                        });
-                    } else {
-                        Swal.fire("Lỗi!", "Không thể xóa sản phẩm. Vui lòng thử lại!", "error");
-                    }
-                });
-            }
+    // Cart display update
+    updateCartDisplay(data) {
+      document.getElementById('subtotal').textContent = utils.formatVND(data.subtotal);
+      document.getElementById('voucher-discount').textContent = utils.formatVND(data.discount);
+      document.getElementById('total-amount').textContent = utils.formatVND(data.total);
+    },
+
+    // Search handling
+    initSearch() {
+      const searchForm = document.getElementById('searchForm');
+      const searchInput = document.getElementById('searchInput');
+      const searchButton = document.getElementById('searchButton');
+      const inputWrapper = document.querySelector('.input-wrapper');
+      let expanded = false;
+
+      searchButton?.addEventListener('click', () => {
+        if (!expanded) {
+          inputWrapper.classList.add('expanded');
+          searchInput.focus();
+          expanded = true;
+        } else if (searchInput.value.trim()) {
+          searchForm.submit();
+        } else {
+          searchInput.focus();
+        }
+      });
+
+      searchInput?.addEventListener('blur', () => {
+        if (!searchInput.value.trim()) {
+          inputWrapper.classList.remove('expanded');
+          expanded = false;
+        }
+        document.getElementById('searchButton').addEventListener('click', function () {
+          document.getElementById('searchForm').submit();
         });
-    });
-});
-});
-function openAddressModal() {
-  var addressModal = new bootstrap.Modal(document.getElementById('addressModal'));
-  addressModal.show();
-}
+      });
+      
+    },
 
-function saveAddress() {
-  var addressDetail = document.getElementById('modalAddressDetail').value;
-  document.getElementById('addressInput').value = addressDetail;
-  var addressModal = bootstrap.Modal.getInstance(document.getElementById('addressModal'));
-  addressModal.hide();
-}
+    // Event listeners setup
+    setupEventListeners() {
+      window.addEventListener('scroll', this.handleScroll);
+      window.addEventListener('load', () => { this.handleScroll(); this.initSwipers(); });
 
-function previewImage(event) {
-  var reader = new FileReader();
-  reader.onload = function() {
-    var output = document.getElementById('previewImg');
-    output.src = reader.result;
+      const mobileNavToggle = document.querySelector('.mobile-nav-toggle');
+      mobileNavToggle?.addEventListener('click', () => {
+        document.body.classList.toggle('mobile-nav-active');
+        mobileNavToggle.classList.toggle('bi-list');
+        mobileNavToggle.classList.toggle('bi-x');
+      });
+
+      document.querySelector('.scroll-top')?.addEventListener('click', () => 
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      );
+
+      document.querySelector('#preloader')?.addEventListener('load', (e) => e.target.remove());
+    },
+
+    // DOMContentLoaded handler
+    initDOMContentLoaded() {
+      // Password toggle
+      document.querySelectorAll('.toggle-password').forEach(button => {
+        button.addEventListener('click', () => {
+          const input = document.getElementById(button.dataset.target);
+          const icon = button.querySelector('i');
+          input.type = input.type === 'password' ? 'text' : 'password';
+          icon.classList.toggle('fa-eye', input.type === 'password');
+          icon.classList.toggle('fa-eye-slash', input.type === 'text');
+        });
+      });
+
+      // Cart updates
+      document.querySelectorAll('.update-cart').forEach(button => {
+        button.addEventListener('click', async () => {
+          const { productId, change } = button.dataset;
+          const quantityInput = button.parentElement.querySelector('.quantity-display');
+          const newQuantity = parseInt(quantityInput.value) + parseInt(change);
+
+          if (newQuantity < 1) return;
+
+          quantityInput.value = newQuantity;
+          try {
+            const data = await utils.fetchData(`/cart/update-cart?productId=${productId}&quantity=${newQuantity}`, 'Failed to update cart');
+            this.updateCartDisplay(data);
+          } catch (error) {
+            console.error('Cart update error:', error);
+            utils.showAlert('Lỗi!', 'Không thể cập nhật giỏ hàng!', 'error');
+          }
+        });
+      });
+
+      // Cart removal
+      document.querySelectorAll('.remove-cart-item').forEach(button => {
+        button.addEventListener('click', async () => {
+          const productId = button.dataset.productId;
+          const result = await utils.showAlert('Bạn có chắc chắn?', 'Sản phẩm sẽ bị xóa khỏi giỏ hàng!', 'warning', {
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Xóa',
+            cancelButtonText: 'Hủy'
+          });
+
+          if (result.isConfirmed) {
+            try {
+              await utils.fetchData(`/cart?action=remove&productId=${productId}`, 'Failed to remove item');
+              await utils.showAlert('Đã xóa!', 'Sản phẩm đã bị xóa khỏi giỏ hàng.', 'success', { timer: 1500, showConfirmButton: false });
+              location.reload();
+            } catch (error) {
+              console.error('Remove item error:', error);
+              utils.showAlert('Lỗi!', 'Không thể xóa sản phẩm!', 'error');
+            }
+          }
+        });
+      });
+
+      // Voucher application
+      document.querySelectorAll('.apply-voucher').forEach(button => {
+        button.addEventListener('click', async () => {
+          const voucherCode = button.dataset.code;
+          try {
+            const data = await utils.fetchData(`/cart/apply-voucher?voucherCode=${voucherCode}`, 'Failed to apply voucher');
+            if (data.error) {
+              document.getElementById('voucher-discount').textContent = utils.formatVND(0);
+              utils.showAlert('Lỗi!', data.error, 'error');
+            } else {
+              this.updateCartDisplay(data);
+              bootstrap.Modal.getInstance(document.getElementById('voucherModal'))?.hide();
+              utils.showAlert('Thành công!', 'Voucher đã được áp dụng!', 'success', { timer: 1500, showConfirmButton: false });
+            }
+          } catch (error) {
+            console.error('Voucher error:', error);
+            utils.showAlert('Lỗi!', 'Có lỗi xảy ra khi áp dụng voucher!', 'error');
+          }
+        });
+      });
+
+      // Payment method handling
+      document.querySelectorAll("input[name='paymentMethod']").forEach(input => {
+        input.addEventListener("change", async () => {
+          if (input.value === "momo") {
+            try {
+              const data = await utils.fetchData('/thanhtoan/momo', 'Failed to get MoMo QR');
+              if (data.qrCodeUrl) {
+                const qrContainer = document.getElementById("momoQrCode");
+                qrContainer.innerHTML = "";
+                new QRCode(qrContainer, { text: data.qrCodeUrl, width: 200, height: 200 });
+                new bootstrap.Modal(document.getElementById("momoModal")).show();
+              } else {
+                utils.showAlert('Lỗi!', 'Không thể tạo mã QR cho MoMo!', 'error');
+              }
+            } catch (error) {
+              console.error("MoMo QR error:", error);
+            }
+          }
+        });
+      });
+    },
+    changeQuantity(change, inputId) {
+      var input = document.getElementById(inputId);
+      var maxQuantity = parseInt(input.getAttribute("max"));
+  
+      var currentValue = parseInt(input.value);
+      var newValue = currentValue + change;
+  
+      if (newValue >= 1 && newValue <= maxQuantity) {
+          input.value = newValue;
+      }
+  },
+  
+
+    
+    // Global functions
+    changeQuantity(change, inputId) {
+      const input = document.getElementById(inputId);
+      const newValue = parseInt(input.value) + change;
+      if (newValue >= 1) input.value = newValue;
+    },
+
+    openAddressModal() {
+      new bootstrap.Modal(document.getElementById('addressModal')).show();
+    },
+
+    saveAddress() {
+      document.getElementById('addressInput').value = document.getElementById('modalAddressDetail').value;
+      bootstrap.Modal.getInstance(document.getElementById('addressModal')).hide();
+    },
+
+    previewImage(event) {
+      const reader = new FileReader();
+      reader.onload = () => document.getElementById('previewImg').src = reader.result;
+      reader.readAsDataURL(event.target.files[0]);
+    }
   };
-  reader.readAsDataURL(event.target.files[0]);
-}
 
+  // Initialize
+  const init = () => {
+    app.setupEventListeners();
+    app.initSearch();
+    document.addEventListener('DOMContentLoaded', () => app.initDOMContentLoaded());
+    Object.assign(window, {
+      changeQuantity: app.changeQuantity,
+      openAddressModal: app.openAddressModal,
+      saveAddress: app.saveAddress,
+      previewImage: app.previewImage
+    });
+  };
 
-
+  init();
+})();

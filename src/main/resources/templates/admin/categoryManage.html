@@ -15,57 +15,63 @@
 </head>
 
 <body>
-<div class="container-fluid">
-    <div class="row g-4">
-        <!-- Sidebar -->
-        <div class="col-auto p-3 min-vh-100 bg-white shadow-sm">
-            <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
-                <a href="/" class="d-flex align-items-center pb-3 mb-md-0 text-decoration-none">
-                    <span class="fs-5 d-none d-sm-inline" style="color: var(--primary-color); font-weight: 600;">Admin Dashboard</span>
-                </a>
-                <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start w-100">
-                    <li class="nav-item w-100">
-                        <a href="/" class="nav-link active" aria-current="page">
-                            <i class="fa-solid fa-house me-2"></i>
-                            <span class="ms-1 d-none d-sm-inline">Home</span>
-                        </a>
-                    </li>
-                    <li class="nav-item w-100">
-                        <a th:href="@{/admin/products}" class="nav-link">
-                            <i class="fa-solid fa-boxes-stacked me-2"></i>
-                            <span class="ms-1 d-none d-sm-inline">Quản Lý Sản Phẩm</span>
-                        </a>
-                    </li>
-                    <li class="nav-item w-100">
-                        <a th:href="@{/admin/categories}" class="nav-link">
-                            <i class="fa-solid fa-tags me-2"></i>
-                            <span class="ms-1 d-none d-sm-inline">Quản Lý Loại Sản Phẩm</span>
-                        </a>
-                    </li>
-                    <li class="nav-item w-100">
-                        <a th:href="@{/admin/bill}" class="nav-link">
-                            <i class="fa-solid fa-file-invoice-dollar me-2"></i>
-                            <span class="ms-1 d-none d-sm-inline">Quản Lý Hóa Đơn</span>
-                        </a>
-                    </li>
-                    <li class="nav-item w-100">
-                        <a th:href="@{/admin/account}" class="nav-link">
-                            <i class="fa-solid fa-users me-2"></i>
-                            <span class="ms-1 d-none d-sm-inline">Quản Lý Người Dùng</span>
-                        </a>
-                    </li>
-                    <li class="nav-item w-100">
-                        <a th:href="@{/admin/statistics}" class="nav-link">
-                            <i class="fa-solid fa-chart-pie me-2"></i>
-                            <span class="ms-1 d-none d-sm-inline">Thống Kê</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
+    <div class="container-fluid">
+        <div class="row g-4">
+            <!-- Sidebar -->
+            <aside class="col-auto p-3 min-vh-100 bg-white shadow-sm">
+                <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
+                    <a href="/" class="d-flex align-items-center pb-3 mb-md-0 text-decoration-none">
+                        <span class="fs-5 d-none d-sm-inline text-primary fw-bold">Admin Dashboard</span>
+                    </a>
+                    <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start w-100">
+                        <li class="nav-item w-100">
+                            <a href="/" class="nav-link active" aria-current="page">
+                                <i class="fa-solid fa-house me-2"></i>
+                                <span class="ms-1 d-none d-sm-inline">Home</span>
+                            </a>
+                        </li>
+                        <li class="nav-item w-100">
+                            <a th:href="@{/admin/products}" class="nav-link">
+                                <i class="fa-solid fa-boxes-stacked me-2"></i>
+                                <span class="ms-1 d-none d-sm-inline">Quản Lý Sản Phẩm</span>
+                            </a>
+                        </li>
+                        <li class="nav-item w-100">
+                            <a th:href="@{/admin/categories}" class="nav-link">
+                                <i class="fa-solid fa-tags me-2"></i>
+                                <span class="ms-1 d-none d-sm-inline">Quản Lý Loại Sản Phẩm</span>
+                            </a>
+                        </li>
+                        <li class="nav-item w-100">
+                            <a th:href="@{/admin/bill}" class="nav-link">
+                                <i class="fa-solid fa-file-invoice-dollar me-2"></i>
+                                <span class="ms-1 d-none d-sm-inline">Quản Lý Hóa Đơn</span>
+                            </a>
+                        </li>
+                        <li class="nav-item w-100">
+                            <a th:href="@{/admin/account}" class="nav-link">
+                                <i class="fa-solid fa-users me-2"></i>
+                                <span class="ms-1 d-none d-sm-inline">Quản Lý Người Dùng</span>
+                            </a>
+                        </li>
+                        <li class="nav-item w-100">
+                            <a th:href="@{/admin/nhansu}" class="nav-link">
+                                <i class="fa-solid fa-ticket-alt me-2"></i>
+                                <span class="ms-1 d-none d-sm-inline">Quản Lý Voucher</span>
+                            </a>
+                        </li>
+                        <li class="nav-item w-100">
+                            <a th:href="@{/admin/statistics}" class="nav-link">
+                                <i class="fa-solid fa-chart-pie me-2"></i>
+                                <span class="ms-1 d-none d-sm-inline">Thống Kê</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </aside>
 
             <!-- Main Content -->
-            <div class="col p-4">
+            <main class="col p-4">
                 <div class="container">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h2 class="mb-0">Quản Lý Loại Sản Phẩm</h2>
@@ -76,7 +82,6 @@
                             </ol>
                         </nav>
                     </div>
-
                     <div class="card shadow-sm">
                         <div class="card-body p-0">
                             <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -96,7 +101,9 @@
                             </ul>
 
                             <div class="tab-content p-4" id="myTabContent">
-                                <!-- Edit Tab -->
+                                <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}">
+                                </div>
+                                <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
                                 <div class="tab-pane fade show active" id="edit" role="tabpanel"
                                     aria-labelledby="edit-tab">
                                     <form action="/admin/categories/save" th:object="${cate}" method="post">
@@ -119,14 +126,13 @@
                                                 formaction="/admin/categories/update">
                                                 <i class="fa-solid fa-pen-to-square"></i> Cập nhật
                                             </button>
-                                            <button type="reset" class="btn btn-warning">
-                                                <a th:href="@{/admin/categories}" class="btn btn-warning">
-                                                    <i class="fa-solid fa-rotate"></i> Làm Mới
-                                                </a>
-                                            </button>
+                                            <a th:href="@{/admin/categories}" class="btn btn-warning">
+                                                <i class="fa-solid fa-rotate"></i> Làm Mới
+                                            </a>
                                         </div>
                                     </form>
                                 </div>
+                                <!-- List Tab -->
                                 <div class="tab-pane fade" id="list" role="tabpanel" aria-labelledby="list-tab">
                                     <div class="table-responsive">
                                         <table class="table table-hover align-middle mb-0 category-table">
@@ -148,10 +154,10 @@
                                                                 <i class="fa-solid fa-pen-to-square"></i> Sửa
                                                             </a>
                                                             <form th:action="@{/admin/categories/delete}" method="post"
-                                                                class="d-inline"
-                                                                onsubmit="return confirm('Bạn có chắc chắn muốn xóa loại sản phẩm này?')">
+                                                                class="d-inline delete-form">
                                                                 <input type="hidden" name="id" th:value="${catei.id}">
-                                                                <button type="submit" class="btn btn-sm btn-danger">
+                                                                <button type="button"
+                                                                    class="btn btn-sm btn-danger delete-btn">
                                                                     <i class="fa-solid fa-trash"></i> Xóa
                                                                 </button>
                                                             </form>
@@ -161,103 +167,56 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                </form>
-                            </div>
-
-                            <!-- List Tab -->
-                            <div class="tab-pane fade" id="list" role="tabpanel" aria-labelledby="list-tab">
-                                <div class="table-responsive">
-                                    <table class="table table-hover align-middle mb-0 category-table">
-                                        <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Tên loại sản phẩm</th>
-                                            <th class="text-center">Hành động</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr>
-                                            <td><span class="fw-medium">LSP001</span></td>
-                                            <td>Rau Xanh</td>
-                                            <td>
-                                                <div class="d-flex justify-content-center gap-2">
-                                                    <button class="btn btn-info btn-sm btn-action edit-btn">
-                                                        <i class="fa-solid fa-pen-to-square"></i>
-                                                    </button>
-                                                    <button class="btn btn-danger btn-sm btn-action delete-btn"
-                                                            onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
-                                                        <i class="fa-solid fa-trash"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                            <table class="table table-bordered table-hover align-middle shadow">
-                                <thead class="table-primary" border="1">
-                                    <tr>
-                                        <th scope="col">ID</th>
-                                        <th scope="col">Tên loại sản phẩm</th>
-                                        <th scope="col" class="col-2">Hành Động</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="table-light">
-                                    <th:block th:each="item : ${categories}">
-                                        <tr>
-                                            <td th:text="${item.id}"></td>
-                                            <td th:text="${item.name}"></td>
-                                            <td>
-                                                <a th:href="@{|/admin/categories/edit/${item.id}|}"
-                                                    class="btn btn-sm btn-info">
-                                                    <i class="fa-solid fa-pen-to-square"></i> Sửa
-                                                </a>
-                                                <form th:action="@{/category/delete}" method="post" class="d-inline"
-                                                    onsubmit="return confirm('Bạn có chắc chắn muốn xóa loại sản phẩm này?')">
-                                                    <input type="hidden" name="id" th:value="${item.id}">
-                                                    <button type="submit" class="btn btn-sm btn-danger">
-                                                        <i class="fa-solid fa-trash"></i> Xóa
-                                                    </button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    </th:block>
-                                </tbody>
-                            </table>
-                        </div>
                     </div>
                 </div>
-            </div>
+            </main>
         </div>
     </div>
-</div>
 
-<script>
-    // Form validation với SweetAlert2
-    (() => {
-        'use strict'
-        const forms = document.querySelectorAll('.needs-validation')
-        Array.from(forms).forEach(form => {
-            form.addEventListener('submit', event => {
-                if (!form.checkValidity()) {
-                    event.preventDefault()
-                    event.stopPropagation()
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Vui lòng điền đầy đủ thông tin!',
-                        text: 'Các trường bắt buộc không được để trống',
-                        confirmButtonColor: '#3b82f6'
-                    });
-                }
-                form.classList.add('was-validated')
-            }, false)
+    <script>
+        (() => {
+            'use strict'
+            const forms = document.querySelectorAll('.needs-validation')
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Vui lòng điền đầy đủ thông tin!',
+                            text: 'Các trường bắt buộc không được để trống',
+                            confirmButtonColor: '#3b82f6'
+                        });
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
         })
-    })()
-</script>
+        ()
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                const form = this.closest('.delete-form');
+                Swal.fire({
+                    title: "Bạn có chắc chắn muốn xóa?",
+                    text: "Hành động này không thể hoàn tác!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "Xóa",
+                    cancelButtonText: "Hủy"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

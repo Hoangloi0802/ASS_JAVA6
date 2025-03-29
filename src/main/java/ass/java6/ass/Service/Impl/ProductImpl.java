@@ -36,13 +36,12 @@ public class ProductImpl implements ProductService {
     }
 
     @Override
-    public Page<Product> filterSortAndPaginate(String keyword, Double priceFilter, String categoryId, String sort, Pageable pageable) {
+    public Page<Product> filterSortAndPaginate(String keyword, Double priceFilter, String categoryId, String sort,
+            Pageable pageable) {
         Specification<Product> spec = Specification.where(null);
-
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            String lowerKeyword = "%" + keyword.toLowerCase() + "%";
-            spec = spec.and((root, query, cb) -> cb.like(cb.lower(root.get("name")), lowerKeyword));
-        }
+        String keywordPattern = (keyword != null && !keyword.trim().isEmpty())
+                ? "%" + keyword.trim().toLowerCase() + "%"
+                : null;
 
         if (priceFilter != null && priceFilter > 0) {
             spec = spec.and((root, query, cb) -> cb.le(root.get("price"), priceFilter));
@@ -54,13 +53,15 @@ public class ProductImpl implements ProductService {
 
         if (sort != null && !sort.isEmpty()) {
             if (sort.equals("5")) {
-                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("price").ascending());
+                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+                        Sort.by("price").ascending());
             } else if (sort.equals("6")) {
-                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("price").descending());
+                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+                        Sort.by("price").descending());
             }
         }
 
-        return productRepository.findAll(pageable);
+        return productRepository.filterProducts(keywordPattern, priceFilter, categoryId, pageable);
     }
 
     @Override
