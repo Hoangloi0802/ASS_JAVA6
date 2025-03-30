@@ -56,9 +56,8 @@
             <div class="product-item">
               <div class="image-holder">
                 <a th:href="@{/product/{id}(id=${product.id})}">
-                  <img th:if="${product.productImages.size() > 0}"
-                    th:src="@{'/img/' + ${product.productImages[0].imageUrl}}" alt="Product Image"
-                    class="product-image img-fluid">
+                  <img th:if="${product.productImages.size() > 0}" th:src="@{${product.productImages[0].imageUrl}}"
+                    alt="Product Image" class="product-image img-fluid">
                 </a>
               </div>
               <div class="product-content">
@@ -87,7 +86,7 @@
               <div class="image-holder">
                 <a th:href="@{/product/{id}(id=${product.id})}">
                   <img th:if="${product.productImages.size() > 0}"
-                    th:src="@{'/img/' + ${product.productImages[0].imageUrl}}" alt="Product Image"
+                    th:src="@{${product.productImages[0].imageUrl}}" alt="Product Image"
                     class="product-image img-fluid">
                 </a>
               </div>

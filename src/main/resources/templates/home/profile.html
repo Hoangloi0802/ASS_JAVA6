@@ -12,7 +12,6 @@
     <!-- Sửa form -->
     <form th:action="@{/profile/update}" method="post" enctype="multipart/form-data" th:object="${user}">
       <div class="row">
-        <!-- Avatar & Upload -->
         <div class="col-md-4 mb-4">
           <div class="card text-center p-3">
             <img
@@ -41,8 +40,8 @@
               <div class="col-sm-9">
                 <input type="text" class="form-control" th:field="*{username}" readonly>
               </div>
-            </div> 
-            
+            </div>
+
             <div class="mb-3 row">
               <label class="col-sm-3 col-form-label">Họ và tên:</label>
               <div class="col-sm-9">
@@ -63,14 +62,10 @@
                 <input type="tel" class="form-control" th:field="*{mobile}">
               </div>
             </div>
-
-            
-
             <!-- Nếu bạn muốn đổi mật khẩu thì làm trang riêng -->
             <div class="text-end">
               <button type="submit" class="btn btn-dark">Lưu thông tin</button>
             </div>
-
           </div>
         </div>
       </div>

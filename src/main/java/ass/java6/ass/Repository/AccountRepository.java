@@ -1,13 +1,14 @@
 package ass.java6.ass.Repository;
 
+import ass.java6.ass.Entity.Account;
+import ass.java6.ass.Entity.Role;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import ass.java6.ass.Entity.Role;
-import ass.java6.ass.Entity.Account;
-
+@Repository
 public interface AccountRepository extends JpaRepository<Account, String> {
         Optional<Account> findByUsername(String username);
 
@@ -24,6 +25,6 @@ public interface AccountRepository extends JpaRepository<Account, String> {
 
         List<Account> findByActivated(Boolean activated);
 
-        @Query("SELECT COUNT(a) FROM Account a WHERE a.activated = true")
+        @Query("SELECT COUNT(a) FROM Account a WHERE a.role = 'CUST'")
         long countNewCustomers();
 }

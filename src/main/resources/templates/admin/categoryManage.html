@@ -5,215 +5,313 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QUẢN LÝ LOẠI SẢN PHẨM</title>
-    <link rel="stylesheet" href="/bootstrap-5.3.3/dist/css/bootstrap.css">
-    <script src="/bootstrap-5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="/css/admin.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" href="/photo/categories.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="icon" href="/photo/categories.png" type="image/png">
+    <link rel="stylesheet" href="/css/category.css">
 </head>
 
 <body>
-    <div class="container-fluid">
-        <div class="row g-4">
-            <!-- Sidebar -->
-            <aside class="col-auto p-3 min-vh-100 bg-white shadow-sm">
-                <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
-                    <a href="/" class="d-flex align-items-center pb-3 mb-md-0 text-decoration-none">
-                        <span class="fs-5 d-none d-sm-inline text-primary fw-bold">Admin Dashboard</span>
-                    </a>
-                    <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start w-100">
-                        <li class="nav-item w-100">
-                            <a href="/" class="nav-link active" aria-current="page">
-                                <i class="fa-solid fa-house me-2"></i>
-                                <span class="ms-1 d-none d-sm-inline">Home</span>
-                            </a>
-                        </li>
-                        <li class="nav-item w-100">
-                            <a th:href="@{/admin/products}" class="nav-link">
-                                <i class="fa-solid fa-boxes-stacked me-2"></i>
-                                <span class="ms-1 d-none d-sm-inline">Quản Lý Sản Phẩm</span>
-                            </a>
-                        </li>
-                        <li class="nav-item w-100">
-                            <a th:href="@{/admin/categories}" class="nav-link">
-                                <i class="fa-solid fa-tags me-2"></i>
-                                <span class="ms-1 d-none d-sm-inline">Quản Lý Loại Sản Phẩm</span>
-                            </a>
-                        </li>
-                        <li class="nav-item w-100">
-                            <a th:href="@{/admin/bill}" class="nav-link">
-                                <i class="fa-solid fa-file-invoice-dollar me-2"></i>
-                                <span class="ms-1 d-none d-sm-inline">Quản Lý Hóa Đơn</span>
-                            </a>
-                        </li>
-                        <li class="nav-item w-100">
-                            <a th:href="@{/admin/account}" class="nav-link">
-                                <i class="fa-solid fa-users me-2"></i>
-                                <span class="ms-1 d-none d-sm-inline">Quản Lý Người Dùng</span>
-                            </a>
-                        </li>
-                        <li class="nav-item w-100">
-                            <a th:href="@{/admin/nhansu}" class="nav-link">
-                                <i class="fa-solid fa-ticket-alt me-2"></i>
-                                <span class="ms-1 d-none d-sm-inline">Quản Lý Voucher</span>
-                            </a>
-                        </li>
-                        <li class="nav-item w-100">
-                            <a th:href="@{/admin/statistics}" class="nav-link">
-                                <i class="fa-solid fa-chart-pie me-2"></i>
-                                <span class="ms-1 d-none d-sm-inline">Thống Kê</span>
-                            </a>
-                        </li>
-                    </ul>
+    <div class="container-fluid p-0">
+        <div class="row g-0">
+            <div class="col-auto sidebar">
+                <div class="sidebar-brand">
+                    <div class="sidebar-brand-icon">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <div class="sidebar-brand-text">QUẢN LÝ ADMIN</div>
                 </div>
-            </aside>
-
-            <!-- Main Content -->
-            <main class="col p-4">
-                <div class="container">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h2 class="mb-0">Quản Lý Loại Sản Phẩm</h2>
+                <div class="nav-menu">
+                    <div class="nav-section">
+                        <div class="nav-section-title">MENU CHÍNH</div>
+                        <a href="/" class="nav-link">
+                            <i class="fa-solid fa-house"></i>
+                            <span class="nav-text">Trang Chủ</span>
+                        </a>
+                        <a th:href="@{/admin/products}" class="nav-link">
+                            <i class="fa-solid fa-box-open"></i>
+                            <span class="nav-text">Quản Lý Sản Phẩm</span>
+                        </a>
+                        <a th:href="@{/admin/categories}" class="nav-link active">
+                            <i class="fa-solid fa-tags"></i>
+                            <span class="nav-text">Quản Lý Loại Sản Phẩm</span>
+                        </a>
+                        <a th:href="@{/admin/bill}" class="nav-link">
+                            <i class="fa-solid fa-receipt"></i>
+                            <span class="nav-text">Quản Lý Hóa Đơn</span>
+                        </a>
+                        <a th:href="@{/admin/account}" class="nav-link">
+                            <i class="fa-solid fa-users"></i>
+                            <span class="nav-text">Quản Lý Người Dùng</span>
+                        </a>
+                        <a th:href="@{/admin/nhansu}" class="nav-link">
+                            <i class="fa-solid fa-ticket"></i>
+                            <span class="nav-text">Quản Lý Voucher</span>
+                        </a>
+                        <a th:href="@{/admin/statistics}" class="nav-link">
+                            <i class="fa-solid fa-chart-line"></i>
+                            <span class="nav-text">Thống Kê</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col main-content">
+                <div class="page-header">
+                    <h1 class="page-title">Quản Lý Loại Sản Phẩm</h1>
+                    <p class="page-subtitle">Quản lý và theo dõi các loại sản phẩm trong hệ thống</p>
+                </div>
+                <div class="action-bar">
+                    <div class="breadcrumb-wrapper">
                         <nav aria-label="breadcrumb">
-                            <ol class="breadcrumb mb-0">
-                                <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Quản Lý Loại Sản Phẩm</li>
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="/"><i class="fas fa-home me-1"></i>Dashboard</a>
+                                </li>
+                                <li class="breadcrumb-item active">Loại Sản Phẩm</li>
                             </ol>
                         </nav>
                     </div>
-                    <div class="card shadow-sm">
-                        <div class="card-body p-0">
-                            <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link active" id="edit-tab" data-bs-toggle="tab"
-                                        data-bs-target="#edit" type="button" role="tab" aria-controls="edit"
-                                        aria-selected="true">
-                                        <i class="fa-solid fa-pen-to-square me-2"></i>CHỈNH SỬA
-                                    </button>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="list-tab" data-bs-toggle="tab" data-bs-target="#list"
-                                        type="button" role="tab" aria-controls="list" aria-selected="false">
-                                        <i class="fa-solid fa-list me-2"></i>DANH SÁCH
-                                    </button>
-                                </li>
-                            </ul>
-
-                            <div class="tab-content p-4" id="myTabContent">
-                                <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}">
-                                </div>
-                                <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
-                                <div class="tab-pane fade show active" id="edit" role="tabpanel"
-                                    aria-labelledby="edit-tab">
-                                    <form action="/admin/categories/save" th:object="${cate}" method="post">
-                                        <div class="mb-3">
-                                            <label class="form-label">ID:</label>
-                                            <input type="text" class="form-control" th:field="*{id}"
-                                                placeholder="Nhập ID">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Tên Loại Sản Phẩm:</label>
-                                            <input type="text" class="form-control" th:field="*{name}"
-                                                placeholder="Nhập tên">
-                                        </div>
-                                        <div class="d-flex gap-2">
-                                            <button type="submit" class="btn btn-success"
-                                                formaction="/admin/categories/create">
-                                                <i class="fa-solid fa-plus"></i> Thêm
-                                            </button>
-                                            <button type="submit" class="btn btn-primary"
-                                                formaction="/admin/categories/update">
-                                                <i class="fa-solid fa-pen-to-square"></i> Cập nhật
-                                            </button>
-                                            <a th:href="@{/admin/categories}" class="btn btn-warning">
-                                                <i class="fa-solid fa-rotate"></i> Làm Mới
-                                            </a>
-                                        </div>
-                                    </form>
-                                </div>
-                                <!-- List Tab -->
-                                <div class="tab-pane fade" id="list" role="tabpanel" aria-labelledby="list-tab">
-                                    <div class="table-responsive">
-                                        <table class="table table-hover align-middle mb-0 category-table">
-                                            <thead>
-                                                <tr>
-                                                    <th>ID</th>
-                                                    <th>Tên loại sản phẩm</th>
-                                                    <th class="text-center">Hành động</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="table-light">
-                                                <th:block th:each="catei : ${categories}">
-                                                    <tr>
-                                                        <td th:text="${catei.id}"></td>
-                                                        <td th:text="${catei.name}"></td>
-                                                        <td class="text-center">
-                                                            <a th:href="@{|/admin/categories/${catei.id}|}"
-                                                                class="btn btn-sm btn-info">
-                                                                <i class="fa-solid fa-pen-to-square"></i> Sửa
-                                                            </a>
-                                                            <form th:action="@{/admin/categories/delete}" method="post"
-                                                                class="d-inline delete-form">
-                                                                <input type="hidden" name="id" th:value="${catei.id}">
-                                                                <button type="button"
-                                                                    class="btn btn-sm btn-danger delete-btn">
-                                                                    <i class="fa-solid fa-trash"></i> Xóa
-                                                                </button>
-                                                            </form>
-                                                        </td>
-                                                    </tr>
-                                                </th:block>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#categoryModal"
+                            onclick="resetModal()">
+                            <i class="fa-solid fa-plus"></i> Thêm loại sản phẩm
+                        </button>
+                    </div>
+                </div>
+                <div class="notifications-container">
+                    <div class="notification success" th:if="${message}" style="display: none;">
+                        <div class="notification-icon">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="notification-content">
+                            <div class="notification-title">Thành công</div>
+                            <p class="notification-message" th:text="${message}"></p>
+                        </div>
+                    </div>
+                    <div class="notification error" th:if="${errorMessage}" style="display: none;">
+                        <div class="notification-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="notification-content">
+                            <div class="notification-title">Lỗi</div>
+                            <p class="notification-message" th:text="${errorMessage}"></p>
                         </div>
                     </div>
                 </div>
-            </main>
+                <div class="card fade-in">
+                    <div class="card-header">
+                        <h5 class="card-title">Danh sách loại sản phẩm</h5>
+                        <div class="card-tools">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Tìm kiếm loại sản phẩm..."
+                                    id="searchInput">
+                                <button class="btn btn-primary" type="button">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="table" id="categoryTable">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Tên loại sản phẩm</th>
+                                        <th class="text-end">Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="catei : ${categories}">
+                                        <td>
+                                            <span class="fw-medium" th:text="${catei.id}"></span>
+                                        </td>
+                                        <td>
+                                            <span class="fw-medium" th:text="${catei.name}"></span>
+                                        </td>
+                                        <td>
+                                            <div class="action-cell">
+                                                <button class="btn-action edit edit-btn" data-bs-toggle="modal"
+                                                    data-bs-target="#categoryModal" th:attr="data-id=${catei.id}"
+                                                    title="Chỉnh sửa">
+                                                    <i class="fa-solid fa-pen-to-square"></i>
+                                                </button>
+                                                <form th:action="@{/admin/categories/delete/{id}(id=${catei.id})}"
+                                                    method="post" class="delete-form" style="display:inline;">
+                                                    <button type="submit" class="btn-action delete delete-btn"
+                                                        title="Xóa">
+                                                        <i class="fa-solid fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
+    <div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="categoryModalLabel">Thêm loại sản phẩm</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="categoryForm" th:action="@{/admin/categories/save}" method="post">
+                        <input type="hidden" name="id" id="categoryId" />
+                        <div class="form-group">
+                            <label for="categoryIdDisplay" class="form-label">ID</label>
+                            <input type="text" class="form-control" name="idDisplay" id="categoryIdDisplay" required
+                                placeholder="Nhập ID">
+                        </div>
+                        <div class="form-group">
+                            <label for="categoryName" class="form-label">Tên loại sản phẩm</label>
+                            <input type="text" class="form-control" name="name" id="categoryName" required
+                                placeholder="Nhập tên loại sản phẩm">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelModalBtn" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i> Hủy
+                    </button>
+                    <button type="button" class="btn btn-warning" onclick="resetModal()">
+                        <i class="fas fa-redo me-1"></i> Reset
+                    </button>
+                    <button type="submit" form="categoryForm" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i> Lưu
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        (() => {
-            'use strict'
-            const forms = document.querySelectorAll('.needs-validation')
-            Array.from(forms).forEach(form => {
-                form.addEventListener('submit', event => {
-                    if (!form.checkValidity()) {
-                        event.preventDefault()
-                        event.stopPropagation()
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Vui lòng điền đầy đủ thông tin!',
-                            text: 'Các trường bắt buộc không được để trống',
-                            confirmButtonColor: '#3b82f6'
+        function resetModal() {
+            document.getElementById('categoryForm').reset();
+            document.getElementById('categoryId').value = '';
+            document.getElementById('categoryIdDisplay').value = '';
+            document.getElementById('categoryIdDisplay').removeAttribute('readonly');
+            document.getElementById('categoryModalLabel').textContent = 'Thêm loại sản phẩm';
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const successNotification = document.querySelector('.notification.success');
+            const errorNotification = document.querySelector('.notification.error');
+
+            if (successNotification) {
+                successNotification.style.display = 'flex';
+                setTimeout(() => {
+                    successNotification.style.opacity = '0';
+                    setTimeout(() => successNotification.remove(), 300);
+                }, 5000);
+            }
+
+            if (errorNotification) {
+                errorNotification.style.display = 'flex';
+                setTimeout(() => {
+                    errorNotification.style.opacity = '0';
+                    setTimeout(() => errorNotification.remove(), 300);
+                }, 5000);
+            }
+
+            const modalElement = document.getElementById('categoryModal');
+            const modal = new bootstrap.Modal(modalElement);
+
+            document.getElementById('cancelModalBtn').addEventListener('click', function () {
+                modal.hide();
+            });
+            const editButtons = document.querySelectorAll('.edit-btn');
+            editButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const id = this.getAttribute('data-id');
+                    fetch(`/admin/categories/${id}`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Không thể lấy dữ liệu loại sản phẩm');
+                            }
+                            return response.json();
+                        })
+                        .then(category => {
+                            if (category) {
+                                document.getElementById('categoryId').value = category.id || '';
+                                document.getElementById('categoryIdDisplay').value = category.id || '';
+                                document.getElementById('categoryIdDisplay').setAttribute('readonly', 'readonly');
+                                document.getElementById('categoryName').value = category.name || '';
+                                document.getElementById('categoryModalLabel').textContent = 'Chỉnh sửa loại sản phẩm';
+                            }
+                            modal.show();
+                        })
+                        .catch(error => {
+                            console.error('Lỗi:', error);
+                            Swal.fire({
+                                icon: "error",
+                                title: "Lỗi",
+                                text: "Không thể tải dữ liệu loại sản phẩm. Vui lòng thử lại!",
+                                confirmButtonColor: "#6366f1"
+                            });
+                            modal.show();
                         });
-                    }
-                    form.classList.add('was-validated')
-                }, false)
-            })
-        })
-        ()
-        document.querySelectorAll('.delete-btn').forEach(button => {
-            button.addEventListener('click', function () {
-                const form = this.closest('.delete-form');
-                Swal.fire({
-                    title: "Bạn có chắc chắn muốn xóa?",
-                    text: "Hành động này không thể hoàn tác!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#d33",
-                    cancelButtonColor: "#3085d6",
-                    confirmButtonText: "Xóa",
-                    cancelButtonText: "Hủy"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        form.submit();
+                });
+            });
+
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const form = this.closest('.delete-form');
+                    Swal.fire({
+                        title: "Bạn có chắc chắn muốn xóa?",
+                        text: "Hành động này không thể hoàn tác!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#ef4444",
+                        cancelButtonColor: "#6b7280",
+                        confirmButtonText: "Xóa",
+                        cancelButtonText: "Hủy"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
+
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('keyup', function () {
+                const searchTerm = this.value.toLowerCase();
+                const table = document.getElementById('categoryTable');
+                const rows = table.querySelectorAll('tbody tr');
+
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
                     }
                 });
+            });
+            const categoryForm = document.getElementById('categoryForm');
+            categoryForm.addEventListener('submit', function (e) {
+                if (!categoryForm.checkValidity()) {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: "warning",
+                        title: "Vui lòng điền đầy đủ thông tin!",
+                        text: "Các trường bắt buộc không được để trống",
+                        confirmButtonColor: "#6366f1"
+                    });
+                } else {
+                    document.getElementById('categoryId').value = document.getElementById('categoryIdDisplay').value;
+                }
             });
         });
     </script>
