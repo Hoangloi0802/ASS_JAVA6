@@ -63,4 +63,11 @@ public class Product implements Serializable {
                ", productImagesCount=" + (productImages != null ? productImages.size() : 0) +
                '}';
     }
+    public int getSoldQuantity() {
+        if (orderDetails == null) {
+            return 0;
+        }
+        return orderDetails.stream().mapToInt(OrderDetail::getQuantity).sum();
+    }
+    
 }

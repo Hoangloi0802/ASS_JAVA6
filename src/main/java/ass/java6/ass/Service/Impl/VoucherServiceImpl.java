@@ -9,6 +9,7 @@ import ass.java6.ass.Service.VoucherService;
 import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class VoucherServiceImpl implements VoucherService {
@@ -59,4 +60,17 @@ public class VoucherServiceImpl implements VoucherService {
                 .filter(v -> v.getMinOrderValue() <= orderAmount)
                 .toList();
     }
+    @Override
+    public List<Voucher> findByTrangThaiTrue() {
+        return voucherRepository.findByTrangThaiTrue(); // ✅ Gọi đúng repository
+    }
+
+    @Override
+     public List<Voucher> getValidVouchers(double totalOrderValue) {
+        List<Voucher> allVouchers = voucherRepository.findByTrangThaiTrue();
+        return allVouchers.stream()
+                .filter(voucher -> totalOrderValue >= voucher.getMinOrderValue()) // Chỉ lấy voucher hợp lệ
+                .collect(Collectors.toList());
+    }
+    
 }

@@ -15,7 +15,7 @@ import ass.java6.ass.Service.ProfileService;
 import java.util.Optional;
 
 @Service
-public class ProfileServiceImpl implements ProfileService {
+public class ProfileImpl implements ProfileService {
 
     @Autowired
     private AccountRepository accountRepository;
@@ -34,7 +34,7 @@ public class ProfileServiceImpl implements ProfileService {
             account.setFullname(updatedUser.getFullname());
             account.setEmail(updatedUser.getEmail());
             account.setMobile(updatedUser.getMobile());
-
+            account.setAddress(updatedUser.getAddress());
             // Xử lý avatar upload
             if (file != null && !file.isEmpty()) {
                 try {

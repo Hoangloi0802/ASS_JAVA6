@@ -27,7 +27,6 @@ import ass.java6.ass.Repository.OrderDetailRepository;
 public class BillController {
     @Autowired
     OrderRepository orderRepository;
-
     @Autowired
     OrderDetailRepository orderDetailRepository;
 
@@ -220,35 +219,5 @@ public class BillController {
             e.printStackTrace();
         }
         return "redirect:/admin/bill";
-    }
-
-    @PostMapping("/admin/bill/delete-ajax/{id}")
-    @ResponseBody
-    public ResponseEntity<Map<String, Object>> deleteOrderAjax(@PathVariable("id") Long id) {
-        Map<String, Object> response = new HashMap<>();
-        try {
-            Order order = orderRepository.findById(id).orElse(null);
-            if (order == null) {
-                response.put("success", false);
-                response.put("message", "Đơn hàng không tồn tại!");
-                return ResponseEntity.badRequest().body(response);
-            }
-
-            if (order.getOrderDetails() != null && !order.getOrderDetails().isEmpty()) {
-                response.put("success", false);
-                response.put("message", "Không thể xóa đơn hàng vì có sản phẩm liên quan!");
-                return ResponseEntity.badRequest().body(response);
-            } else {
-                orderRepository.delete(order);
-                response.put("success", true);
-                response.put("message", "Xóa đơn hàng thành công!");
-                return ResponseEntity.ok(response);
-            }
-        } catch (Exception e) {
-            response.put("success", false);
-            response.put("message", "Lỗi khi xóa đơn hàng: " + e.getMessage());
-            e.printStackTrace();
-            return ResponseEntity.badRequest().body(response);
-        }
     }
 }

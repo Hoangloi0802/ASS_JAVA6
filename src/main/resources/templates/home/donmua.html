@@ -1,92 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head th:replace="~{/layouts/header}">
-        <title>Home</title>
-    </head>
-    <body>
-        <header th:replace="~{/layouts/nav}">
-        </header>
-        <main class="container my-5">
+<head th:replace="~{/layouts/header}">
+  <title>Home</title>
+</head>
+<body>
+  <header th:replace="~{/layouts/nav}"></header>
+  <main class="container my-5">
+    <div class="text-center mb-4">
+      <h2>🎉 Đặt hàng thành công!</h2>
+      <p>Cảm ơn bạn đã mua sắm tại cửa hàng của chúng tôi.</p>
+    </div>
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5>Thông tin đơn hàng</h5>
+        <p><strong>Mã đơn hàng:</strong> <span th:text="${order.id}"></span></p>
+        <p><strong>Ngày đặt:</strong> <span th:text="${#temporals.format(order.createDate, 'dd/MM/yyyy')}"></span></p>
+        <p><strong>Trạng thái:</strong> <span class="badge" th:classappend="${order.status} ? 'bg-success' : 'bg-danger'" th:text="${order.status} ? 'Hoàn thành' : 'Chưa hoàn thành'"></span></p>
+      </div>
+    </div>
 
-            <div class="text-center mb-4">
-              <h2>🎉 Đặt hàng thành công!</h2>
-              <p>Cảm ơn bạn đã mua sắm tại cửa hàng của chúng tôi.</p>
+    <!-- Danh sách sản phẩm -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5>Danh sách sản phẩm</h5>
+        <ul class="list-group">
+          <li class="list-group-item d-flex align-items-center" th:each="item : ${order.orderDetails}">
+            <img th:src="${item.product.productImages[0].imageUrl}" class="product-img me-3" alt="Sản phẩm">
+            <div class="flex-grow-1">
+              <h6 class="mb-1" th:text="${item.product.name}"></h6>
+              <small>Số lượng: <span th:text="${item.quantity}"></span></small>
             </div>
-            <div class="card mb-4">
-              <div class="card-body">
-                <h5>Thông tin đơn hàng</h5>
-                <p><strong>Mã đơn hàng:</strong> #DH123456</p>
-                <p><strong>Ngày đặt:</strong> 18/03/2025</p>
-                <p><strong>Trạng thái:</strong> <span class="badge bg-success">Đã thanh toán</span></p>
-              </div>
-            </div>
-        
-            <!-- Danh sách sản phẩm -->
-            <div class="card mb-4">
-              <div class="card-body">
-                <h5>Danh sách sản phẩm</h5>
-                <ul class="list-group">
-                  <!-- Sản phẩm 1 -->
-                  <li class="list-group-item d-flex align-items-center">
-                    <img src="https://bizweb.dktcdn.net/100/446/974/products/ao-thun-mlb-new-era-heavy-cotton-new-york-yankees-black-13086578-1.jpg?v=1691318321487" class="product-img me-3" alt="Sản phẩm">
-                    <div class="flex-grow-1">
-                      <h6 class="mb-1">Áo len Sparrow - trắng & nâu</h6>
-                      <small>Số lượng: 1</small>
-                    </div>
-                    <strong>500.000 VNĐ</strong>
-                  </li>
-                  <!-- Sản phẩm 2 -->
-                  <li class="list-group-item d-flex align-items-center">
-                    <img src="https://bizweb.dktcdn.net/100/446/974/products/ao-thun-mlb-new-era-heavy-cotton-new-york-yankees-black-13086578-1.jpg?v=1691318321487" class="product-img me-3" alt="Sản phẩm">
-                    <div class="flex-grow-1">
-                      <h6 class="mb-1">Túi xách Sparrow - nâu</h6>
-                      <small>Số lượng: 1</small>
-                    </div>
-                    <strong>300.000 VNĐ</strong>
-                  </li>
-                </ul>
-              </div>
-            </div>
-        
-            <!-- Thông tin khách hàng -->
-            <div class="card mb-4">
-              <div class="card-body">
-                <h5>Thông tin giao hàng</h5>
-                <p><strong>Họ và tên:</strong> Nguyễn Văn A</p>
-                <p><strong>Địa chỉ:</strong> Liên Chiểu, Đà Nẵng</p>
-                <p><strong>Số điện thoại:</strong> 0345706285</p>
-              </div>
-            </div>
-        
-            <!-- Tổng tiền -->
-            <div class="card mb-4">
-              <div class="card-body">
-                <h5>Tóm tắt đơn hàng</h5>
-                <ul class="list-group">
-                  <li class="list-group-item d-flex justify-content-between">
-                    <span>Tạm tính</span>
-                    <strong>800.000 VNĐ</strong>
-                  </li>
-                  <li class="list-group-item d-flex justify-content-between">
-                    <span>Phí vận chuyển</span>
-                    <strong>50.000 VNĐ</strong>
-                  </li>
-                  <li class="list-group-item d-flex justify-content-between">
-                    <span>Tổng cộng</span>
-                    <strong>850.000 VNĐ</strong>
-                  </li>
-                </ul>
-              </div>
-            </div>
-        
-            <!-- Nút quay lại -->
-            <div class="text-center">
-              <a href="/" class="btn btn-dark">Quay lại trang chủ</a>
-              <a href="/shop" class="btn btn-outline-secondary ms-2">Tiếp tục mua sắm</a>
-            </div>
-        
-          </main>
-        <div th:replace="~{/layouts/footer}">
-        </div>
-    </body>
+            <strong th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></strong>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Thông tin giao hàng -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5>Thông tin giao hàng</h5>
+        <p><strong>Họ và tên:</strong> <span th:text="${order.account.fullname}"></span></p>
+        <p><strong>Địa chỉ:</strong> <span th:text="${order.address}"></span></p>
+        <p><strong>Số điện thoại:</strong> <span th:text="${order.account.mobile}"></span></p>
+      </div>
+    </div>
+
+    <!-- Tổng tiền -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5>Tóm tắt đơn hàng</h5>
+        <ul class="list-group">
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Tạm tính</span>
+            <strong th:text="${#numbers.formatDecimal(subtotal, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></strong>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Phí vận chuyển</span>
+            <strong th:text="'+' + ${#numbers.formatDecimal(shippingFee, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></strong>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Tổng cộng</span>
+            <strong th:text="${#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></strong>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Nút quay lại -->
+    <div class="text-center">
+      <a href="/" class="btn btn-dark">Quay lại trang chủ</a>
+      <a href="/shop" class="btn btn-outline-secondary ms-2">Tiếp tục mua sắm</a>
+    </div>
+  </main>
+  <div th:replace="~{/layouts/footer}"></div>
+</body>
 </html>

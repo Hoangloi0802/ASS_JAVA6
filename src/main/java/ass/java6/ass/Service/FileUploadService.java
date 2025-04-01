@@ -27,7 +27,7 @@ public class FileUploadService {
     private boolean isValidImageFile(String fileName) {
         String lowerCaseName = fileName.toLowerCase();
         return lowerCaseName.endsWith(".jpg") || lowerCaseName.endsWith(".jpeg") ||
-                lowerCaseName.endsWith(".png") || lowerCaseName.endsWith(".gif");
+                lowerCaseName.endsWith(".png") || lowerCaseName.endsWith(".gif") || lowerCaseName.endsWith(".webp");
     }
 
     /**

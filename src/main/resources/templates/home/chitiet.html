@@ -17,7 +17,7 @@
               <div class="swiper main-slider">
                 <div class="swiper-wrapper">
                   <div th:each="img : ${product.productImages}" class="swiper-slide">
-                    <img class="img-thumbnail slider-image" th:src="@{${img.imageUrl}}" alt="">
+                    <img class="img-thumbnail slider-image" th:src="${img.imageUrl}" alt="">
                   </div>
                 </div>
                 <div class="swiper-button-next"></div>
@@ -28,7 +28,7 @@
               <div class="swiper thumbs-slider mt-3">
                 <div class="swiper-wrapper">
                   <div th:each="img : ${product.productImages}" class="swiper-slide">
-                    <img class="img-fluid thumb-image" th:src="@{${img.imageUrl}}" alt="">
+                    <img class="img-fluid thumb-image" th:src=" ${img.imageUrl}" alt="">
                   </div>
                 </div>
               </div>
@@ -43,25 +43,44 @@
             <h6 class="mt-4 mb-3">Product Details</h6>
             <p th:text="${product.description}" class="text-secondary mb-4"></p>
 
-            <form th:action="@{/giohang/add}" method="post" class="mt-4">
+            <form th:action="@{/cart}" method="get" class="mt-4" th:if="${product.quantity > 0}">
+              <!-- Hiển thị số lượng còn lại -->
+              <p class="text-muted">Còn lại: <span th:text="${product.quantity}"></span> sản phẩm</p>
+          
+              <!-- Hidden Product ID -->
               <input type="hidden" name="productId" th:value="${product.id}">
+            
+              <!-- Hidden action -->
+              <input type="hidden" name="action" value="add">
+            
+              <!-- Quantity Selector -->
               <div class="d-flex align-items-center gap-2 mb-4">
-                <button type="button" class="btn btn-outline-dark btn-sm px-3 py-2"
-                  onclick="decreaseQuantity()">-</button>
-                <input type="number" id="quantityInput" name="quantity" value="1" min="1"
-                  class="form-control form-control-sm text-center" style="width: 80px; height: 40px;">
-                <button type="button" class="btn btn-outline-dark btn-sm px-3 py-2"
-                  onclick="increaseQuantity()">+</button>
+                  <button type="button" class="btn btn-outline-dark btn-sm px-3 py-2" onclick="changeQuantity(-1, 'quantityInput')" th:disabled="${product.quantity == 1}">-</button>
+                  <input type="number" id="quantityInput" name="quantity" value="1" min="1" th:max="${product.quantity}" class="form-control form-control-sm text-center" style="width: 80px; height: 40px;" readonly>
+                  <button type="button" class="btn btn-outline-dark btn-sm px-3 py-2" onclick="changeQuantity(1, 'quantityInput')" th:disabled="${product.quantity == 1}">+</button>
               </div>
+          
+              <!-- Submit Button -->
               <button type="submit" class="btn btn-dark">Add to Cart</button>
-            </form>
-          </div>
+          </form>
+          
+          <!-- Nếu hết hàng thì hiển thị thông báo -->
+          <p class="text-danger fw-bold" th:if="${product.quantity == 0}">Hết hàng</p>
+          
+          
+          
+        </div>
         </div>
       </div>
     </section>
   </main>
 
   <div th:replace="~{/layouts/footer}"></div>
+
+  <script>
+    
+</script>
+
 </body>
 
 </html>

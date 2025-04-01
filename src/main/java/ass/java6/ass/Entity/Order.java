@@ -35,4 +35,11 @@ public class Order implements Serializable {
     @ManyToOne
     @JoinColumn(name = "voucher_id")
     private Voucher voucher;
+
+
+    public int getTotalQuantity() {
+        return orderDetails.stream()
+                .mapToInt(OrderDetail::getQuantity)
+                .sum();
+    }
 }

@@ -11,6 +11,7 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -44,7 +45,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable())
+        http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(PUBLIC_ENDPOINTS).permitAll() // Các trang công khai
                         .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN") // Chỉ admin mới truy cập được trang
@@ -84,7 +85,6 @@ public class SecurityConfig {
                                                 : currentUser.getEmail());
                                 req.getSession().setAttribute("role", currentUser.getRole().name()); // 👈 Lưu quyền vào
                                                                                                      // session
-
                                 res.sendRedirect("/shop");
                             } else {
                                 res.sendRedirect("/Dangnhap?error=user_not_found");
@@ -107,27 +107,41 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> {
-            Optional<Account> optionalAccount = accountRepository.findByUsername(username);
-            if (optionalAccount.isEmpty()) {
-                throw new BadCredentialsException("tài khoản không tồn tại");
+            Account account = accountRepository.findByUsername(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("Tài khoản không tồn tại"));
+
+            if (!account.isActivated()) {
+                throw new DisabledException("Tài khoản chưa được kích hoạt. Vui lòng liên hệ admin.");
             }
-            Account account = optionalAccount.get();
-            if (account.isActivated() != true) {
-                throw new DisabledException("tài khoản chưa được kích hoạt vui lòng liên hệ admin");
-            }
-            return account;
+            return org.springframework.security.core.userdetails.User
+                    .withUsername(account.getUsername())
+                    .password(account.getPassword())
+                    .authorities(account.getRole().name())
+                    .build();
         };
     }
 
     @Bean
     public AuthenticationFailureHandler customFailureHandler() {
         return (request, response, exception) -> {
-            String error = "true"; // Mặc định
-            if (exception instanceof BadCredentialsException) {
-                error = "userNotFound";
-            } else if (exception instanceof DisabledException) {
-                error = "notActivated";
+            String error = "true";
+            String username = request.getParameter("username");
+            String password = request.getParameter("password");
+            Optional<Account> account = accountRepository.findByUsername(username);
+            if (account.isEmpty()) {
+
+                response.sendRedirect("/Dangnhap?error=Tai khoan khong ton tai");
+                return;
             }
+            if (account.get().isActivated() == false) {
+                response.sendRedirect("/Dangnhap?error=tai khoan chua duoc kick hoat vui long lien he admin");
+                return;
+            }
+            if (!bCryptPasswordEncoder().matches(account.get().getPassword(), password)) {
+                response.sendRedirect("/Dangnhap?error=Mat khau khong chinh xac");
+                return;
+            }
+
             response.sendRedirect("/Dangnhap?error=" + error);
         };
     }

@@ -55,7 +55,7 @@
                             <i class="fa-solid fa-chart-line"></i>
                             <span class="nav-text">Thống Kê</span>
                         </a>
-                    </div>             
+                    </div>
                 </div>
             </div>
             <div class="col main-content">
@@ -109,88 +109,70 @@
                                         </button>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
-                                    <select class="form-select" name="role" onchange="this.form.submit()">
-                                        <option value="" th:selected="${param.role == null}">Tất cả vai trò</option>
-                                        <option value="admin" th:selected="${param.role == 'admin'}">Admin</option>
-                                        <option value="user" th:selected="${param.role == 'user'}">User</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3">
-                                    <select class="form-select" name="status" onchange="this.form.submit()">
-                                        <option value="" th:selected="${param.status == null}">Tất cả trạng thái
-                                        </option>
-                                        <option value="active" th:selected="${param.status == 'active'}">Đang hoạt
-                                            động</option>
-                                        <option value="inactive" th:selected="${param.status == 'inactive'}">Ngừng
-                                            hoạt động</option>
-                                    </select>
-                                </div>
-                            </div>
                         </form>
                     </div>
                 </div>
-                <div class="card fade-in">
-                    <div class="card-header">
-                        <h5 class="card-title">Danh sách người dùng</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-container">
-                            <table class="table" id="userTable">
-                                <thead>
-                                    <tr>
-                                        <th>Username</th>
-                                        <th>Họ và Tên</th>
-                                        <th>Email</th>
-                                        <th>Ảnh</th>
-                                        <th>Trạng Thái</th>
-                                        <th class="text-end">Thao tác</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr th:each="account : ${accounts}">
-                                        <td>
-                                            <span class="fw-medium" th:text="${account.username}"></span>
-                                        </td>
-                                        <td>
-                                            <span class="fw-medium" th:text="${account.fullname}"></span>
-                                        </td>
-                                        <td th:text="${account.email}"></td>
-                                        <td>
-                                            <img th:src="${account.photo} != null and ${account.photo} != '' 
+            </div>
+            <div class="card fade-in">
+                <div class="card-header">
+                    <h5 class="card-title">Danh sách người dùng</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-container">
+                        <table class="table" id="userTable">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Họ và Tên</th>
+                                    <th>Email</th>
+                                    <th>Ảnh</th>
+                                    <th>Trạng Thái</th>
+                                    <th class="text-end">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="account : ${accounts}">
+                                    <td>
+                                        <span class="fw-medium" th:text="${account.username}"></span>
+                                    </td>
+                                    <td>
+                                        <span class="fw-medium" th:text="${account.fullname}"></span>
+                                    </td>
+                                    <td th:text="${account.email}"></td>
+                                    <td>
+                                        <img th:src="${account.photo} != null and ${account.photo} != '' 
                                                 ? @{${account.photo}} 
                                                 : 'https://ui-avatars.com/api/?name=' + ${account.username} + '&background=4f46e5&color=fff'"
-                                                class="rounded-circle" style="width: 40px; height: 40px;">
-                                        </td>
-                                        <td>
-                                            <span class="badge"
-                                                th:classappend="${account.activated} ? 'badge-success' : 'badge-danger'"
-                                                th:text="${account.activated} ? 'Hoạt động' : 'Ngừng hoạt động'"></span>
-                                        </td>
-                                        <td>
-                                            <div class="action-cell">
-                                                <a th:href="@{/admin/account(username=${account.username})}"
-                                                    class="btn-action view" title="Xem chi tiết">
-                                                    <i class="fa-solid fa-eye"></i>
-                                                </a>
-                                                <form
-                                                    th:action="@{/admin/account/delete/{username}(username=${account.username})}"
-                                                    method="post" class="delete-form" style="display:inline;">
-                                                    <button type="submit" class="btn-action delete delete-btn"
-                                                        title="Xóa">
-                                                        <i class="fa-solid fa-trash"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                                            class="rounded-circle" style="width: 40px; height: 40px;">
+                                    </td>
+                                    <td>
+                                        <span class="badge"
+                                            th:classappend="${account.activated} ? 'badge-success' : 'badge-danger'"
+                                            th:text="${account.activated} ? 'Hoạt động' : 'Ngừng hoạt động'"></span>
+                                    </td>
+                                    <td>
+                                        <div class="action-cell">
+                                            <a th:href="@{/admin/account(username=${account.username})}"
+                                                class="btn-action view" title="Xem chi tiết">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </a>
+                                            <form
+                                                th:action="@{/admin/account/delete/{username}(username=${account.username})}"
+                                                method="post" class="delete-form" style="display:inline;">
+                                                <button type="submit" class="btn-action delete delete-btn" title="Xóa">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
     </div>
     <div class="modal fade" id="viewUserModal" tabindex="-1" th:classappend="${selectedAccount} ? 'show d-block' : ''"
         th:style="${selectedAccount} ? 'display: block; background: rgba(0, 0, 0, 0.5);' : ''">
@@ -203,10 +185,10 @@
                 <div class="modal-body">
                     <div class="row mb-4">
                         <div class="col-md-3 text-center">
-                            <img th:src="${selectedAccount != null and selectedAccount.photo != null and selectedAccount.photo != ''} 
-                                ? @{${selectedAccount.photo}} 
-                                : 'https://ui-avatars.com/api/?name=' + ${selectedAccount?.fullname ?: 'User'} + '&background=4f46e5&color=fff'"
-                                alt="User Photo" class="rounded-circle mb-3">
+                            <img th:src="${selectedAccount.photo} != null and ${selectedAccount.photo} != '' 
+                            ? ${selectedAccount.photo}
+                            : 'https://ui-avatars.com/api/?name=' + ${selectedAccount.username}" class="rounded-circle"
+                                style="width: 100px; height: 100px; object-fit: cover;">
                         </div>
                         <div class="col-md-9">
                             <h6 class="fw-bold mb-3">Thông tin cá nhân</h6>
