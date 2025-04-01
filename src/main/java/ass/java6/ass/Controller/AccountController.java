@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/admin/account")
 public class AccountController {
-
     private final AccountRepository accountRepository;
 
     @Autowired
@@ -32,14 +31,15 @@ public class AccountController {
 
     @GetMapping
     public String listAccounts(@RequestParam(name = "keyword", required = false) String keyword,
-                               @RequestParam(name = "role", required = false) String role,
-                               @RequestParam(name = "status", required = false) String status,
-                               @RequestParam(name = "username", required = false) String username,
-                               Model model) {
+            @RequestParam(name = "role", required = false) String role,
+            @RequestParam(name = "status", required = false) String status,
+            @RequestParam(name = "username", required = false) String username,
+            Model model) {
         try {
             List<Account> accounts;
             if (keyword != null && !keyword.trim().isEmpty()) {
-                accounts = accountRepository.findByUsernameContainingIgnoreCaseOrFullnameContainingIgnoreCase(keyword, keyword);
+                accounts = accountRepository.findByUsernameContainingIgnoreCaseOrFullnameContainingIgnoreCase(keyword,
+                        keyword);
             } else {
                 accounts = accountRepository.findAll();
             }
@@ -66,18 +66,26 @@ public class AccountController {
                     Account account = accountOptional.get();
                     model.addAttribute("selectedAccount", account);
 
+                    // Lấy danh sách đơn hàng của tài khoản
                     List<Order> orders = account.getOrders();
+
+                    // 1️⃣ Tính tổng đơn hàng
                     long totalOrders = orders.size();
+
+                    // 2️⃣ Tính tổng chi tiêu (tổng tiền tất cả đơn hàng)
                     double totalSpending = orders.stream()
-                            .flatMap(order -> order.getOrderDetails().stream())
+                               .flatMap(order -> order.getOrderDetails().stream())
                             .filter(detail -> detail.getPrice() != null && detail.getQuantity() != null)
                             .mapToDouble(detail -> detail.getPrice() * detail.getQuantity())
                             .sum();
 
+                    // 3️⃣ Tính top 3 sản phẩm đặt nhiều nhất + lấy lần mua cuối cùng
                     Map<String, Object[]> productStatsMap = new HashMap<>();
+
                     for (Order order : orders) {
                         for (OrderDetail detail : order.getOrderDetails()) {
-                            if (detail.getPrice() == null || detail.getQuantity() == null) continue;
+                            if (detail.getPrice() == null || detail.getQuantity() == null)
+                                continue;
 
                             String productName = detail.getProduct().getName();
                             int quantity = detail.getQuantity();
@@ -89,14 +97,17 @@ public class AccountController {
                                 int totalQuantity = (Integer) existingData[0] + quantity;
                                 double totalSpent = (Double) existingData[1] + totalPrice;
                                 LocalDateTime latestDate = ((LocalDateTime) existingData[2]).isAfter(lastPurchaseDate)
-                                        ? (LocalDateTime) existingData[2] : lastPurchaseDate;
-                                productStatsMap.put(productName, new Object[]{totalQuantity, totalSpent, latestDate});
+                                        ? (LocalDateTime) existingData[2]
+                                        : lastPurchaseDate;
+
+                                productStatsMap.put(productName,
+                                        new Object[] { totalQuantity, totalSpent, latestDate });
                             } else {
-                                productStatsMap.put(productName, new Object[]{quantity, totalPrice, lastPurchaseDate});
+                                productStatsMap.put(productName,
+                                        new Object[] { quantity, totalPrice, lastPurchaseDate });
                             }
                         }
                     }
-
                     List<Map.Entry<String, Object[]>> topProducts = productStatsMap.entrySet().stream()
                             .sorted((p1, p2) -> Double.compare((Double) p2.getValue()[1], (Double) p1.getValue()[1]))
                             .limit(3)
@@ -110,42 +121,34 @@ public class AccountController {
 
             return "admin/accountManage";
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "Lỗi khi tải danh sách tài khoản: " + e.getMessage());
+            model.addAttribute("error", "Error loading accounts: " + e.getMessage());
             e.printStackTrace();
-            return "admin/accountManage";
+            return "error";
         }
     }
 
     @PostMapping("/update-status")
     @ResponseBody
     public ResponseEntity<?> updateAccountStatus(@RequestParam("username") String username,
-                                                 @RequestParam("isActive") boolean isActive) {
-        try {
-            Optional<Account> accountOptional = accountRepository.findById(username);
-            if (accountOptional.isPresent()) {
-                Account account = accountOptional.get();
-                account.setActivated(isActive);
-                accountRepository.save(account);
-                return ResponseEntity.ok(Map.of("message", "Cập nhật trạng thái thành công!"));
-            }
-            return ResponseEntity.status(404).body(Map.of("error", "Tài khoản không tồn tại!"));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Lỗi khi cập nhật trạng thái: " + e.getMessage()));
+            @RequestParam("isActive") boolean isActive) {
+        Optional<Account> accountOptional = accountRepository.findById(username);
+        if (accountOptional.isPresent()) {
+            Account account = accountOptional.get();
+            account.setActivated(isActive);
+            accountRepository.save(account);
+            return ResponseEntity.ok(Map.of("message", "Cập nhật trạng thái thành công!"));
         }
+        return ResponseEntity.status(404).body(Map.of("error", "Tài khoản không tồn tại!"));
     }
 
-    @PostMapping("/delete/{username}")
+    @GetMapping("/delete/{username}")
     public String deleteAccount(@PathVariable("username") String username, RedirectAttributes redirectAttributes) {
-        try {
-            Optional<Account> accountOptional = accountRepository.findById(username);
-            if (accountOptional.isPresent()) {
-                accountRepository.delete(accountOptional.get());
-                redirectAttributes.addFlashAttribute("successMessage", "Xóa tài khoản thành công!");
-            } else {
-                redirectAttributes.addFlashAttribute("errorMessage", "Tài khoản không tồn tại!");
-            }
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Xóa tài khoản thất bại: " + e.getMessage());
+        Optional<Account> accountOptional = accountRepository.findById(username);
+        if (accountOptional.isPresent()) {
+            accountRepository.delete(accountOptional.get());
+            redirectAttributes.addFlashAttribute("successMessage", "Xóa tài khoản thành công!");
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "Tài khoản không tồn tại!");
         }
         return "redirect:/admin/account";
     }
