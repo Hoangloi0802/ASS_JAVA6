@@ -74,7 +74,7 @@ public class AccountController {
 
                     // 2️⃣ Tính tổng chi tiêu (tổng tiền tất cả đơn hàng)
                     double totalSpending = orders.stream()
-                            .flatMap(order -> order.getOrderDetails().stream())
+                               .flatMap(order -> order.getOrderDetails().stream())
                             .filter(detail -> detail.getPrice() != null && detail.getQuantity() != null)
                             .mapToDouble(detail -> detail.getPrice() * detail.getQuantity())
                             .sum();
@@ -108,8 +108,6 @@ public class AccountController {
                             }
                         }
                     }
-
-                    // Sắp xếp theo tổng tiền giảm dần
                     List<Map.Entry<String, Object[]>> topProducts = productStatsMap.entrySet().stream()
                             .sorted((p1, p2) -> Double.compare((Double) p2.getValue()[1], (Double) p1.getValue()[1]))
                             .limit(3)

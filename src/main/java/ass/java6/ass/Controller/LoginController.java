@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import ass.java6.ass.Config.SendEmailConfig;
 import ass.java6.ass.Dto.DangkyRequest;
+import ass.java6.ass.Dto.DangnhapRequest;
 import ass.java6.ass.Dto.DatlaimkRequest;
 import ass.java6.ass.Entity.Account;
 import ass.java6.ass.Repository.AccountRepository;
@@ -59,15 +60,8 @@ public class LoginController {
     }
 
     @GetMapping("/Dangnhap")
-    public String dangnhap(Model model, @RequestParam(value = "error", required = false) String error) {
-        if (error != null) {
-            if ("invalid_credentials".equals(error)) {
-                model.addAttribute("errorMessage", "Thông tin đăng nhập không hợp lệ!");
-            } else {
-                model.addAttribute("errorMessage", "Đã xảy ra lỗi không xác định!");
-            }
-        }
-        model.addAttribute("dangnhapRequest", new DangkyRequest());
+    public String dangnhap(Model model) {
+    model.addAttribute("dangnhapRequest", new DangnhapRequest());
         return "login/Dangnhap";
     }
 
@@ -101,12 +95,16 @@ public class LoginController {
     }
 
     @PostMapping("/otpquenmk")
-    public String checkquenmkPost(@RequestParam("otpInput") String otpInput, HttpSession session, Model model) {
+    public String checkquenmkPost(@RequestParam(value = "otpInput", required = false) Integer otpInput, HttpSession session, Model model) {
+        if (otpInput == null) {
+            model.addAttribute("errorMessage", "OTP không được để trống.");
+            return "login/otpquenmk";
+        }
         try {
             accoutService.Checkotpquenmk(session, otpInput);
-            return "login/datlaimatkhau";
+            return "redirect:/datlaimk";
         } catch (IllegalArgumentException e) {
-            model.addAttribute("message", e.getMessage());
+            model.addAttribute("errorMessage", e.getMessage());
             return "login/otpquenmk";
         }
     }
@@ -121,7 +119,7 @@ public class LoginController {
     public String quenmkPost(Model model, @RequestParam("emailInput") String email, HttpSession session) {
         if (email == null) {
             model.addAttribute("message", "email không được để trống");
-            return "login/otp";
+            return "login/quenmk";
 
         }
         if (accountRepository.findByEmail(email).isPresent()) {
@@ -136,7 +134,7 @@ public class LoginController {
         } else {
             model.addAttribute("message", "email không tồn tại");
         }
-        return "login/otpquenmk";
+        return "login/quenmk";
     }
 
     @PostMapping("/datlaimk")
@@ -144,6 +142,10 @@ public class LoginController {
 
             BindingResult result, HttpSession session, Model model) {
         if (result.hasErrors()) {
+            return "login/datlaimatkhau";
+        }
+        if(!datlaimkRequest.getPassword().equals(datlaimkRequest.getConfirmPassword())){
+            model.addAttribute("errorMessage", "mật khẩu nhập lại không khớp");
             return "login/datlaimatkhau";
         }
         String email = (String) session.getAttribute("emailcheck");
@@ -160,8 +162,6 @@ public class LoginController {
             return "login/datlaimatkhau";
         }
     }
-
-
     @GetMapping("/datlaimk")
 
     public String datlaimk(Model model) {
@@ -190,14 +190,13 @@ public class LoginController {
             String content = sendEmailConfig.generateOtpEmailContent(otpCode, link);
             sendEmailConfig.sendEmail(account.getEmail(), subject, content);
 
-            // Debug
+            
             System.out.println("📧 Gửi lại OTP đến email: " + account.getEmail() + " - Mã OTP mới: " + otpCode);
 
             model.addAttribute("message", "Mã OTP mới đã được gửi đến email của bạn.");
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Có lỗi xảy ra khi gửi lại OTP. Vui lòng thử lại!");
         }
-
         return "login/otp";
     }
 
