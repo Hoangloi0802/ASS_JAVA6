@@ -98,9 +98,11 @@ public class Accoutlmpl implements AccoutService {
             throw new IllegalArgumentException("OTP đã hết hạn hoặc không tồn tại.");
         }
 
-        String otpFromSession = otpObj.toString().trim();
-        if (!otpFromSession.equals(otpInput.trim())) {
-            throw new IllegalArgumentException("OTP không đúng.");
+        // Chuyển OTP từ session thành số nguyên
+        int otpFromSession = Integer.parseInt(otpObj.toString());
+        // Kiểm tra nếu OTP nhập vào không đúng
+        if (!otpInput.equals(otpFromSession)) {
+            throw new IllegalArgumentException("❌ OTP không chính xác. Vui lòng thử lại.");
         }
         session.removeAttribute("otp");
     }
