@@ -7,7 +7,6 @@ import ass.java6.ass.Service.FileUploadService;
 import ass.java6.ass.Service.ProductImageService;
 import ass.java6.ass.Service.ProductService;
 
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -180,7 +179,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public String deleteProduct(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
         System.out.println("deleteProduct: Xóa sản phẩm, ID: " + id);
         try {

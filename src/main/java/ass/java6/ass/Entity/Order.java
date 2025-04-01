@@ -32,4 +32,14 @@ public class Order implements Serializable {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OrderDetail> orderDetails = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "voucher_id")
+    private Voucher voucher;
+
+
+    public int getTotalQuantity() {
+        return orderDetails.stream()
+                .mapToInt(OrderDetail::getQuantity)
+                .sum();
+    }
 }

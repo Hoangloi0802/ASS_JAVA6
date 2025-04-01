@@ -47,6 +47,4 @@ public class Account implements Serializable, UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
     }
-
-   
 }

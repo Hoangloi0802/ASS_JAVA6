@@ -5,137 +5,742 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QUẢN LÝ HÓA ĐƠN</title>
-    <link rel="stylesheet" href="/bootstrap-5.3.3/dist/css/bootstrap.css">
-    <script src="/bootstrap-5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="/css/billAndStatistics.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="icon" href="/photo/bill.png" type="image/png">
+    <link rel="stylesheet" href="/css/bill.css">
+    <style>
+        .loading-spinner {
+            display: inline-block;
+            width: 1.5rem;
+            height: 1.5rem;
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: #3b82f6;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .order-summary {
+            background-color: #f8fafc;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .order-summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+
+        .order-summary-item:last-child {
+            border-bottom: none;
+            font-weight: bold;
+        }
+
+        .badge-success {
+            background-color: #10b981;
+            color: white;
+        }
+
+        .badge-warning {
+            background-color: #f59e0b;
+            color: white;
+        }
+
+        .modal-table th,
+        .modal-table td {
+            vertical-align: middle;
+        }
+
+        .product-image {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-buttons button {
+            transition: all 0.2s;
+        }
+
+        .action-buttons button:hover {
+            transform: translateY(-2px);
+        }
+    </style>
 </head>
 
 <body>
-    <div class="container-fluid">
-        <div class="row g-4">
-            <div class="col-auto p-3 min-vh-100 bg-white shadow-sm">
-                <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
-                    <a href="/" class="d-flex align-items-center pb-3 mb-md-0 text-decoration-none">
-                        <span class="fs-5 d-none d-sm-inline"
-                            style="color: var(--primary-color); font-weight: 600;">Admin Dashboard</span>
-                    </a>
-                    <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start w-100">
-                        <li class="nav-item w-100">
-                            <a href="/" class="nav-link active" aria-current="page">
-                                <i class="fa-solid fa-house me-2"></i>
-                                <span class="ms-1 d-none d-sm-inline">Home</span>
-                            </a>
-                        </li>
-                        <li class="nav-item w-100">
-                            <a th:href="@{/admin/products}" class="nav-link">
-                                <i class="fa-solid fa-boxes-stacked me-2"></i>
-                                <span class="ms-1 d-none d-sm-inline">Quản Lý Sản Phẩm</span>
-                            </a>
-                        </li>
-                        <li class="nav-item w-100">
-                            <a th:href="@{/admin/categories}" class="nav-link">
-                                <i class="fa-solid fa-tags me-2"></i>
-                                <span class="ms-1 d-none d-sm-inline">Quản Lý Loại Sản Phẩm</span>
-                            </a>
-                        </li>
-                        <li class="nav-item w-100">
-                            <a th:href="@{/admin/bill}" class="nav-link">
-                                <i class="fa-solid fa-file-invoice-dollar me-2"></i>
-                                <span class="ms-1 d-none d-sm-inline">Quản Lý Hóa Đơn</span>
-                            </a>
-                        </li>
-                        <li class="nav-item w-100">
-                            <a th:href="@{/admin/account}" class="nav-link">
-                                <i class="fa-solid fa-users me-2"></i>
-                                <span class="ms-1 d-none d-sm-inline">Quản Lý Người Dùng</span>
-                            </a>
-                        </li>
-                        <li class="nav-item w-100">
-                            <a th:href="@{/admin/nhansu}" class="nav-link">
-                                <i class="fa-solid fa-chart-pie me-2"></i>
-                                <span class="ms-1 d-none d-sm-inline">Quản Lý Nhân Sự</span>
-                            </a>
-                        </li>
-                        <li class="nav-item w-100">
-                            <a th:href="@{/admin/statistics}" class="nav-link">
-                                <i class="fa-solid fa-chart-pie me-2"></i>
-                                <span class="ms-1 d-none d-sm-inline">Thống Kê</span>
-                            </a>
-                        </li>
-                    </ul>
+    <div class="container-fluid p-0">
+        <div class="row g-0">
+            <div class="col-auto sidebar">
+                <div class="sidebar-brand">
+                    <div class="sidebar-brand-icon">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <div class="sidebar-brand-text">QUẢN LÝ ADMIN</div>
+                </div>
+                <div class="nav-menu">
+                    <div class="nav-section">
+                        <div class="nav-section-title">MENU CHÍNH</div>
+                        <a href="/" class="nav-link">
+                            <i class="fa-solid fa-house"></i>
+                            <span class="nav-text">Trang Chủ</span>
+                        </a>
+                        <a th:href="@{/admin/products}" class="nav-link">
+                            <i class="fa-solid fa-box-open"></i>
+                            <span class="nav-text">Quản Lý Sản Phẩm</span>
+                        </a>
+                        <a th:href="@{/admin/categories}" class="nav-link">
+                            <i class="fa-solid fa-tags"></i>
+                            <span class="nav-text">Quản Lý Loại Sản Phẩm</span>
+                        </a>
+                        <a th:href="@{/admin/bill}" class="nav-link active">
+                            <i class="fa-solid fa-receipt"></i>
+                            <span class="nav-text">Quản Lý Hóa Đơn</span>
+                        </a>
+                        <a th:href="@{/admin/account}" class="nav-link">
+                            <i class="fa-solid fa-users"></i>
+                            <span class="nav-text">Quản Lý Người Dùng</span>
+                        </a>
+                        <a th:href="@{/admin/nhansu}" class="nav-link">
+                            <i class="fa-solid fa-ticket"></i>
+                            <span class="nav-text">Quản Lý Voucher</span>
+                        </a>
+                        <a th:href="@{/admin/statistics}" class="nav-link">
+                            <i class="fa-solid fa-chart-line"></i>
+                            <span class="nav-text">Thống Kê</span>
+                        </a>
+                    </div>
                 </div>
             </div>
-            <div class="col p-4">
-                <div class="container">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h2 class="mb-0">Quản Lý Hóa Đơn</h2>
+            <div class="col main-content">
+                <div class="page-header">
+                    <h1 class="page-title">Quản Lý Hóa Đơn</h1>
+                    <p class="page-subtitle">Quản lý và theo dõi thông tin hóa đơn trong hệ thống</p>
+                </div>
+                <div class="action-bar">
+                    <div class="breadcrumb-wrapper">
                         <nav aria-label="breadcrumb">
-                            <ol class="breadcrumb mb-0">
-                                <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Quản Lý Hóa Đơn</li>
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="/"><i class="fas fa-home me-1"></i>Dashboard</a>
+                                </li>
+                                <li class="breadcrumb-item active">Hóa Đơn</li>
                             </ol>
                         </nav>
                     </div>
-                    <div class="card shadow-sm">
-                        <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Khách hàng</th>
-                                            <th>Địa chỉ</th>
-                                            <th>Ngày tạo</th>
-                                            <th>SĐT</th>
-                                            <th>Trạng thái</th>
-                                            <th>Hành động</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr th:each="o : ${orders}">
-                                            <td><span class="fw-medium" th:text="${o.id}"></span></td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <div>
-                                                        <div class="fw-medium" th:text="${o.account.fullname}"></div>
-                                                        <div class="small text-muted" th:text="${o.account.email}"></div>
+                </div>
+                <div class="notifications-container">
+                    <div class="notification success" th:if="${successMessage}" style="display: none;">
+                        <div class="notification-icon">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="notification-content">
+                            <div class="notification-title">Thành công</div>
+                            <p class="notification-message" th:text="${successMessage}"></p>
+                        </div>
+                    </div>
+                    <div class="notification error" th:if="${errorMessage}" style="display: none;">
+                        <div class="notification-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="notification-content">
+                            <div class="notification-title">Lỗi</div>
+                            <p class="notification-message" th:text="${errorMessage}"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card fade-in">
+                    <div class="card-header">
+                        <h5 class="card-title">Danh sách hóa đơn</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="table" id="ordersTable">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Khách hàng</th>
+                                        <th>Địa chỉ</th>
+                                        <th>Ngày tạo</th>
+                                        <th>SĐT</th>
+                                        <th>Trạng thái</th>
+                                        <th class="text-end">Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="o : ${orders}" th:id="'order-row-' + ${o.id}">
+                                        <td><span class="fw-medium" th:text="${o.id}"></span></td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div>
+                                                    <div class="fw-medium" th:text="${o.account.fullname}"></div>
+                                                    <div class="small text-muted" th:text="${o.account.email}">
                                                     </div>
                                                 </div>
-                                            </td>
-                                            <td th:text="${o.address}"></td>
-                                            <td th:text="${#temporals.format(o.createDate, 'dd/MM/yyyy')}"></td>
-                                            <td th:text="${o.account.mobile}"></td>
-                                            <td>
-                                                <span class="badge" th:classappend="${o.status} ? 'bg-success' : 'bg-warning'">
-                                                    <span th:text="${o.status} ? 'Đã thanh toán' : 'Chưa thanh toán'"></span>
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <div class="d-flex justify-content-center gap-2">
-                                                    <a href="" class="btn btn-info btn-sm">
-                                                        <i class="fa-solid fa-eye"></i>
-                                                    </a>
-                                                    <a th:href="@{/admin/bill/delete/{id}(id=${o.id})}"
-                                                        class="btn btn-danger btn-sm"
-                                                        onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
-                                                        <i class="fa-solid fa-trash"></i>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                
-                            </div>
+                                            </div>
+                                        </td>
+                                        <td th:text="${o.address}"></td>
+                                        <td th:text="${#temporals.format(o.createDate, 'dd/MM/yyyy')}"></td>
+                                        <td th:text="${o.account.mobile}"></td>
+                                        <td>
+                                            <span class="badge"
+                                                th:classappend="${o.status} ? 'badge-success' : 'badge-warning'"
+                                                th:text="${o.status} ? 'Đã thanh toán' : 'Chưa thanh toán'"
+                                                th:id="'status-badge-' + ${o.id}"></span>
+                                        </td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <button type="button"
+                                                    class="btn btn-sm btn-outline-primary view-order-btn"
+                                                    th:data-order-id="${o.id}">
+                                                    <i class="fa-solid fa-eye"></i>
+                                                </button>
+                                                <button type="button"
+                                                    class="btn btn-sm btn-outline-warning update-status-btn"
+                                                    th:data-order-id="${o.id}">
+                                                    <i class="fa-solid fa-exchange-alt"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-outline-danger delete-btn"
+                                                    th:data-order-id="${o.id}">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <div class="modal fade" id="orderDetailModal" tabindex="-1" aria-labelledby="orderDetailModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="orderDetailModalLabel">Chi Tiết Đơn Hàng #<span id="orderIdSpan"></span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="modalLoadingSpinner" class="text-center py-5">
+                        <div class="loading-spinner"></div>
+                        <p class="mt-3">Đang tải thông tin đơn hàng...</p>
+                    </div>
+                    <div id="modalContent" style="display: none;">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="table-responsive">
+                                    <table class="table modal-table" id="orderDetailsTable">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Sản Phẩm</th>
+                                                <th>Giá</th>
+                                                <th>Số Lượng</th>
+                                                <th>Thành Tiền</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="order-summary" id="orderSummary">
+                                    <div class="order-summary-item">
+                                        <span>Tổng tiền hàng:</span>
+                                        <span id="subtotalAmount"></span>
+                                    </div>
+                                    <div class="order-summary-item" id="discountRow" style="display: none;">
+                                        <span>Giảm giá:</span>
+                                        <span id="discountAmount"></span>
+                                    </div>
+                                    <div class="order-summary-item">
+                                        <span>Tổng thanh toán:</span>
+                                        <span id="finalAmount"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="order-info">
+                                    <h5>Thông Tin Đơn Hàng</h5>
+                                    <p>
+                                        <span>Mã Đơn Hàng:</span>
+                                        <span id="orderIdInfo"></span>
+                                    </p>
+                                    <p>
+                                        <span>Ngày Đặt Hàng:</span>
+                                        <span id="orderDateInfo"></span>
+                                    </p>
+                                    <p>
+                                        <span>Trạng Thái:</span>
+                                        <span id="orderStatusInfo"></span>
+                                    </p>
+                                    <p id="orderVoucherInfo" style="display: none;">
+                                        <span>Voucher:</span>
+                                        <span id="voucherInfo"></span>
+                                    </p>
+                                </div>
+
+                                <div class="order-info mt-4">
+                                    <h5>Thông Tin Khách Hàng</h5>
+                                    <p>
+                                        <span>Tên Khách Hàng:</span>
+                                        <span id="customerNameInfo"></span>
+                                    </p>
+                                    <p>
+                                        <span>Email:</span>
+                                        <span id="customerEmailInfo"></span>
+                                    </p>
+                                    <p>
+                                        <span>Số Điện Thoại:</span>
+                                        <span id="customerPhoneInfo"></span>
+                                    </p>
+                                    <p>
+                                        <span>Địa Chỉ:</span>
+                                        <span id="customerAddressInfo"></span>
+                                    </p>
+                                </div>
+
+                                <div class="d-grid gap-2 mt-4">
+                                    <button id="updateStatusBtn" class="btn btn-primary w-100">
+                                        <i class="fa-solid fa-exchange-alt me-2"></i>
+                                        <span id="updateStatusBtnText"></span>
+                                    </button>
+
+                                    <button id="deleteOrderBtn" class="btn btn-danger w-100 mt-2">
+                                        <i class="fa-solid fa-trash me-2"></i>
+                                        Xóa Đơn Hàng
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i> Đóng
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Show notifications
+            const successNotification = document.querySelector('.notification.success');
+            const errorNotification = document.querySelector('.notification.error');
+
+            if (successNotification) {
+                successNotification.style.display = 'flex';
+                setTimeout(() => {
+                    successNotification.style.opacity = '0';
+                    setTimeout(() => successNotification.remove(), 300);
+                }, 5000);
+            }
+
+            if (errorNotification) {
+                errorNotification.style.display = 'flex';
+                setTimeout(() => {
+                    errorNotification.style.opacity = '0';
+                    setTimeout(() => errorNotification.remove(), 300);
+                }, 5000);
+            }
+
+            // Initialize modal
+            const orderDetailModal = document.getElementById('orderDetailModal');
+            const modal = new bootstrap.Modal(orderDetailModal);
+            let currentOrderId = null;
+
+            // View order details
+            document.querySelectorAll('.view-order-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    const orderId = this.getAttribute('data-order-id');
+                    currentOrderId = orderId;
+                    showOrderDetailModal(orderId);
+                });
+            });
+
+            // Update order status from table
+            document.querySelectorAll('.update-status-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    const orderId = this.getAttribute('data-order-id');
+                    updateOrderStatus(orderId);
+                });
+            });
+
+            // Delete order from table
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    const orderId = this.getAttribute('data-order-id');
+                    confirmDeleteOrder(orderId);
+                });
+            });
+
+            // Update status button in modal
+            document.getElementById('updateStatusBtn').addEventListener('click', function () {
+                if (currentOrderId) {
+                    updateOrderStatus(currentOrderId);
+                }
+            });
+
+            // Delete button in modal
+            document.getElementById('deleteOrderBtn').addEventListener('click', function () {
+                if (currentOrderId) {
+                    confirmDeleteOrder(currentOrderId);
+                }
+            });
+
+            function showOrderDetailModal(orderId) {
+                // Reset and show modal
+                document.getElementById('orderIdSpan').textContent = orderId;
+                document.getElementById('modalContent').style.display = 'none';
+                document.getElementById('modalLoadingSpinner').style.display = 'block';
+                modal.show();
+
+                // Fetch order details
+                fetchOrderDetails(orderId);
+            }
+
+            function fetchOrderDetails(orderId) {
+                fetch(`/admin/bill/detail/${orderId}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        displayOrderDetails(data);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching order details:', error);
+                        document.getElementById('modalLoadingSpinner').style.display = 'none';
+                        Swal.fire({
+                            title: 'Lỗi!',
+                            text: 'Không thể tải thông tin đơn hàng. Vui lòng thử lại sau.',
+                            icon: 'error',
+                            confirmButtonText: 'Đóng'
+                        });
+                    });
+            }
+
+            // Sửa lại hàm displayOrderDetails để đảm bảo hiển thị đúng thông tin
+            function displayOrderDetails(data) {
+                console.log('API response:', data); // Debug log
+
+                const order = data.order;
+                const orderDetails = data.orderDetails || [];
+                const totalAmount = data.totalAmount;
+                const discountAmount = data.discountAmount || 0;
+                const finalAmount = data.finalAmount;
+
+                console.log('Order details count:', orderDetails.length); // Debug log
+
+                // Hide loading spinner and show content
+                document.getElementById('modalLoadingSpinner').style.display = 'none';
+                document.getElementById('modalContent').style.display = 'block';
+
+                // Order information
+                document.getElementById('orderIdInfo').textContent = order.id;
+
+                const orderDate = new Date(order.createDate);
+                const formattedDate = orderDate.toLocaleDateString('vi-VN') + ' ' +
+                    orderDate.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+                document.getElementById('orderDateInfo').textContent = formattedDate;
+
+                // Status badge
+                const statusBadge = document.createElement('span');
+                statusBadge.className = 'badge ' + (order.status ? 'badge-success' : 'badge-warning');
+                statusBadge.textContent = order.status ? 'Đã thanh toán' : 'Chưa thanh toán';
+                document.getElementById('orderStatusInfo').innerHTML = '';
+                document.getElementById('orderStatusInfo').appendChild(statusBadge);
+
+                // Voucher information
+                if (order.voucher) {
+                    document.getElementById('orderVoucherInfo').style.display = 'flex';
+                    document.getElementById('voucherInfo').textContent =
+                        `${order.voucher.code} (${order.voucher.discountAmount}%)`;
+                } else {
+                    document.getElementById('orderVoucherInfo').style.display = 'none';
+                }
+
+                // Customer information
+                if (order.account) {
+                    document.getElementById('customerNameInfo').textContent = order.account.fullname || 'N/A';
+                    document.getElementById('customerEmailInfo').textContent = order.account.email || 'N/A';
+                    document.getElementById('customerPhoneInfo').textContent = order.account.mobile || 'N/A';
+                }
+                document.getElementById('customerAddressInfo').textContent = order.address || 'N/A';
+
+                // Update status button text
+                document.getElementById('updateStatusBtnText').textContent =
+                    order.status ? 'Đánh Dấu Chưa Thanh Toán' : 'Đánh Dấu Đã Thanh Toán';
+
+                // Order details table
+                const tableBody = document.getElementById('orderDetailsTable').querySelector('tbody');
+                tableBody.innerHTML = '';
+
+                if (orderDetails && orderDetails.length > 0) {
+                    orderDetails.forEach(item => {
+                        console.log('Processing item:', item); // Debug log
+
+                        const row = document.createElement('tr');
+
+                        const idCell = document.createElement('td');
+                        idCell.textContent = item.id;
+                        row.appendChild(idCell);
+
+                        const productCell = document.createElement('td');
+                        const productInfo = document.createElement('div');
+                        productInfo.className = 'd-flex align-items-center gap-2';
+
+                        // Add product image if available
+                        if (item.product && item.product.image) {
+                            const img = document.createElement('img');
+                            img.src = item.product.image;
+                            img.alt = item.product.name;
+                            img.className = 'product-image'; 
+                            productInfo.appendChild(img);
+                        }
+
+                        const productDetails = document.createElement('div');
+
+                        const productName = document.createElement('div');
+                        productName.className = 'fw-medium';
+                        productName.textContent = item.product ? item.product.name : 'N/A';
+
+                        const categoryName = document.createElement('div');
+                        categoryName.className = 'small text-muted';
+                        categoryName.textContent = item.product && item.product.category ? item.product.category.name : 'N/A';
+
+                        productDetails.appendChild(productName);
+                        productDetails.appendChild(categoryName);
+                        productInfo.appendChild(productDetails);
+
+                        productCell.appendChild(productInfo);
+                        row.appendChild(productCell);
+
+                        // Ensure price is displayed correctly
+                        const priceCell = document.createElement('td');
+                        priceCell.textContent = formatCurrency(item.price || 0);
+                        row.appendChild(priceCell);
+
+                        // Ensure quantity is displayed correctly
+                        const quantityCell = document.createElement('td');
+                        quantityCell.textContent = item.quantity || 0;
+                        row.appendChild(quantityCell);
+
+                        // Calculate and display subtotal
+                        const subtotalCell = document.createElement('td');
+                        const subtotal = (item.price || 0) * (item.quantity || 0);
+                        subtotalCell.textContent = formatCurrency(subtotal);
+                        row.appendChild(subtotalCell);
+
+                        tableBody.appendChild(row);
+                    });
+                } else {
+                    const emptyRow = document.createElement('tr');
+                    const emptyCell = document.createElement('td');
+                    emptyCell.colSpan = 5;
+                    emptyCell.textContent = 'Không có sản phẩm nào trong đơn hàng';
+                    emptyCell.className = 'text-center py-4 text-muted';
+                    emptyRow.appendChild(emptyCell);
+                    tableBody.appendChild(emptyRow);
+                }
+
+                // Order summary
+                document.getElementById('subtotalAmount').textContent = formatCurrency(totalAmount);
+
+                if (discountAmount > 0) {
+                    document.getElementById('discountRow').style.display = 'flex';
+                    document.getElementById('discountAmount').textContent = '- ' + formatCurrency(discountAmount);
+                } else {
+                    document.getElementById('discountRow').style.display = 'none';
+                }
+
+                document.getElementById('finalAmount').textContent = formatCurrency(finalAmount);
+            }
+
+            function updateOrderStatus(orderId) {
+                Swal.fire({
+                    title: "Cập nhật trạng thái đơn hàng?",
+                    text: "Bạn có chắc chắn muốn thay đổi trạng thái đơn hàng này?",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonColor: "#28a745",
+                    cancelButtonColor: "#6b7280",
+                    confirmButtonText: "Cập nhật",
+                    cancelButtonText: "Hủy"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Show loading indicator
+                        Swal.fire({
+                            title: 'Đang xử lý...',
+                            html: 'Vui lòng đợi trong giây lát',
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+
+                        // Send AJAX request to update status
+                        fetch(`/admin/bill/update-status-ajax/${orderId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            }
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    // Update UI
+                                    const statusBadge = document.getElementById(`status-badge-${orderId}`);
+                                    if (statusBadge) {
+                                        statusBadge.className = `badge ${data.status ? 'badge-success' : 'badge-warning'}`;
+                                        statusBadge.textContent = data.status ? 'Đã thanh toán' : 'Chưa thanh toán';
+                                    }
+
+                                    // If modal is open with this order, update modal UI too
+                                    if (currentOrderId == orderId) {
+                                        const modalStatusBadge = document.getElementById('orderStatusInfo').querySelector('.badge');
+                                        if (modalStatusBadge) {
+                                            modalStatusBadge.className = `badge ${data.status ? 'badge-success' : 'badge-warning'}`;
+                                            modalStatusBadge.textContent = data.status ? 'Đã thanh toán' : 'Chưa thanh toán';
+                                        }
+
+                                        document.getElementById('updateStatusBtnText').textContent =
+                                            data.status ? 'Đánh Dấu Chưa Thanh Toán' : 'Đánh Dấu Đã Thanh Toán';
+                                    }
+
+                                    Swal.fire({
+                                        title: 'Thành công!',
+                                        text: data.message,
+                                        icon: 'success',
+                                        confirmButtonText: 'Đóng'
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        title: 'Lỗi!',
+                                        text: data.message,
+                                        icon: 'error',
+                                        confirmButtonText: 'Đóng'
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error updating order status:', error);
+                                Swal.fire({
+                                    title: 'Lỗi!',
+                                    text: 'Không thể cập nhật trạng thái đơn hàng. Vui lòng thử lại sau.',
+                                    icon: 'error',
+                                    confirmButtonText: 'Đóng'
+                                });
+                            });
+                    }
+                });
+            }
+
+            function confirmDeleteOrder(orderId) {
+                Swal.fire({
+                    title: "Bạn có chắc chắn muốn xóa?",
+                    text: "Hành động này không thể hoàn tác!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#ef4444",
+                    cancelButtonColor: "#6b7280",
+                    confirmButtonText: "Xóa",
+                    cancelButtonText: "Hủy"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Show loading indicator
+                        Swal.fire({
+                            title: 'Đang xử lý...',
+                            html: 'Vui lòng đợi trong giây lát',
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+
+                        // Send AJAX request to delete order
+                        fetch(`/admin/bill/delete-ajax/${orderId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            }
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    // Remove row from table
+                                    const orderRow = document.getElementById(`order-row-${orderId}`);
+                                    if (orderRow) {
+                                        orderRow.remove();
+                                    }
+
+                                    // Close modal if open
+                                    if (currentOrderId == orderId) {
+                                        modal.hide();
+                                    }
+
+                                    Swal.fire({
+                                        title: 'Thành công!',
+                                        text: data.message,
+                                        icon: 'success',
+                                        confirmButtonText: 'Đóng'
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        title: 'Lỗi!',
+                                        text: data.message,
+                                        icon: 'error',
+                                        confirmButtonText: 'Đóng'
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error deleting order:', error);
+                                Swal.fire({
+                                    title: 'Lỗi!',
+                                    text: 'Không thể xóa đơn hàng. Vui lòng thử lại sau.',
+                                    icon: 'error',
+                                    confirmButtonText: 'Đóng'
+                                });
+                            });
+                    }
+                });
+            }
+
+            function formatCurrency(amount) {
+                return new Intl.NumberFormat('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND',
+                    maximumFractionDigits: 0
+                }).format(amount || 0);
+            }
+        });
+    </script>
 </body>
 
 </html>

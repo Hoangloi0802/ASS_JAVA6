@@ -1,20 +1,19 @@
- package ass.java6.ass.Controller;
-
-import org.springframework.ui.Model;
-import java.util.Optional;
+package ass.java6.ass.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 import ass.java6.ass.Entity.Category;
+import ass.java6.ass.Entity.Product;
 import ass.java6.ass.Repository.CategoryRepository;
+import ass.java6.ass.Repository.ProductRepository;
 import ass.java6.ass.Service.CategoryService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/admin/categories")
@@ -23,6 +22,8 @@ public class CategoryController {
     private CategoryService categoryService;
     @Autowired
     private CategoryRepository categoryRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
     @GetMapping
     public String CategoryIndex(Model model) {
@@ -31,34 +32,62 @@ public class CategoryController {
         return "admin/categoryManage";
     }
 
+    // Trả về JSON cho AJAX
     @GetMapping("/{id}")
-    public String CategoryEdit(Model model, @PathVariable("id") String id) {
+    @ResponseBody
+    public ResponseEntity<Category> getCategoryById(@PathVariable("id") String id) {
         Optional<Category> optionalCate = categoryRepository.findById(id);
         if (optionalCate.isPresent()) {
-            model.addAttribute("cate", optionalCate.get());
+            return ResponseEntity.ok(optionalCate.get());
         } else {
-            model.addAttribute("cate", new Category());
+            return ResponseEntity.notFound().build();
         }
-        model.addAttribute("categories", categoryRepository.findAll());
-        return "admin/categoryManage";
     }
 
-    @PostMapping("/create")
-    public String create(@ModelAttribute Category item) {
-        categoryService.save(item);
+    // Xử lý cả thêm mới và cập nhật
+    @PostMapping("/save")
+    public String save(@ModelAttribute Category item, RedirectAttributes redirectAttributes) {
+        try {
+            // Nếu ID rỗng, đặt thành null để JPA sinh tự động (nếu dùng @GeneratedValue)
+            if (item.getId() != null && item.getId().isEmpty()) {
+                item.setId(null);
+            }
+
+            // Kiểm tra trùng ID (nếu không dùng tự động tăng)
+            if (item.getId() != null && categoryRepository.existsById(item.getId())) {
+                // Nếu đây là thêm mới (không phải cập nhật)
+                Optional<Category> existingCategory = categoryRepository.findById(item.getId());
+                if (existingCategory.isPresent() && !existingCategory.get().getId().equals(item.getId())) {
+                    redirectAttributes.addFlashAttribute("errorMessage", "ID đã tồn tại! Vui lòng chọn ID khác.");
+                    return "redirect:/admin/categories";
+                }
+            }
+
+            categoryService.save(item);
+            redirectAttributes.addFlashAttribute("message", "Lưu danh mục thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Lỗi khi lưu danh mục: " + e.getMessage());
+        }
         return "redirect:/admin/categories";
     }
 
-    @PostMapping("/update")
-    public String update(@ModelAttribute Category item) {
-        categoryService.save(item);
-        return "redirect:/admin/categories";
-    }
+    @PostMapping("/delete/{id}")
+    public String delete(@PathVariable("id") String id, RedirectAttributes redirectAttributes) {
+        try {
+            // Kiểm tra xem loại sản phẩm có đang được sử dụng bởi sản phẩm nào không
+            List<Product> products = productRepository.findByCategoryId(id);
+            if (!products.isEmpty()) {
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        "Không thể xóa loại sản phẩm vì đang được sử dụng bởi " + products.size() + " sản phẩm.");
+                return "redirect:/admin/categories";
+            }
 
-    @PostMapping("/delete")
-    public String delete(@RequestParam("id") String id) {
-        categoryService.deleteById(id);
+            // Nếu không có sản phẩm liên quan, tiến hành xóa
+            categoryService.deleteById(id);
+            redirectAttributes.addFlashAttribute("message", "Xóa danh mục thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Không thể xóa danh mục: " + e.getMessage());
+        }
         return "redirect:/admin/categories";
     }
 }
-

@@ -8,6 +8,7 @@ import ass.java6.ass.Entity.Account;
 import jakarta.servlet.http.HttpSession;
 
 public interface AccoutService {
+    Account save(Account account);
     Account Dangky( DangkyRequest newaccout );
     Account Xacthuc(HttpSession session ,Integer otpinput);
     Optional<Account> findByUsername(String username);
