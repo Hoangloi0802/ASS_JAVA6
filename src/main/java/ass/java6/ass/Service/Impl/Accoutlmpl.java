@@ -90,9 +90,14 @@ public class Accoutlmpl implements AccoutService {
         }
     }
 
-    @Override
-    public void Checkotpquenmk(HttpSession session, String otpInput) {
-        Object otpObj = session.getAttribute("otp");
+@Override
+public void Checkotpquenmk(HttpSession session, Integer otpInput) {
+    // Lấy OTP từ session
+    Object otpObj = session.getAttribute("otp");
+    if (otpObj == null) {
+        throw new IllegalArgumentException("⚠️ OTP đã hết hạn hoặc không tồn tại.");
+    }
+
 
         if (otpObj == null) {
             throw new IllegalArgumentException("OTP đã hết hạn hoặc không tồn tại.");
@@ -107,6 +112,23 @@ public class Accoutlmpl implements AccoutService {
         session.removeAttribute("otp");
     }
 
+
+    // Chuyển OTP từ session thành số nguyên
+    int otpFromSession = Integer.parseInt(otpObj.toString());
+
+    // Kiểm tra nếu OTP nhập vào không đúng
+    if (!otpInput.equals(otpFromSession)) {
+        throw new IllegalArgumentException("❌ OTP không chính xác. Vui lòng thử lại.");
+    }
+
+    // Nếu đúng thì xóa OTP khỏi session
+    session.removeAttribute("otp");
+}
+
+
+
+
+
     @Override
     public void doiMatKhau(String email, String password) {
         Account account = accountRepository.findByEmail(email)
@@ -116,4 +138,7 @@ public class Accoutlmpl implements AccoutService {
         Account updatedAccount = accountRepository.save(account);
         System.out.println("Email: " + email + ", Mật khẩu mới: " + updatedAccount.getPassword());
     }
+
+
+   
 }

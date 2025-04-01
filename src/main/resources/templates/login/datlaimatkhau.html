@@ -15,13 +15,13 @@
                                 <form th:action="@{/datlaimk}" method="post" id="resetForm" th:object="${datlaimkRequest}" style="max-width: 23rem; margin: auto;">
                                     <h2 class="text-center mb-4">Đặt Lại Mật Khẩu</h2>
                                     <p class="text-center text-muted mb-4">Nhập mật khẩu mới để hoàn tất quá trình đặt lại.</p>
-                                    
+                                    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
                                     <div class="mb-3">
-                                        <input type="password" class="form-control" id="password" th:field="*{password}" placeholder="Mật khẩu mới" required>
+                                        <input type="password" class="form-control" id="password" th:field="*{password}" placeholder="Mật khẩu mới" >
                                         <p class="text-danger" th:errors="*{password}"></p>
                                     </div>
                                     <div class="mb-3">
-                                        <input type="password" class="form-control" id="confirmPassword" th:field="*{confirmPassword}" placeholder="Xác nhận mật khẩu" required>
+                                        <input type="password" class="form-control" id="confirmPassword" th:field="*{confirmPassword}" placeholder="Xác nhận mật khẩu" >
                                         <p class="text-danger" th:errors="*{confirmPassword}"></p>
                                     </div>
                                     <button type="submit" class="btn btn-primary w-100">Xác Nhận</button>
