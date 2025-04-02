@@ -37,19 +37,19 @@
               </div>
               <div class="col-12 col-md-4 col-lg-3">
                 <select name="sort" class="form-select" onchange="this.form.submit()">
-                  <option value="">Sắp xếp theo</option>
-                  <option th:value="5" th:selected="${sort != null and sort == '5'}" th:text="'Giá tăng dần'"></option>
-                  <option th:value="6" th:selected="${sort != null and sort == '6'}" th:text="'Giá giảm dần'"></option>
+                    <option value="">Sắp xếp theo</option>
+                    <option value="price_asc" th:selected="${sort != null and sort == 'price_asc'}" th:text="'Giá tăng dần'"></option>
+                    <option value="price_desc" th:selected="${sort != null and sort == 'price_desc'}" th:text="'Giá giảm dần'"></option>
                 </select>
               </div>
             </div>
           </form>
         </div>
       </div>
-    </div>
 
     <div class="container" data-aos="fade-up" data-aos-duration="1000">
       <div class="row g-4">
+        <!-- Hiển thị sản phẩm -->
         <div th:each="product : ${products}" class="col-md-3 mb-4">
           <div class="product-item">
               <div class="image-holder">
@@ -57,6 +57,9 @@
                       <img th:if="${product.productImages != null and not product.productImages.isEmpty()}"
                            th:src="${product.productImages[0].imageUrl}" 
                            alt="Product Image" class="product-image img-fluid">
+                      <img th:unless="${product.productImages != null and not product.productImages.isEmpty()}"
+                           src="/images/default-product.jpg" 
+                           alt="Default Image" class="product-image img-fluid">
                   </a>
               </div>
               <div class="product-content">
@@ -66,17 +69,20 @@
                   <div class="d-flex justify-content-between align-items-center">
                       <span th:text="${#numbers.formatDecimal(product.price, 1, 'POINT', 0, 'POINT')} + ' VND'"></span>
                       <span th:text="'Đã bán: ' + ${product.soldQuantity}"></span>
-
                   </div>
               </div>
           </div>
-      </div>
-      
+        </div>
+        <!-- Thông báo khi không có sản phẩm -->
+        <div th:if="${products == null or #lists.isEmpty(products)}" class="col-12 text-center">
+          <p class="text-muted">Không có sản phẩm nào để hiển thị.</p>
+        </div>
       </div>
     </div>
-    <nav aria-label="Page navigation">
+
+    <!-- Phân trang -->
+    <nav aria-label="Page navigation" th:if="${totalPages > 1}">
       <ul class="pagination justify-content-center">
-          <!-- Previous -->
           <li th:classappend="${currentPage == 0} ? 'disabled'" class="page-item">
               <a class="page-link bw-page-link"
                  th:href="@{/shop(
@@ -86,8 +92,6 @@
                       sort=${sort != null ? sort : ''}
                   )}"><</a>
           </li>
-  
-          <!-- Page numbers -->
           <li class="page-item"
               th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
               th:classappend="${i} == ${currentPage} ? 'active'">
@@ -100,8 +104,6 @@
                   )}"
                  th:text="${i + 1}"></a>
           </li>
-  
-          <!-- Next -->
           <li th:classappend="${currentPage == totalPages - 1} ? 'disabled'" class="page-item">
               <a class="page-link bw-page-link"
                  th:href="@{/shop(
@@ -112,10 +114,9 @@
                   )}">></a>
           </li>
       </ul>
-  </nav>
-  
-    
-</main>
+    </nav>
+  </main>
+
   <div th:replace="~{/layouts/footer}">
   </div>
 </body>

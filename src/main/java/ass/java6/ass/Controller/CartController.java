@@ -23,11 +23,15 @@ import java.util.Map;
 @RequestMapping("/cart")
 public class CartController {
 
-    @Autowired private VoucherService voucherService;
-    @Autowired private CartService cartService;
-    @Autowired private ProductRepository productRepository;
-    @Autowired private AccoutService accountService;
-  
+    @Autowired
+    private VoucherService voucherService;
+    @Autowired
+    private CartService cartService;
+    @Autowired
+    private ProductRepository productRepository;
+    @Autowired
+    private AccoutService accountService;
+
     private static final String LOGIN_REDIRECT = "redirect:/dangnhap";
     private static final String CART_VIEW = "home/giohang";
 
@@ -47,13 +51,14 @@ public class CartController {
             RedirectAttributes redirectAttributes) {
 
         Account account = getAuthenticatedAccount();
-        if (account == null) return LOGIN_REDIRECT;
+        if (account == null)
+            return LOGIN_REDIRECT;
 
         try {
             Product product = (productId != null)
-                ? productRepository.findById(productId)
-                    .orElseThrow(() -> new IllegalArgumentException("Sản phẩm không tồn tại"))
-                : null;
+                    ? productRepository.findById(productId)
+                            .orElseThrow(() -> new IllegalArgumentException("Sản phẩm không tồn tại"))
+                    : null;
 
             switch (String.valueOf(action)) {
                 case "add":
@@ -103,11 +108,12 @@ public class CartController {
             @RequestParam int quantity) {
 
         Account account = getAuthenticatedAccount();
-        if (account == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (account == null)
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         try {
             Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new IllegalArgumentException("Sản phẩm không tồn tại"));
+                    .orElseThrow(() -> new IllegalArgumentException("Sản phẩm không tồn tại"));
             cartService.updateQuantity(account, product, quantity);
             Order cart = cartService.getCurrentCart(account);
             validateVoucher(cart); // Kiểm tra và xóa voucher nếu không hợp lệ
@@ -119,11 +125,10 @@ public class CartController {
 
     @GetMapping("/apply-voucher")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> applyVoucher(
-            @RequestParam String voucherCode) {
-
+    public ResponseEntity<Map<String, Object>> applyVoucher(@RequestParam String voucherCode) {
         Account account = getAuthenticatedAccount();
-        if (account == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (account == null)
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         Order cart = cartService.getCurrentCart(account);
         if (cart == null || cart.getOrderDetails().isEmpty()) {
@@ -136,36 +141,49 @@ public class CartController {
 
         Voucher voucher = voucherService.findByCode(voucherCode);
         if (voucher == null) {
-            cart.setVoucher(null); // Xóa voucher nếu không hợp lệ
+            cart.setVoucher(null);
             cartService.saveCart(cart);
             return ResponseEntity.badRequest().body(Map.of("error", "Voucher không hợp lệ."));
         }
 
         double subtotal = cartService.calculateSubtotal(account);
         if (subtotal < voucher.getMinOrderValue()) {
-            cart.setVoucher(null); // Xóa voucher nếu không đủ điều kiện
+            cart.setVoucher(null);
             cartService.saveCart(cart);
             return ResponseEntity.badRequest().body(Map.of("error", "Đơn hàng chưa đủ điều kiện áp dụng voucher."));
+        }
+
+        // ✅ Kiểm tra xem giỏ hàng có sản phẩm thuộc danh mục của voucher không
+        boolean hasValidProduct = cart.getOrderDetails().stream()
+                .anyMatch(orderDetail -> orderDetail.getProduct().getCategory().getId()
+                        .equals(voucher.getCategory().getId()));
+
+        if (!hasValidProduct) {
+            cart.setVoucher(null);
+            cartService.saveCart(cart);
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Voucher không áp dụng cho sản phẩm trong giỏ hàng."));
         }
 
         cart.setVoucher(voucher);
         cartService.saveCart(cart);
         return ResponseEntity.ok(createCartResponse(account));
     }
+
     @GetMapping("/checkout")
     public String checkout(RedirectAttributes redirectAttributes) {
         Account account = getAuthenticatedAccount();
-        if (account == null) return "redirect:/dangnhap";
-    
+        if (account == null)
+            return "redirect:/dangnhap";
+
         Order cart = cartService.getCurrentCart(account);
         if (cart == null || cart.getOrderDetails().isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Giỏ hàng của bạn đang trống!");
             return "redirect:/cart";
         }
-    
+
         return "redirect:/thanhtoan"; // Chuyển sang trang thanh toán
     }
-    
 
     // Helper methods
     private void populateCartModel(Order cart, Model model) {
@@ -187,8 +205,8 @@ public class CartController {
             double discount = cartService.calculateDiscount(cart.getAccount());
             double total = cartService.calculateTotalPrice(cart.getAccount());
             double totalPrice = cartItems.stream()
-                .mapToDouble(item -> item.getPrice() * item.getQuantity())
-                .sum();
+                    .mapToDouble(item -> item.getPrice() * item.getQuantity())
+                    .sum();
 
             model.addAttribute("subtotal", subtotal);
             model.addAttribute("discount", discount);
@@ -209,7 +227,8 @@ public class CartController {
         }
 
         Voucher voucher = cart.getVoucher();
-        if (voucher == null) return;
+        if (voucher == null)
+            return;
 
         double subtotal = cartService.calculateSubtotal(cart.getAccount());
         if (subtotal < voucher.getMinOrderValue()) {

@@ -21,7 +21,6 @@
                     <h5>Thông tin đơn hàng</h5>
                     <p><strong>Mã đơn hàng:</strong> <span th:text="${order.id}"></span></p>
                     <p><strong>Ngày đặt:</strong>    <td th:text="${#temporals.format(order.createDate, 'dd/MM/yyyy HH:mm')}"></td></p>
-                    <p><strong>Trạng thái:</strong> 
                         <p><strong>Trạng thái:</strong> <span class="badge" th:classappend="${order.status} ? 'bg-success' : 'bg-danger'" th:text="${order.status} ? 'Hoàn thành' : 'Chưa hoàn thành'"></span></p>
                     </p>
                 </div>

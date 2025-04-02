@@ -3,6 +3,7 @@ package ass.java6.ass.Controller;
 import java.util.Collections;
 import java.util.List;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,7 +19,7 @@ import ass.java6.ass.Entity.Account;
 import ass.java6.ass.Entity.Order;
 import ass.java6.ass.Service.AccoutService;
 import ass.java6.ass.Service.CartService;
-
+import ass.java6.ass.Service.MomoService;
 
 @Controller
 public class PayController {
@@ -27,7 +28,8 @@ public class PayController {
 
     @Autowired
     private AccoutService accountService;
-
+    @Autowired
+    private MomoService momoService;
 
     @GetMapping("/thanhtoan")
     public String thanhtoan(Model model) {
@@ -46,14 +48,13 @@ public class PayController {
             model.addAttribute("cartItems", cart.getOrderDetails());
             model.addAttribute("subtotal", cartService.calculateSubtotal(account));
             model.addAttribute("discount", cartService.calculateDiscount(account));
-            model.addAttribute("totalAmount", cartService.calculateTotalPrice(account));
+            model.addAttribute("totalAmount", cartService.tongthanhtoan(account));
         }
         model.addAttribute("usedVoucherCode", cartService.getUsedVoucherCode(account));
 
         model.addAttribute("account", account);
         return "home/thanhtoan";
     }
-
 
     @PostMapping("/thanhtoan/dathang")
     public String placeOrder(@RequestParam("address") String address, RedirectAttributes redirectAttributes) {
@@ -79,20 +80,23 @@ public class PayController {
         if (orderId == null) {
             return "redirect:/";
         }
+
         Order order = cartService.getOrderById(orderId);
         if (order == null) {
             return "redirect:/";
         }
-        model.addAttribute("order", order);
 
-        // Tính tổng tiền từ orderDetails: giá * số lượng
         double subtotal = order.getOrderDetails().stream()
                 .mapToDouble(detail -> detail.getPrice() * detail.getQuantity())
                 .sum();
-        double shippingFee = 50000; // Phí vận chuyển cố định
-        double totalAmount = subtotal + shippingFee;
 
+        double discount = (order.getVoucher() != null) ? order.getVoucher().getDiscountAmount() : 0.0;
+        double shippingFee = 50000;
+        double totalAmount = subtotal - discount + shippingFee;
+
+        model.addAttribute("order", order);
         model.addAttribute("subtotal", subtotal);
+        model.addAttribute("discount", discount);
         model.addAttribute("shippingFee", shippingFee);
         model.addAttribute("totalAmount", totalAmount);
 
