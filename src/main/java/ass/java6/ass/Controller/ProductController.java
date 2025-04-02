@@ -179,7 +179,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public String deleteProduct(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
         System.out.println("deleteProduct: Xóa sản phẩm, ID: " + id);
         try {

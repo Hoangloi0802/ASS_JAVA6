@@ -27,15 +27,9 @@
                                             <span class="h1 fw-bold mb-0">ĐĂNG NHẬP</span>
                                         </div>
                                         <!-- Hiển thị lỗi từ server -->
-                                        <div th:if="${param.error != null}" class="alert alert-danger">
-                                            <span th:switch="${param.error[0]}">
-                                                <span th:case="'true'">Tên tài khoản hoặc mật khẩu không đúng <br>Cũng
-                                                    có thể chưa kích hoạt vui lòng liên hệ admin để được hỗ trợ</span>
-                                                <span th:case="'userNotFound'">Tài khoản không tồn tại.</span>
-                                                <span th:case="'notActivated'">Tài khoản chưa được kích hoạt, vui lòng
-                                                    liên hệ admin.</span>
-                                            </span>
-                                        </div>
+                                        <div th:if="${param.error}" class="alert alert-danger">
+                                            <span th:text="${param.error[0]}"></span>
+                                        </div>                                        
                                         <div data-mdb-input-init class="form-outline mb-4">
                                             <label class="form-label" for="form2Example17">Tên tài khoản</label>
                                             <input type="text" th:field="*{username}" id="form2Example17"

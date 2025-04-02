@@ -1,276 +1,496 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THỐNG KÊ</title>
+    <title>THỐNG KÊ DOANH THU</title>
     <link rel="stylesheet" th:href="@{/bootstrap-5.3.3/dist/css/bootstrap.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <link rel="icon" href="/photo/analysis.png" type="image/png">
+    <link rel="stylesheet" href="/css/thongke.css">
     <style>
-        :root {
-            --primary-color: #4f46e5;
-            --secondary-color: #6366f1;
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.7);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
         }
 
-        body {
-            background-color: #f3f4f6;
-            font-family: 'Segoe UI', sans-serif;
-        }
-
-        .stats-container {
-            margin-top: 20px;
-        }
-
-        .stats-card {
-            background: #fff;
+        .loading-spinner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: white;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-            transition: transform 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        .stats-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .filter-section {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .chart-container {
-            min-height: 300px;
-        }
-
-        .summary-card {
-            text-align: center;
-            padding: 20px;
-        }
-
-        .summary-card h4 {
-            color: var(--primary-color);
+        .loading-spinner i {
+            font-size: 2rem;
+            color: #6366f1;
             margin-bottom: 10px;
         }
 
-        .summary-card p {
-            font-size: 24px;
-            font-weight: bold;
-            margin: 0;
+        /* Hiệu ứng nhấp nháy cho các thẻ khi đang lọc */
+        .filtering .stats-card {
+            animation: pulse 1.5s infinite;
         }
 
-        .nav-link.active {
-            background-color: var(--primary-color) !important;
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+
+            100% {
+                opacity: 1;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-auto p-3 min-vh-100 bg-white shadow-sm">
-                <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
-                    <a href="/" class="d-flex align-items-center pb-3 mb-md-0 text-decoration-none">
-                        <span class="fs-5 d-none d-sm-inline"
-                            style="color: var(--primary-color); font-weight: 600;">Admin Dashboard</span>
-                    </a>
-                    <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start w-100">
-                        <li class="nav-item w-100">
-                            <a href="/" class="nav-link active" aria-current="page">
-                                <i class="fa-solid fa-house me-2"></i>
-                                <span class="ms-1 d-none d-sm-inline">Home</span>
-                            </a>
-                        </li>
-                        <li class="nav-item w-100">
-                            <a th:href="@{/admin/products}" class="nav-link">
-                                <i class="fa-solid fa-boxes-stacked me-2"></i>
-                                <span class="ms-1 d-none d-sm-inline">Quản Lý Sản Phẩm</span>
-                            </a>
-                        </li>
-                        <li class="nav-item w-100">
-                            <a th:href="@{/admin/categories}" class="nav-link">
-                                <i class="fa-solid fa-tags me-2"></i>
-                                <span class="ms-1 d-none d-sm-inline">Quản Lý Loại Sản Phẩm</span>
-                            </a>
-                        </li>
-                        <li class="nav-item w-100">
-                            <a th:href="@{/admin/bill}" class="nav-link">
-                                <i class="fa-solid fa-file-invoice-dollar me-2"></i>
-                                <span class="ms-1 d-none d-sm-inline">Quản Lý Hóa Đơn</span>
-                            </a>
-                        </li>
-                        <li class="nav-item w-100">
-                            <a th:href="@{/admin/account}" class="nav-link">
-                                <i class="fa-solid fa-users me-2"></i>
-                                <span class="ms-1 d-none d-sm-inline">Quản Lý Người Dùng</span>
-                            </a>
-                        </li>
-                        <li class="nav-item w-100">
-                            <a th:href="@{/admin/nhansu}" class="nav-link">
-                                <i class="fa-solid fa-ticket-alt me-2"></i>
-                                <span class="ms-1 d-none d-sm-inline">Quản Lý Voucher</span>
-                            </a>
-                        </li>
-                        <li class="nav-item w-100">
-                            <a th:href="@{/admin/statistics}" class="nav-link">
-                                <i class="fa-solid fa-chart-pie me-2"></i>
-                                <span class="ms-1 d-none d-sm-inline">Thống Kê</span>
-                            </a>
-                        </li>
-                    </ul>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>Đang xử lý dữ liệu...</span>
+        </div>
+    </div>
+
+    <div class="container-fluid p-0">
+        <div class="row g-0">
+            <div class="col-auto sidebar">
+                <div class="sidebar-brand">
+                    <div class="sidebar-brand-icon">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <div class="sidebar-brand-text">QUẢN LÝ ADMIN</div>
+                </div>
+                <div class="nav-menu">
+                    <div class="nav-section">
+                        <div class="nav-section-title">MENU CHÍNH</div>
+                        <a href="/" class="nav-link">
+                            <i class="fa-solid fa-house"></i>
+                            <span class="nav-text">Trang Chủ</span>
+                        </a>
+                        <a th:href="@{/admin/products}" class="nav-link">
+                            <i class="fa-solid fa-box-open"></i>
+                            <span class="nav-text">Quản Lý Sản Phẩm</span>
+                        </a>
+                        <a th:href="@{/admin/categories}" class="nav-link">
+                            <i class="fa-solid fa-tags"></i>
+                            <span class="nav-text">Quản Lý Loại Sản Phẩm</span>
+                        </a>
+                        <a th:href="@{/admin/bill}" class="nav-link">
+                            <i class="fa-solid fa-receipt"></i>
+                            <span class="nav-text">Quản Lý Hóa Đơn</span>
+                        </a>
+                        <a th:href="@{/admin/account}" class="nav-link">
+                            <i class="fa-solid fa-users"></i>
+                            <span class="nav-text">Quản Lý Người Dùng</span>
+                        </a>
+                        <a th:href="@{/admin/nhansu}" class="nav-link">
+                            <i class="fa-solid fa-ticket"></i>
+                            <span class="nav-text">Quản Lý Voucher</span>
+                        </a>
+                        <a th:href="@{/admin/statistics}" class="nav-link active">
+                            <i class="fa-solid fa-chart-line"></i>
+                            <span class="nav-text">Thống Kê</span>
+                        </a>
+                    </div>
                 </div>
             </div>
-            <div class="col py-3">
-                <div class="container">
-                    <h2 class="mb-4 fw-bold">Thống Kê Doanh Thu</h2>
-                    <div class="filter-section shadow-sm mb-4">
-                        <div class="row g-3">
-                            <div class="col-md-3">
-                                <label class="form-label">Loại sản phẩm</label>
-                                <select class="form-select" id="categoryFilter">
+            <div class="col main-content">
+                <h1 class="page-title mb-2">Thống Kê Doanh Thu</h1>
+                <p class="page-subtitle">Quản lý và theo dõi doanh thu trong hệ thống</p>
+
+                <!-- Filter Section -->
+                <div class="filter-section">
+                    <form th:action="@{/admin/statistics}" method="get" id="statsFilterForm">
+                        <div class="filter-row">
+                            <div class="filter-group">
+                                <label class="filter-label">Loại sản phẩm</label>
+                                <select name="category" class="filter-select" id="categoryFilter">
+                                    <option value="">Tất cả loại</option>
+                                    <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat}"
+                                        th:selected="${cat == selectedCategory}"></option>
                                 </select>
                             </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Từ ngày</label>
-                                <input type="date" class="form-control" id="startDate">
+                            <div class="filter-group">
+                                <label class="filter-label">Từ ngày</label>
+                                <input type="text" name="startDate" class="filter-input" placeholder="yyyy-mm-dd"
+                                    id="startDate" th:value="${selectedStartDate}">
                             </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Đến ngày</label>
-                                <input type="date" class="form-control" id="endDate">
+                            <div class="filter-group">
+                                <label class="filter-label">Đến ngày</label>
+                                <input type="text" name="endDate" class="filter-input" placeholder="yyyy-mm-dd"
+                                    id="endDate" th:value="${selectedEndDate}">
                             </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Thống kê theo</label>
-                                <select class="form-select" id="timeUnit">
-                                    <option value="day">Ngày</option>
-                                    <option value="month">Tháng</option>
-                                    <option value="year">Năm</option>
-                                </select>
-                            </div>
-                            <div class="col-12">
-                                <button class="btn btn-primary" onclick="updateStatistics()">
-                                    <i class="fas fa-sync-alt me-2"></i>Cập nhật thống kê
-                                </button>
-                            </div>
+                            <button type="submit" class="filter-btn" id="filterSubmitBtn">
+                                <i class="fas fa-sync-alt"></i> Cập nhật thống kê
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Active Filters Display -->
+                <div class="active-filters mb-3"
+                    th:if="${selectedCategory != null || selectedStartDate != null || selectedEndDate != null}">
+                    <div class="d-flex align-items-center">
+                        <span class="me-2"><i class="fas fa-filter"></i> Bộ lọc đang áp dụng:</span>
+                        <div class="filter-tags">
+                            <span class="filter-tag" th:if="${selectedCategory != null}">
+                                Loại: <strong th:text="${selectedCategory}"></strong>
+                            </span>
+                            <span class="filter-tag" th:if="${selectedStartDate != null}">
+                                Từ: <strong th:text="${selectedStartDate}"></strong>
+                            </span>
+                            <span class="filter-tag" th:if="${selectedEndDate != null}">
+                                Đến: <strong th:text="${selectedEndDate}"></strong>
+                            </span>
+                            <a href="/admin/statistics" class="filter-tag clear-all">
+                                <i class="fas fa-times"></i> Xóa tất cả
+                            </a>
                         </div>
                     </div>
-                    <div class="row mb-4">
-                        <div class="col-md-3">
-                            <div class="stats-card summary-card">
-                                <i class="fas fa-money-bill-wave fa-2x mb-3 text-primary"></i>
-                                <h4>Tổng Doanh Thu</h4>
-                                <p id="totalRevenue" th:text="${totalRevenue} + ' ₫'">0 ₫</p>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="stats-card summary-card">
-                                <i class="fas fa-shopping-cart fa-2x mb-3 text-success"></i>
-                                <h4>Tổng Đơn Hàng</h4>
-                                <p id="totalOrders" th:text="${totalOrders}">0</p>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="stats-card summary-card">
-                                <i class="fas fa-box fa-2x mb-3 text-warning"></i>
-                                <h4>Sản Phẩm Đã Bán</h4>
-                                <p id="totalProducts" th:text="${totalProducts}">0</p>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="stats-card summary-card">
-                                <i class="fas fa-users fa-2x mb-3 text-info"></i>
-                                <h4>Khách Hàng Mới</h4>
-                                <p id="newCustomers" th:text="${newCustomers}">0</p>
-                            </div>
-                        </div>
-                    </div>
-                    <h4 class="mb-4">Thống Kê Doanh Thu Theo Loại Sản Phẩm</h4>
-                    <canvas id="categoryRevenueChart"></canvas>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-container">
                     <div class="stats-card">
-                        <h4 class="mb-4">Chi Tiết Thống Kê</h4>
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Thời Gian</th>
-                                        <th>Loại SP</th>
-                                        <th>Số Lượng</th>
-                                        <th>Doanh Thu</th>
-                                        <th>Trung Bình/Đơn</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr th:each="i : ${#numbers.sequence(0, labels.size()-1)}">
-                                        <td th:text="${labels[i]}"></td>
-                                        <td th:text="${totalProducts[i]}"></td>
-                                        <td th:text="${totalOrders[i]}"></td>
-                                        <td
-                                            th:text="${#numbers.formatDecimal(revenue[i], 0, 'COMMA', 0, 'POINT')} + ' ₫'">
-                                        </td>
-                                        <td
-                                            th:text="${totalOrders[i] != 0 ? #numbers.formatDecimal(revenue[i] / totalOrders[i], 0, 'COMMA', 0, 'POINT') + ' ₫' : '0 ₫'}">
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <div class="stats-icon" style="color: #6366f1;">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div class="stats-title">Tổng Doanh Thu</div>
+                        <div class="stats-value" id="totalRevenue"
+                            th:text="${#numbers.formatDecimal(totalRevenue, 0, 'COMMA', 0, 'POINT')} + ' đ'">0 đ</div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="stats-icon" style="color: #10b981;">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="stats-title">Tổng Đơn Hàng</div>
+                        <div class="stats-value" id="totalOrders" th:text="${totalOrders}">0</div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="stats-icon" style="color: #f97316;">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="stats-title">Sản Phẩm Đã Bán</div>
+                        <div class="stats-value" id="totalProducts" th:text="${totalProducts}">0</div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="stats-icon" style="color: #3b82f6;">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stats-title">Khách Hàng Mới</div>
+                        <div class="stats-value" id="newCustomers" th:text="${newCustomers}">0</div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="charts-container chart-colors-primary">
+                    <div class="chart-card">
+                        <h5 class="chart-title">Biểu Đồ Doanh Thu Theo Loại Sản Phẩm</h5>
+                        <div class="chart-container">
+                            <canvas id="revenueLineChart"></canvas>
+                            <div id="noRevenueData" class="no-data-message" style="display: none;">
+                                Không có dữ liệu doanh thu để hiển thị.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <h5 class="chart-title">Phân Bố Số Lượng Theo Loại</h5>
+                        <div class="chart-container">
+                            <canvas id="categoryPieChart"></canvas>
+                            <div id="noCategoryData" class="no-data-message" style="display: none;">
+                                Không có dữ liệu phân bố loại sản phẩm để hiển thị.
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <script th:src="@{/bootstrap-5.3.3/dist/js/bootstrap.bundle.min.js}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script th:src="@{/bootstrap-5.3.3/dist/js/bootstrap.bundle.min.js}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script th:inline="javascript">
+            let revenueLineChart;
+            let categoryPieChart;
 
-    <script>
-        document.addEventListener("DOMContentLoaded", async () => {
-            try {
-                const response = await fetch('/admin/statistics/revenueByCategory');
-                const data = await response.json();
-                console.log("✅ Dữ liệu từ API:", data);
+            // Dữ liệu ban đầu từ Thymeleaf
+            const initialCategories = /*[[${categories}]]*/['Áo', 'Quần', 'Giày', 'Phụ kiện'];
+            const initialCategoryRevenue = /*[[${categoryRevenue}]]*/[45000000, 65000000, 40000000, 30000000];
+            const initialQuantityCategories = /*[[${quantityCategories}]]*/['Áo', 'Quần', 'Giày', 'Phụ kiện'];
+            const initialQuantities = /*[[${quantities}]]*/[150, 100, 80, 200];
 
-                if (!data.categories || !data.revenue || data.categories.length === 0 || data.revenue.length === 0) {
-                    console.error("⚠ Dữ liệu biểu đồ trống hoặc không hợp lệ!");
+            // Thông tin bộ lọc
+            const selectedCategory = /*[[${selectedCategory}]]*/null;
+            const selectedStartDate = /*[[${selectedStartDate}]]*/null;
+            const selectedEndDate = /*[[${selectedEndDate}]]*/null;
+
+            // Khởi tạo date picker
+            document.addEventListener("DOMContentLoaded", function () {
+                // Khởi tạo date picker với định dạng ISO để gửi lên server
+                flatpickr("#startDate", {
+                    dateFormat: "Y-m-d",
+                    allowInput: true,
+                    altInput: true,
+                    altFormat: "d/m/Y"
+                });
+
+                flatpickr("#endDate", {
+                    dateFormat: "Y-m-d",
+                    allowInput: true,
+                    altInput: true,
+                    altFormat: "d/m/Y"
+                });
+
+                // Xử lý form submit
+                const filterForm = document.getElementById('statsFilterForm');
+                const loadingOverlay = document.getElementById('loadingOverlay');
+
+                if (filterForm) {
+                    filterForm.addEventListener('submit', function (e) {
+                        // Hiển thị loading overlay
+                        if (loadingOverlay) {
+                            loadingOverlay.style.display = 'flex';
+                        }
+
+                        // Thêm class filtering để tạo hiệu ứng
+                        document.body.classList.add('filtering');
+
+                        // Cập nhật nút submit
+                        const submitBtn = document.getElementById('filterSubmitBtn');
+                        if (submitBtn) {
+                            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
+                            submitBtn.disabled = true;
+                        }
+                    });
+                }
+
+                // Vẽ biểu đồ
+                drawRevenueLineChart();
+                drawCategoryPieChart(initialCategories, initialQuantities);
+            });
+
+            // Vẽ biểu đồ đường doanh thu
+            function drawRevenueLineChart() {
+                const chartContainer = document.getElementById('revenueLineChart');
+                const noDataMessage = document.getElementById('noRevenueData');
+
+                if (!initialCategories || initialCategories.length === 0 || !initialCategoryRevenue || initialCategoryRevenue.length === 0) {
+                    if (chartContainer) chartContainer.style.display = 'none';
+                    if (noDataMessage) noDataMessage.style.display = 'block';
                     return;
                 }
 
-                const ctx = document.getElementById('categoryRevenueChart');
-                if (!ctx) {
-                    console.error("⚠ Không tìm thấy <canvas> để vẽ biểu đồ!");
-                    return;
-                }
+                if (chartContainer) chartContainer.style.display = 'block';
+                if (noDataMessage) noDataMessage.style.display = 'none';
 
-                if (window.categoryChart) {
-                    window.categoryChart.destroy();
-                }
+                const ctx = chartContainer.getContext('2d');
+                if (revenueLineChart) revenueLineChart.destroy();
 
-                window.categoryChart = new Chart(ctx.getContext('2d'), {
+                // Gradient background
+                const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+                gradient.addColorStop(0, 'rgba(99, 102, 241, 0.2)');
+                gradient.addColorStop(1, 'rgba(99, 102, 241, 0)');
+
+                revenueLineChart = new Chart(ctx, {
                     type: 'bar',
                     data: {
-                        labels: data.categories,
+                        labels: initialCategories,
                         datasets: [{
-                            label: 'Doanh Thu (₫)',
-                            data: data.revenue,
-                            backgroundColor: ['#ff6384', '#36a2eb', '#ffce56', '#4bc0c0']
+                            label: 'Doanh Thu (đ)',
+                            data: initialCategoryRevenue,
+                            backgroundColor: [
+                                '#6366f1',
+                                '#f97316',
+                                '#10b981',
+                                '#ef4444',
+                                '#3b82f6',
+                                '#8b5cf6'
+                            ],
+                            borderWidth: 0,
+                            borderRadius: 4
                         }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        scales: { y: { beginAtZero: true } }
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                                titleColor: '#111827',
+                                bodyColor: '#111827',
+                                titleFont: {
+                                    size: 14,
+                                    weight: 'bold'
+                                },
+                                bodyFont: {
+                                    size: 13
+                                },
+                                padding: 12,
+                                cornerRadius: 8,
+                                borderColor: '#e5e7eb',
+                                borderWidth: 1,
+                                callbacks: {
+                                    label: function (context) {
+                                        let value = context.raw;
+                                        return 'Doanh thu: ' + value.toLocaleString('vi-VN') + ' đ';
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(156, 163, 175, 0.1)',
+                                    drawBorder: false
+                                },
+                                ticks: {
+                                    font: {
+                                        size: 12
+                                    },
+                                    padding: 10,
+                                    callback: function (value) {
+                                        if (value >= 1000000) {
+                                            return (value / 1000000) + 'tr';
+                                        }
+                                        return value;
+                                    }
+                                },
+                                border: {
+                                    display: false
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false,
+                                    drawBorder: false
+                                },
+                                ticks: {
+                                    font: {
+                                        size: 12
+                                    },
+                                    padding: 10
+                                },
+                                border: {
+                                    display: false
+                                }
+                            }
+                        },
+                        animation: {
+                            duration: 1500,
+                            easing: 'easeOutQuart'
+                        }
                     }
                 });
-
-            } catch (error) {
-                console.error("⚠ Lỗi tải dữ liệu:", error);
             }
-        });
 
-    </script>
+            // Vẽ biểu đồ tròn phân bố loại sản phẩm
+            function drawCategoryPieChart(categories, quantities) {
+                const chartContainer = document.getElementById('categoryPieChart');
+                const noDataMessage = document.getElementById('noCategoryData');
+
+                if (!categories || categories.length === 0 || !quantities || quantities.length === 0) {
+                    if (chartContainer) chartContainer.style.display = 'none';
+                    if (noDataMessage) noDataMessage.style.display = 'block';
+                    return;
+                }
+
+                if (chartContainer) chartContainer.style.display = 'block';
+                if (noDataMessage) noDataMessage.style.display = 'none';
+
+                const ctx = chartContainer.getContext('2d');
+                if (categoryPieChart) categoryPieChart.destroy();
+
+                categoryPieChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: categories,
+                        datasets: [{
+                            data: quantities,
+                            backgroundColor: [
+                                '#6366f1', // Blue
+                                '#f97316', // Orange
+                                '#10b981', // Green
+                                '#ef4444', // Red
+                                '#3b82f6', // Light blue
+                                '#8b5cf6'  // Purple
+                            ],
+                            borderWidth: 0,
+                            hoverOffset: 15
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '60%',
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    padding: 15,
+                                    usePointStyle: true,
+                                    pointStyle: 'circle',
+                                    font: {
+                                        size: 12
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                                titleColor: '#111827',
+                                bodyColor: '#111827',
+                                titleFont: {
+                                    size: 14,
+                                    weight: 'bold'
+                                },
+                                bodyFont: {
+                                    size: 13
+                                },
+                                padding: 12,
+                                cornerRadius: 8,
+                                borderColor: '#e5e7eb',
+                                borderWidth: 1,
+                                callbacks: {
+                                    label: function (context) {
+                                        let value = context.raw;
+                                        let total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        let percentage = Math.round((value / total) * 100);
+                                        return `${context.label}: ${value} (${percentage}%)`;
+                                    }
+                                }
+                            }
+                        },
+                        animation: {
+                            duration: 1500,
+                            easing: 'easeOutQuart'
+                        }
+                    }
+                });
+            }
+        </script>
 </body>
 
 </html>

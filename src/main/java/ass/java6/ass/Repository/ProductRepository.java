@@ -32,7 +32,8 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query("SELECT p FROM Product p ORDER BY p.createDate DESC")
     Page<Product> findLatestProducts(Pageable pageable);
 
+    @Query("SELECT p FROM Product p WHERE p.category.id = :categoryId")
+    List<Product> findByCategoryId(String categoryId);
     Page<Product> findAll(Specification<Product> spec, Pageable pageable);
-
     Optional<Product> findById(Long id);
 }

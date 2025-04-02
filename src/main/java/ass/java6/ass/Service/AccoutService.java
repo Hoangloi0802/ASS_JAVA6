@@ -12,6 +12,6 @@ public interface AccoutService {
     Account Dangky( DangkyRequest newaccout );
     Account Xacthuc(HttpSession session ,Integer otpinput);
     Optional<Account> findByUsername(String username);
-    public void Checkotpquenmk(HttpSession session ,String otp);
+    public void Checkotpquenmk(HttpSession session ,Integer otp);
     public void doiMatKhau(String email ,String password);
 }

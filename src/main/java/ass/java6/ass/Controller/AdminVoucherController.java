@@ -48,15 +48,15 @@ public class AdminVoucherController {
     @GetMapping("/create-auto-discount")
     public String createAutoDiscountVoucher(RedirectAttributes redirect) {
         Voucher voucher = new Voucher();
-        voucher.setCode("AUTO50K_" + System.currentTimeMillis()); // Mã duy nhất dựa trên thời gian
-        voucher.setDiscountAmount(50000.0); // Giảm 50k
-        voucher.setMinOrderValue(1000000.0); // Đơn tối thiểu 1 triệu
-        voucher.setExpiryDate(Date.valueOf("2025-12-31")); // Hết hạn cuối 2025 (tùy chỉnh)
-        voucher.setCategory(null); // Áp dụng cho tất cả sản phẩm
-        voucher.setTrangThai(true); // Hoạt động
+        voucher.setCode("AUTO50K_" + System.currentTimeMillis());
+        voucher.setDiscountAmount(100000.0);
+        voucher.setMinOrderValue(1000000.0);
+        voucher.setExpiryDate(Date.valueOf("2025-12-31"));
+        voucher.setCategory(null);
+        voucher.setTrangThai(true);
 
         voucherService.save(voucher);
-        redirect.addFlashAttribute("successMessage", "Đã tạo voucher giảm 50k cho đơn hàng trên 1 triệu!");
+        redirect.addFlashAttribute("successMessage", "Đã tạo voucher giảm 100k cho đơn hàng trên 1 triệu!");
         return "redirect:/admin/nhansu";
     }
 
@@ -66,8 +66,7 @@ public class AdminVoucherController {
         return voucherService.findById(id).orElse(null);
     }
 
-    // Xóa voucher
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public String deleteVoucher(@PathVariable Integer id, RedirectAttributes redirect) {
         voucherService.deleteById(id);
         redirect.addFlashAttribute("successMessage", "Xóa voucher thành công!");

@@ -80,7 +80,6 @@ public class PayController {
         if (orderId == null) {
             return "redirect:/";
         }
-
         Order order = cartService.getOrderById(orderId);
         if (order == null) {
             return "redirect:/";

@@ -81,7 +81,6 @@
       <h2 class="text-center mb-4">SẢN PHẨM MỚI NHẤT</h2>
       <div class="container">
         <div class="row g-4">
-          <!-- Lặp qua danh sách products -->
           <div th:each="product : ${latestProducts}" class="col-md-3 mb-4">
             <div class="product-item">
               <div class="image-holder">
@@ -104,9 +103,10 @@
             </div>
             </div>
           </div>
-
         </div>
+
       </div>
+    </div>
     </div>
     <div class="container featurs py-5 bg-light p-5 rounded " data-aos="fade-up" data-aos-duration="1000">
       <div class="container py-5">
