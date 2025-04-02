@@ -8,14 +8,15 @@ import ass.java6.ass.Repository.OrderRepository;
 import ass.java6.ass.Repository.OrderDetailRepository;
 import ass.java6.ass.Repository.ProductRepository;
 import ass.java6.ass.Service.CartService;
+import jakarta.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -86,7 +87,7 @@ public class CartServiceImpl implements CartService {
                 .orElseGet(() -> {
                     Order newOrder = new Order();
                     newOrder.setAccount(account);
-                    newOrder.setStatus(false);
+                    newOrder.setStatus(false); // false nghĩa là giỏ hàng chưa thanh toán
                     return orderRepository.save(newOrder);
                 });
     }
@@ -109,9 +110,9 @@ public class CartServiceImpl implements CartService {
 
         // Áp dụng giảm giá từ voucher (nếu có)
         double discount = (cart.getVoucher() != null) ? cart.getVoucher().getDiscountAmount() : 0.0;
-
+        
         // Tính tổng tiền thanh toán
-        return Math.max(subtotal - discount, 0); // Đảm bảo không âm
+        return Math.max(subtotal - discount , 0); // Đảm bảo không âm
     }
 
     public double tongthanhtoan(Account account) {
@@ -124,7 +125,7 @@ public class CartServiceImpl implements CartService {
                 .sum();
         double discount = (cart.getVoucher() != null) ? cart.getVoucher().getDiscountAmount() : 0.0;
         double ship = 50000;
-        return Math.max(subtotal - discount - ship, 0); // Đảm bảo không âm
+        return Math.max(subtotal - discount + ship, 0); // Đảm bảo không âm
     }
 
     @Override
@@ -236,5 +237,15 @@ public class CartServiceImpl implements CartService {
     public List<Order> getOrdersByUsername(String username) {
         return orderRepository.findByAccount_Username(username);
     }
-
+    @Override
+    @Transactional
+    public void updateOrderStatus(Long orderId, boolean isPaid) {
+        Order order = orderRepository.findById(orderId).orElse(null);
+        if (order != null) {
+            order.setStatus(isPaid); // Nếu isPaid = true -> đơn hàng đã thanh toán, false -> chưa thanh toán
+            orderRepository.save(order);
+        } else {
+            throw new RuntimeException("Không tìm thấy đơn hàng với ID: " + orderId);
+        }
+    }
 }

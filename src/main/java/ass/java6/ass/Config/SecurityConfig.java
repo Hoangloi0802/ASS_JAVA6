@@ -32,13 +32,13 @@ public class SecurityConfig {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-
+    
     private final String[] PUBLIC_ENDPOINTS = {
         "/", "/Dangnhap", "/Dangky",
         "/profile/update","/profile",
-        "/donmua", "/donhang", "/chitietdonhang", "/shop",
-        "/giohang", "/thanhtoan",
-        "/chitiet",
+        "/donmua", "/donhang", "/chitietdonhang/**", "/shop",
+        "/giohang/**", "/thanhtoan/**", "/product/**",
+        "/cart/**",
         "/quenmk", "/datlaimk", "/checkotp","/otpquenmk","/datlaimk","/datlaimatkhau","/goilaiotp",
         "/uploads/**","/admin/products/**",
 

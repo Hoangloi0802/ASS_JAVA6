@@ -30,6 +30,8 @@ public class BillController {
     @Autowired
     OrderDetailRepository orderDetailRepository;
 
+  
+
     @GetMapping("/admin/bill")
     public String getBill(Model model) {
         try {
@@ -220,4 +222,7 @@ public class BillController {
         }
         return "redirect:/admin/bill";
     }
+
+    
+    
 }

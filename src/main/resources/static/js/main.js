@@ -211,11 +211,23 @@
 
     
     // Global functions
-    changeQuantity(change, inputId) {
+     changeQuantity(change, inputId) {
       const input = document.getElementById(inputId);
-      const newValue = parseInt(input.value) + change;
-      if (newValue >= 1) input.value = newValue;
-    },
+      const maxQuantity = parseInt(input.getAttribute("max"));
+      let newValue = parseInt(input.value) + change;
+  
+      // Kiểm tra giới hạn số lượng
+      if (newValue >= 1 && newValue <= maxQuantity) {
+          input.value = newValue;
+      }
+  
+      // Cập nhật trạng thái của nút tăng/giảm
+      const minusButton = input.parentElement.querySelector("button[onclick*='changeQuantity(-1']");
+      const plusButton = input.parentElement.querySelector("button[onclick*='changeQuantity(1']");
+  
+      minusButton.disabled = (parseInt(input.value) <= 1);
+      plusButton.disabled = (parseInt(input.value) >= maxQuantity);
+  },
 
     openAddressModal() {
       new bootstrap.Modal(document.getElementById('addressModal')).show();
