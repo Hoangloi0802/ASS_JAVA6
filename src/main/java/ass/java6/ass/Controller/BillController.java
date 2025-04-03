@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -25,23 +27,29 @@ import ass.java6.ass.Repository.OrderDetailRepository;
 
 @Controller
 public class BillController {
+
     @Autowired
     OrderRepository orderRepository;
+
     @Autowired
     OrderDetailRepository orderDetailRepository;
 
     @GetMapping("/admin/bill")
-    public String getBill(Model model) {
-        try {
-            List<Order> orders = orderRepository.findAll();
-            model.addAttribute("orders", orders);
-        } catch (Exception e) {
-            System.out.println("Lỗi khi lấy danh sách đơn hàng: " + e.getMessage());
-            e.printStackTrace();
-        }
-        return "admin/billManage";
+public String getBill(Model model) {
+    try {
+        List<Order> orders = orderRepository.findAll()
+                .stream()
+                .filter(order -> !"CART".equals(order.getStatus())) // Chỉ lọc bỏ CART
+                .collect(Collectors.toList());
+        System.out.println("Total orders after filtering: " + orders.size());
+        orders.forEach(order -> System.out.println("Order ID: " + order.getId() + ", Status: " + order.getStatus()));
+        model.addAttribute("orders", orders);
+    } catch (Exception e) {
+        System.out.println("Lỗi khi lấy danh sách đơn hàng: " + e.getMessage());
+        e.printStackTrace();
     }
-
+    return "admin/billManage";
+}
     @GetMapping("/admin/bill/detail/{id}")
     @ResponseBody
     @Transactional
@@ -62,7 +70,7 @@ public class BillController {
             Map<String, Object> orderMap = new HashMap<>();
             orderMap.put("id", order.getId());
             orderMap.put("address", order.getAddress());
-            orderMap.put("status", order.isStatus());
+            orderMap.put("status", order.getStatus()); // Sử dụng status kiểu String
             orderMap.put("createDate", order.getCreateDate());
 
             // Thông tin account
@@ -147,19 +155,23 @@ public class BillController {
     }
 
     @PostMapping("/admin/bill/update-status/{id}")
-    public String updateOrderStatus(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+    public String updateOrderStatus(
+            @PathVariable("id") Long id,
+            @RequestParam("status") String newStatus,
+            RedirectAttributes redirectAttributes) {
         try {
             Order order = orderRepository.findById(id).orElse(null);
             if (order == null) {
                 redirectAttributes.addFlashAttribute("errorMessage", "Đơn hàng không tồn tại!");
                 return "redirect:/admin/bill";
             }
-            // Toggle the status
-            order.setStatus(!order.isStatus());
+
+            // Cập nhật trạng thái đơn hàng
+            order.setStatus(newStatus);
             orderRepository.save(order);
+
             redirectAttributes.addFlashAttribute("successMessage",
-                    "Cập nhật trạng thái đơn hàng thành " + (order.isStatus() ? "Đã thanh toán" : "Chưa thanh toán")
-                            + " thành công!");
+                    "Cập nhật trạng thái đơn hàng thành " + newStatus + " thành công!");
             return "redirect:/admin/bill";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage",
@@ -171,7 +183,9 @@ public class BillController {
 
     @PostMapping("/admin/bill/update-status-ajax/{id}")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> updateOrderStatusAjax(@PathVariable("id") Long id) {
+    public ResponseEntity<Map<String, Object>> updateOrderStatusAjax(
+            @PathVariable("id") Long id,
+            @RequestParam("status") String newStatus) {
         Map<String, Object> response = new HashMap<>();
         try {
             Order order = orderRepository.findById(id).orElse(null);
@@ -181,14 +195,13 @@ public class BillController {
                 return ResponseEntity.badRequest().body(response);
             }
 
-            // Toggle the status
-            order.setStatus(!order.isStatus());
+            // Cập nhật trạng thái đơn hàng
+            order.setStatus(newStatus);
             orderRepository.save(order);
 
             response.put("success", true);
-            response.put("status", order.isStatus());
-            response.put("message", "Cập nhật trạng thái đơn hàng thành " +
-                    (order.isStatus() ? "Đã thanh toán" : "Chưa thanh toán") + " thành công!");
+            response.put("status", order.getStatus());
+            response.put("message", "Cập nhật trạng thái đơn hàng thành " + newStatus + " thành công!");
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -205,6 +218,10 @@ public class BillController {
             Order order = orderRepository.findById(id).orElse(null);
             if (order == null) {
                 redirectAttributes.addFlashAttribute("errorMessage", "Đơn hàng không tồn tại!");
+                return "redirect:/admin/bill";
+            }
+            if ("CART".equals(order.getStatus())) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Không thể xóa giỏ hàng tạm thời!");
                 return "redirect:/admin/bill";
             }
             if (order.getOrderDetails() != null && !order.getOrderDetails().isEmpty()) {
