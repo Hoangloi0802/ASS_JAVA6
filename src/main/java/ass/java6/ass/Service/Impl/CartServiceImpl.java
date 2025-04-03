@@ -14,6 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -32,29 +37,23 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public Order addToCart(Account account, Product product, int quantity) {
-        // Lấy giỏ hàng hiện tại
         Order order = getCurrentCart(account);
-
-        // Kiểm tra sản phẩm đã có trong giỏ hàng chưa
         Optional<OrderDetail> existingDetail = order.getOrderDetails().stream()
                 .filter(od -> od.getProduct().getId().equals(product.getId()))
                 .findFirst();
 
         if (existingDetail.isPresent()) {
-            // Nếu sản phẩm đã tồn tại, tăng số lượng
             OrderDetail orderDetail = existingDetail.get();
             orderDetail.setQuantity(orderDetail.getQuantity() + quantity);
-            orderDetailRepository.save(orderDetail); // Cập nhật số lượng trong DB
+            orderDetailRepository.save(orderDetail);
         } else {
-            // Nếu sản phẩm chưa có, tạo mới
             OrderDetail orderDetail = new OrderDetail();
             orderDetail.setOrder(order);
             orderDetail.setProduct(product);
             orderDetail.setPrice(product.getPrice());
             orderDetail.setQuantity(quantity);
-
             order.getOrderDetails().add(orderDetail);
-            orderDetailRepository.save(orderDetail); // Lưu mới vào DB
+            orderDetailRepository.save(orderDetail);
         }
 
         return orderRepository.save(order);
@@ -63,7 +62,6 @@ public class CartServiceImpl implements CartService {
     @Override
     public void updateQuantity(Account account, Product product, int quantity) {
         Order cart = getCurrentCart(account);
-
         cart.getOrderDetails().stream()
                 .filter(od -> od.getProduct().getId().equals(product.getId()))
                 .findFirst()
@@ -76,45 +74,51 @@ public class CartServiceImpl implements CartService {
     @Override
     public void removeFromCart(Account account, Product product) {
         Order cart = getCurrentCart(account);
-
         cart.getOrderDetails().removeIf(od -> od.getProduct().getId().equals(product.getId()));
         orderRepository.save(cart);
     }
 
     @Override
     public Order getCurrentCart(Account account) {
-        return orderRepository.findByAccountAndStatus(account, false)
+        return orderRepository.findByAccountAndStatus(account, "CART")
                 .orElseGet(() -> {
                     Order newOrder = new Order();
                     newOrder.setAccount(account);
+
+                    newOrder.setStatus("CART");
+
                     newOrder.setStatus(false); // false nghĩa là giỏ hàng chưa thanh toán
+
                     return orderRepository.save(newOrder);
                 });
     }
 
+    @Override
     public int getTotalItemsInCart(Account account) {
         Order cart = getCurrentCart(account);
         return cart.getOrderDetails().stream().mapToInt(OrderDetail::getQuantity).sum();
     }
 
+    @Override
     public double calculateTotalPrice(Account account) {
         Order cart = getCurrentCart(account);
         if (cart == null || cart.getOrderDetails().isEmpty()) {
             return 0.0;
         }
-
-        // Tính tổng tiền sản phẩm trong giỏ hàng
         double subtotal = cart.getOrderDetails().stream()
                 .mapToDouble(item -> item.getPrice() * item.getQuantity())
                 .sum();
-
-        // Áp dụng giảm giá từ voucher (nếu có)
         double discount = (cart.getVoucher() != null) ? cart.getVoucher().getDiscountAmount() : 0.0;
+
+        return Math.max(subtotal - discount, 0);
+
         
         // Tính tổng tiền thanh toán
         return Math.max(subtotal - discount , 0); // Đảm bảo không âm
+
     }
 
+    @Override
     public double tongthanhtoan(Account account) {
         Order cart = getCurrentCart(account);
         if (cart == null || cart.getOrderDetails().isEmpty()) {
@@ -124,8 +128,13 @@ public class CartServiceImpl implements CartService {
                 .mapToDouble(item -> item.getPrice() * item.getQuantity())
                 .sum();
         double discount = (cart.getVoucher() != null) ? cart.getVoucher().getDiscountAmount() : 0.0;
+
+        double ship = 50000; // Đổi từ 500000 thành 50000 để hợp lý hơn với phí vận chuyển
+        return Math.max(subtotal - discount + ship, 0); // Thêm phí vận chuyển vào tổng
+
         double ship = 50000;
         return Math.max(subtotal - discount + ship, 0); // Đảm bảo không âm
+
     }
 
     @Override
@@ -152,7 +161,7 @@ public class CartServiceImpl implements CartService {
         Order cart = getCurrentCart(account);
         if (cart != null) {
             cart.getOrderDetails().clear();
-            cart.setVoucher(null); // Xóa voucher nếu có
+            cart.setVoucher(null);
             orderRepository.save(cart);
         }
     }
@@ -160,22 +169,16 @@ public class CartServiceImpl implements CartService {
     @Override
     public Order createOrderFromCart(Account account) {
         Order cart = getCurrentCart(account);
-
         if (cart == null || cart.getOrderDetails().isEmpty()) {
             throw new IllegalArgumentException("Giỏ hàng rỗng, không thể tạo đơn hàng.");
         }
-
-        // Đánh dấu đơn hàng đã thanh toán
-        cart.setStatus(true);
-        cart.setCreateDate(LocalDateTime.now()); // Lưu ngày đặt hàng
-
-        // Lưu đơn hàng vào database
+        cart.setStatus("SHIPPING"); // Đổi từ PENDING thành SHIPPING sau khi thanh toán
+        cart.setCreateDate(LocalDateTime.now());
         orderRepository.save(cart);
 
-        // Tạo giỏ hàng mới cho lần mua tiếp theo
         Order newCart = new Order();
         newCart.setAccount(account);
-        newCart.setStatus(false); // Chưa thanh toán
+        newCart.setStatus("CART");
         orderRepository.save(newCart);
 
         return cart;
@@ -185,7 +188,7 @@ public class CartServiceImpl implements CartService {
     public String getUsedVoucherCode(Account account) {
         Order cart = getCurrentCart(account);
         if (cart == null || cart.getVoucher() == null) {
-            return ""; // Không có voucher nào được sử dụng
+            return "";
         }
         return cart.getVoucher().getCode();
     }
@@ -193,50 +196,102 @@ public class CartServiceImpl implements CartService {
     @Override
     public Order createOrderFromCart(Account account, String address) {
         Order cart = getCurrentCart(account);
-    
+
         if (cart == null || cart.getOrderDetails().isEmpty()) {
             throw new IllegalArgumentException("Giỏ hàng rỗng, không thể tạo đơn hàng.");
         }
-    
-        // Đánh dấu đơn hàng đã thanh toán
-        cart.setStatus(true);
-        cart.setCreateDate(LocalDateTime.now()); // Lưu ngày đặt hàng
-        cart.setAddress(address); // Lưu địa chỉ giao hàng
-    
+
+        // Đánh dấu đơn hàng đã thanh toán và chuyển sang trạng thái SHIPPING
+        cart.setStatus("SHIPPING"); // Đổi từ PENDING thành SHIPPING
+        cart.setCreateDate(LocalDateTime.now());
+        cart.setAddress(address);
+
         // Giảm số lượng sản phẩm trong kho
         for (OrderDetail orderDetail : cart.getOrderDetails()) {
             Product product = orderDetail.getProduct();
             int orderedQuantity = orderDetail.getQuantity();
-    
-            // Kiểm tra nếu số lượng còn đủ để bán
+
             if (product.getQuantity() < orderedQuantity) {
                 throw new IllegalArgumentException("Sản phẩm " + product.getName() + " không đủ số lượng trong kho.");
             }
-    
-            // Giảm số lượng sản phẩm
+
             product.setQuantity(product.getQuantity() - orderedQuantity);
-            productRepository.save(product); // Lưu cập nhật vào database
+            productRepository.save(product);
         }
-    
+
         // Lưu đơn hàng vào database
-        orderRepository.save(cart);
-    
+        Order savedOrder = orderRepository.save(cart);
+
+        // Làm trống giỏ hàng cũ
+        clearCart(account);
+
         // Tạo giỏ hàng mới cho lần mua tiếp theo
         Order newCart = new Order();
         newCart.setAccount(account);
-        newCart.setStatus(false); // Chưa thanh toán
+        newCart.setStatus("CART");
         orderRepository.save(newCart);
-    
-        return cart;
+
+        return savedOrder;
     }
-    
+
     @Override
     public Order getOrderById(Long orderId) {
         return orderRepository.findById(orderId).orElse(null);
     }
+
+    @Override
     public List<Order> getOrdersByUsername(String username) {
         return orderRepository.findByAccount_Username(username);
     }
+
+
+    @Override
+    public Order createTemporaryOrder(Account account, String address) {
+        Order cart = getCurrentCart(account);
+        if (cart == null || cart.getOrderDetails().isEmpty()) {
+            throw new RuntimeException("Giỏ hàng trống!");
+        }
+
+        Order order = new Order();
+        order.setAddress(address);
+        order.setStatus("SHIPPING"); // Đổi từ PENDING thành SHIPPING
+        order.setAccount(account);
+        order.setCreateDate(LocalDateTime.now());
+
+        List<OrderDetail> newOrderDetails = new ArrayList<>();
+        for (OrderDetail cartDetail : cart.getOrderDetails()) {
+            OrderDetail newDetail = new OrderDetail();
+            newDetail.setProduct(cartDetail.getProduct());
+            newDetail.setPrice(cartDetail.getPrice());
+            newDetail.setQuantity(cartDetail.getQuantity());
+            newDetail.setOrder(order);
+            newOrderDetails.add(newDetail);
+        }
+        order.setOrderDetails(newOrderDetails);
+
+        return order;
+    }
+
+    @Override
+    public void saveOrder(Order order) {
+        orderRepository.save(order);
+    }
+
+    @Override
+    public void updateOrder(Order order) {
+        orderRepository.save(order);
+    }
+
+    @Override
+    public void confirmOrderReceived(Long orderId) {
+        Order order = getOrderById(orderId);
+        if (order != null && "SHIPPING".equals(order.getStatus())) {
+            order.setStatus("SUCCESS");
+            updateOrder(order);
+        }
+    }
+}
+
     @Override
     @Transactional
     public void updateOrderStatus(Long orderId, boolean isPaid) {
@@ -249,3 +304,4 @@ public class CartServiceImpl implements CartService {
         }
     }
 }
+

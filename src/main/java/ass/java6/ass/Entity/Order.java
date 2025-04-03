@@ -22,7 +22,8 @@ public class Order implements Serializable {
 
     private String address;
 
-    private boolean status;
+    private String status; // Thay từ boolean thành String để lưu trạng thái (PENDING, SUCCESS, FAILED)
+
     @Column(name = "createdate")
     private LocalDateTime createDate = LocalDateTime.now();
 
@@ -32,10 +33,10 @@ public class Order implements Serializable {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OrderDetail> orderDetails = new ArrayList<>();
+
     @ManyToOne
     @JoinColumn(name = "voucher_id")
     private Voucher voucher;
-
 
     public int getTotalQuantity() {
         return orderDetails.stream()
