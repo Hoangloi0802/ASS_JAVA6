@@ -114,6 +114,12 @@ public class Accoutlmpl implements AccoutService {
         }
     }
 
+
+        session.removeAttribute("otp");
+    }
+
+
+
     @Override
     public void doiMatKhau(String email, String password) {
         Account account = accountRepository.findByEmail(email)

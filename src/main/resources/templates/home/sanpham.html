@@ -15,43 +15,40 @@
     </div>
     <div class="controller py-5 bg-light">
       <div class="container">
-        <form th:action="@{/shop}" method="get">
-          <div class="row justify-content-center g-3 mt-3">
-            <div class="col-12 col-md-4 col-lg-3">
-              <select name="priceFilter" class="form-select" onchange="this.form.submit()">
-                <option value="">Lọc giá</option>
-                <option th:value="100000" th:selected="${priceFilter != null and priceFilter == 100000}"
-                  th:text="'Dưới 100.000 VND'"></option>
-                <option th:value="300000" th:selected="${priceFilter != null and priceFilter == 300000}"
-                  th:text="'Dưới 300.000 VND'"></option>
-                <option th:value="500000" th:selected="${priceFilter != null and priceFilter == 500000}"
-                  th:text="'Dưới 500.000 VND'"></option>
-                <option th:value="1000000" th:selected="${priceFilter != null and priceFilter == 1000000}"
-                  th:text="'Dưới 1.000.000 VND'"></option>
-              </select>
+          <form th:action="@{/shop}" method="get">
+            <div class="row justify-content-center g-3 mt-3">
+              <div class="col-12 col-md-4 col-lg-3">
+                <select name="priceFilter" class="form-select" onchange="this.form.submit()">
+                  <option value="">Lọc giá</option>
+                  <option th:value="100000" th:selected="${priceFilter != null and priceFilter == 100000}" th:text="'Dưới 100.000 VND'"></option>
+                  <option th:value="300000" th:selected="${priceFilter != null and priceFilter == 300000}" th:text="'Dưới 300.000 VND'"></option>
+                  <option th:value="500000" th:selected="${priceFilter != null and priceFilter == 500000}" th:text="'Dưới 500.000 VND'"></option>
+                  <option th:value="1000000" th:selected="${priceFilter != null and priceFilter == 1000000}" th:text="'Dưới 1.000.000 VND'"></option>
+                </select>
+              </div>
+              <div class="col-12 col-md-4 col-lg-3">
+                <select name="categoryId" class="form-select" onchange="this.form.submit()">
+                  <option value="">Danh mục</option>
+                  <option th:each="category : ${categories}"
+                          th:value="${category.id}"
+                          th:text="${category.name}"
+                          th:selected="${categoryId != null and categoryId == category.id}"></option>
+                </select>
+              </div>
+              <div class="col-12 col-md-4 col-lg-3">
+                <select name="sort" class="form-select" onchange="this.form.submit()">
+                    <option value="">Sắp xếp theo</option>
+                    <option value="price_asc" th:selected="${sort != null and sort == 'price_asc'}" th:text="'Giá tăng dần'"></option>
+                    <option value="price_desc" th:selected="${sort != null and sort == 'price_desc'}" th:text="'Giá giảm dần'"></option>
+                </select>
+              </div>
             </div>
-            <div class="col-12 col-md-4 col-lg-3">
-              <select name="categoryId" class="form-select" onchange="this.form.submit()">
-                <option value="">Danh mục</option>
-                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"
-                  th:selected="${categoryId != null and categoryId == category.id}"></option>
-              </select>
-            </div>
-            <div class="col-12 col-md-4 col-lg-3">
-              <select name="sort" class="form-select" onchange="this.form.submit()">
-                <option value="">Sắp xếp theo</option>
-                <option th:value="5" th:selected="${sort != null and sort == '5'}" th:text="'Giá tăng dần'"></option>
-                <option th:value="6" th:selected="${sort != null and sort == '6'}" th:text="'Giá giảm dần'"></option>
-              </select>
-            </div>
-          </div>
         </form>
       </div>
     </div>
-    </div>
-
     <div class="container" data-aos="fade-up" data-aos-duration="1000">
       <div class="row g-4">
+        <!-- Hiển thị sản phẩm -->
         <div th:each="product : ${products}" class="col-md-3 mb-4">
           <div class="product-item">
               <div class="image-holder">
@@ -59,6 +56,9 @@
                       <img th:if="${product.productImages != null and not product.productImages.isEmpty()}"
                            th:src="${product.productImages[0].imageUrl}" 
                            alt="Product Image" class="product-image img-fluid">
+                      <img th:unless="${product.productImages != null and not product.productImages.isEmpty()}"
+                           src="/images/default-product.jpg" 
+                           alt="Default Image" class="product-image img-fluid">
                   </a>
               </div>
               <div class="product-content">
@@ -68,36 +68,44 @@
                   <div class="d-flex justify-content-between align-items-center">
                       <span th:text="${#numbers.formatDecimal(product.price, 1, 'POINT', 0, 'POINT')} + ' VND'"></span>
                       <span th:text="'Đã bán: ' + ${product.soldQuantity}"></span>
-
                   </div>
               </div>
           </div>
-      </div>
-      
+        </div>
+        <!-- Thông báo khi không có sản phẩm -->
+        <div th:if="${products == null or #lists.isEmpty(products)}" class="col-12 text-center">
+          <p class="text-muted">Không có sản phẩm nào để hiển thị.</p>
+        </div>
       </div>
     </div>
-    <nav aria-label="Page navigation">
+
+    <!-- Phân trang -->
+    <nav aria-label="Page navigation" th:if="${totalPages > 1}">
       <ul class="pagination justify-content-center">
-        <li th:classappend="${currentPage == 0} ? 'disabled'" class="page-item">
-          <a class="page-link bw-page-link" th:href="@{/shop(
+          <li th:classappend="${currentPage == 0} ? 'disabled'" class="page-item">
+              <a class="page-link bw-page-link"
+                 th:href="@{/shop(
                       page=${currentPage - 1}, 
                       priceFilter=${priceFilter != null ? priceFilter : ''}, 
                       categoryId=${categoryId != null ? categoryId : ''}, 
                       sort=${sort != null ? sort : ''}
-                  )}">
-            << /a>
-        </li>
-        <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
-          th:classappend="${i} == ${currentPage} ? 'active'">
-          <a class="page-link bw-page-link" th:href="@{/shop(
+                  )}"><</a>
+          </li>
+          <li class="page-item"
+              th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+              th:classappend="${i} == ${currentPage} ? 'active'">
+              <a class="page-link bw-page-link"
+                 th:href="@{/shop(
                       page=${i}, 
                       priceFilter=${priceFilter != null ? priceFilter : ''}, 
                       categoryId=${categoryId != null ? categoryId : ''}, 
                       sort=${sort != null ? sort : ''}
-                  )}" th:text="${i + 1}"></a>
-        </li>
-        <li th:classappend="${currentPage == totalPages - 1} ? 'disabled'" class="page-item">
-          <a class="page-link bw-page-link" th:href="@{/shop(
+                  )}"
+                 th:text="${i + 1}"></a>
+          </li>
+          <li th:classappend="${currentPage == totalPages - 1} ? 'disabled'" class="page-item">
+              <a class="page-link bw-page-link"
+                 th:href="@{/shop(
                       page=${currentPage + 1}, 
                       priceFilter=${priceFilter != null ? priceFilter : ''}, 
                       categoryId=${categoryId != null ? categoryId : ''}, 

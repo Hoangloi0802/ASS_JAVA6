@@ -6,6 +6,11 @@ import ass.java6.ass.Entity.Order;
 import ass.java6.ass.Service.AccoutService;
 import ass.java6.ass.Service.CartService;
 import ass.java6.ass.Service.VNPayService;
+
+import java.util.Collections;
+import java.util.List;
+
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,7 +21,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import jakarta.servlet.http.HttpServletRequest;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -25,6 +29,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import ass.java6.ass.Entity.Account;
+import ass.java6.ass.Entity.Order;
+import ass.java6.ass.Service.AccoutService;
+import ass.java6.ass.Service.CartService;
+import ass.java6.ass.Service.MomoService;
 
 @Controller
 public class PayController {
@@ -37,6 +46,8 @@ public class PayController {
 
     @Autowired
     private VNPayService vnPayService;
+    @Autowired
+    private MomoService momoService;
 
     @GetMapping("/thanhtoan")
     public String thanhtoan(Model model) {
@@ -55,7 +66,7 @@ public class PayController {
             model.addAttribute("cartItems", cart.getOrderDetails());
             model.addAttribute("subtotal", cartService.calculateSubtotal(account));
             model.addAttribute("discount", cartService.calculateDiscount(account));
-            model.addAttribute("totalAmount", cartService.calculateTotalPrice(account));
+            model.addAttribute("totalAmount", cartService.tongthanhtoan(account));
         }
         model.addAttribute("usedVoucherCode", cartService.getUsedVoucherCode(account));
         model.addAttribute("account", account);
@@ -144,6 +155,7 @@ public class PayController {
             return "redirect:/";
         }
 
+
         model.addAttribute("order", order);
         double subtotal = order.getOrderDetails().stream()
                 .mapToDouble(detail -> detail.getPrice() * detail.getQuantity())
@@ -151,7 +163,18 @@ public class PayController {
         double shippingFee = 50000;
         double totalAmount = subtotal + shippingFee;
 
+        double subtotal = order.getOrderDetails().stream()
+                .mapToDouble(detail -> detail.getPrice() * detail.getQuantity())
+                .sum();
+
+
+        double discount = (order.getVoucher() != null) ? order.getVoucher().getDiscountAmount() : 0.0;
+        double shippingFee = 50000;
+        double totalAmount = subtotal - discount + shippingFee;
+
+        model.addAttribute("order", order);
         model.addAttribute("subtotal", subtotal);
+        model.addAttribute("discount", discount);
         model.addAttribute("shippingFee", shippingFee);
         model.addAttribute("totalAmount", totalAmount);
 

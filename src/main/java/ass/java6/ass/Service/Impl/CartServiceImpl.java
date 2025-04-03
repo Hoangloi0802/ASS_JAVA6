@@ -8,13 +8,20 @@ import ass.java6.ass.Repository.OrderRepository;
 import ass.java6.ass.Repository.OrderDetailRepository;
 import ass.java6.ass.Repository.ProductRepository;
 import ass.java6.ass.Service.CartService;
+import jakarta.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import java.util.List;
+import java.util.Optional;
+
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -77,7 +84,11 @@ public class CartServiceImpl implements CartService {
                 .orElseGet(() -> {
                     Order newOrder = new Order();
                     newOrder.setAccount(account);
+
                     newOrder.setStatus("CART");
+
+                    newOrder.setStatus(false); // false nghĩa là giỏ hàng chưa thanh toán
+
                     return orderRepository.save(newOrder);
                 });
     }
@@ -98,7 +109,13 @@ public class CartServiceImpl implements CartService {
                 .mapToDouble(item -> item.getPrice() * item.getQuantity())
                 .sum();
         double discount = (cart.getVoucher() != null) ? cart.getVoucher().getDiscountAmount() : 0.0;
+
         return Math.max(subtotal - discount, 0);
+
+        
+        // Tính tổng tiền thanh toán
+        return Math.max(subtotal - discount , 0); // Đảm bảo không âm
+
     }
 
     @Override
@@ -111,8 +128,13 @@ public class CartServiceImpl implements CartService {
                 .mapToDouble(item -> item.getPrice() * item.getQuantity())
                 .sum();
         double discount = (cart.getVoucher() != null) ? cart.getVoucher().getDiscountAmount() : 0.0;
+
         double ship = 50000; // Đổi từ 500000 thành 50000 để hợp lý hơn với phí vận chuyển
         return Math.max(subtotal - discount + ship, 0); // Thêm phí vận chuyển vào tổng
+
+        double ship = 50000;
+        return Math.max(subtotal - discount + ship, 0); // Đảm bảo không âm
+
     }
 
     @Override
@@ -222,6 +244,7 @@ public class CartServiceImpl implements CartService {
         return orderRepository.findByAccount_Username(username);
     }
 
+
     @Override
     public Order createTemporaryOrder(Account account, String address) {
         Order cart = getCurrentCart(account);
@@ -268,3 +291,17 @@ public class CartServiceImpl implements CartService {
         }
     }
 }
+
+    @Override
+    @Transactional
+    public void updateOrderStatus(Long orderId, boolean isPaid) {
+        Order order = orderRepository.findById(orderId).orElse(null);
+        if (order != null) {
+            order.setStatus(isPaid); // Nếu isPaid = true -> đơn hàng đã thanh toán, false -> chưa thanh toán
+            orderRepository.save(order);
+        } else {
+            throw new RuntimeException("Không tìm thấy đơn hàng với ID: " + orderId);
+        }
+    }
+}
+

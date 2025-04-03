@@ -17,6 +17,7 @@
                 <!-- Thông tin đơn hàng -->
                 <div class="mb-4 col-6">
                     <h5>Thông tin đơn hàng</h5>
+
                     <p><strong>Mã đơn hàng:</strong> <span th:text="${order.id != null} ? ${order.id} : 'N/A'"></span></p>
                     <p><strong>Ngày đặt:</strong> <span th:text="${order.createDate != null} ? ${#temporals.format(order.createDate, 'dd/MM/yyyy HH:mm')} : 'N/A'"></span></p>
                     <p><strong>Trạng thái:</strong>
@@ -24,6 +25,11 @@
                               th:classappend="${order.status == 'SUCCESS'} ? 'bg-success' : (${order.status == 'FAILED'} ? 'bg-danger' : (${order.status == 'SHIPPING'} ? 'bg-info' : 'bg-warning'))"
                               th:text="${order.status == 'SUCCESS'} ? 'Đã giao hàng' : (${order.status == 'FAILED'} ? 'Thất bại' : (${order.status == 'SHIPPING'} ? 'Đang giao hàng' : 'Chờ xử lý'))">
                         </span>
+
+                    <p><strong>Mã đơn hàng:</strong> <span th:text="${order.id}"></span></p>
+                    <p><strong>Ngày đặt:</strong>    <td th:text="${#temporals.format(order.createDate, 'dd/MM/yyyy HH:mm')}"></td></p>
+                        <p><strong>Trạng thái:</strong> <span class="badge" th:classappend="${order.status} ? 'bg-success' : 'bg-danger'" th:text="${order.status} ? 'Hoàn thành' : 'Chưa hoàn thành'"></span></p>
+
                     </p>
                 </div>
 

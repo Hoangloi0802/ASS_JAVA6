@@ -24,10 +24,15 @@ public interface CartService {
     Order createOrderFromCart(Account account, String address);
     Order getOrderById(Long orderId);
     List<Order> getOrdersByUsername(String username);
+
     Order createTemporaryOrder(Account account, String address);
     void saveOrder(Order order);
     void updateOrder(Order order);
     // Thêm phương thức mới để xác nhận đã nhận hàng
     void confirmOrderReceived(Long orderId);
+
+    void updateOrderStatus(Long orderId, boolean isPaid);
+}
+
     
 }
