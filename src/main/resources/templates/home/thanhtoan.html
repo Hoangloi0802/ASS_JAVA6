@@ -156,46 +156,6 @@
         </div>
 
 
-        <div class="modal fade" id="momoQrModal" tabindex="-1" aria-labelledby="momoQrModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="momoQrModalLabel">Quét mã QR để thanh toán</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body text-center">
-                        <img id="momoQrCode" src="" alt="Momo QR Code" class="img-fluid" style="max-width: 300px;">
-                        <p class="mt-3">Vui lòng quét mã QR bằng ứng dụng MoMo để hoàn tất thanh toán</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đã thanh toán</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-  
-  
-  <!-- Modal thanh toán ZaloPay -->
-  <div class="modal fade" id="zalopayModal" tabindex="-1" aria-labelledby="zalopayModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="zalopayModalLabel">Thanh toán qua ZaloPay</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body text-center">
-          <p>Quét mã QR để thanh toán đơn hàng của bạn.</p>
-          <div id="zalopayQrCode"></div> <!-- Đây là nơi hiển thị QR ZaloPay -->
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-
     </main>
 
     <div th:replace="~{/layouts/footer}"></div>

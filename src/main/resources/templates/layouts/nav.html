@@ -50,11 +50,10 @@
 
           <!-- Đã đăng nhập -->
           <th:block th:if="${currentUser != null}">
-            <img th:src="${session.currentUser.photo != null and session.currentUser.photo != ''} 
-             ? ${session.currentUser.photo} 
-             : 'https://ui-avatars.com/api/?name=' + ${session.currentUser.fullname}" class="rounded-circle"
+            <img th:src="${currentUser.photo != null and currentUser.photo != ''} 
+             ? ${currentUser.photo} 
+             : 'https://ui-avatars.com/api/?name=' + ${currentUser.fullname}" class="rounded-circle"
               style="width: 40px; height: 40px;">
-
           </th:block>
 
         </a>

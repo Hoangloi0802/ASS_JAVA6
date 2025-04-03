@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-
 @Service
 public class CartServiceImpl implements CartService {
 
@@ -110,9 +109,9 @@ public class CartServiceImpl implements CartService {
 
         // Áp dụng giảm giá từ voucher (nếu có)
         double discount = (cart.getVoucher() != null) ? cart.getVoucher().getDiscountAmount() : 0.0;
-        
+
         // Tính tổng tiền thanh toán
-        return Math.max(subtotal - discount , 0); // Đảm bảo không âm
+        return Math.max(subtotal - discount, 0); // Đảm bảo không âm
     }
 
     public double tongthanhtoan(Account account) {
@@ -193,59 +192,62 @@ public class CartServiceImpl implements CartService {
     @Override
     public Order createOrderFromCart(Account account, String address) {
         Order cart = getCurrentCart(account);
-    
+
         if (cart == null || cart.getOrderDetails().isEmpty()) {
             throw new IllegalArgumentException("Giỏ hàng rỗng, không thể tạo đơn hàng.");
         }
-    
+
         // Đánh dấu đơn hàng đã thanh toán
         cart.setStatus(true);
         cart.setCreateDate(LocalDateTime.now()); // Lưu ngày đặt hàng
         cart.setAddress(address); // Lưu địa chỉ giao hàng
-    
+
         // Giảm số lượng sản phẩm trong kho
         for (OrderDetail orderDetail : cart.getOrderDetails()) {
             Product product = orderDetail.getProduct();
             int orderedQuantity = orderDetail.getQuantity();
-    
+
             // Kiểm tra nếu số lượng còn đủ để bán
             if (product.getQuantity() < orderedQuantity) {
                 throw new IllegalArgumentException("Sản phẩm " + product.getName() + " không đủ số lượng trong kho.");
             }
-    
+
             // Giảm số lượng sản phẩm
             product.setQuantity(product.getQuantity() - orderedQuantity);
             productRepository.save(product); // Lưu cập nhật vào database
         }
-    
+
         // Lưu đơn hàng vào database
         orderRepository.save(cart);
-    
+
         // Tạo giỏ hàng mới cho lần mua tiếp theo
         Order newCart = new Order();
         newCart.setAccount(account);
         newCart.setStatus(false); // Chưa thanh toán
         orderRepository.save(newCart);
-    
+
         return cart;
     }
-    
+
     @Override
     public Order getOrderById(Long orderId) {
         return orderRepository.findById(orderId).orElse(null);
     }
+
     public List<Order> getOrdersByUsername(String username) {
         return orderRepository.findByAccount_Username(username);
     }
+
     @Override
     @Transactional
     public void updateOrderStatus(Long orderId, boolean isPaid) {
         Order order = orderRepository.findById(orderId).orElse(null);
         if (order != null) {
-            order.setStatus(isPaid); // Nếu isPaid = true -> đơn hàng đã thanh toán, false -> chưa thanh toán
+            order.setStatus(isPaid); // Gán trực tiếp vì status là boolean
             orderRepository.save(order);
         } else {
             throw new RuntimeException("Không tìm thấy đơn hàng với ID: " + orderId);
         }
     }
+
 }

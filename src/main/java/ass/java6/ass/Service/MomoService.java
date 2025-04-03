@@ -15,18 +15,19 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MomoService {
-    private static final String PARTNER_CODE = "MOMO";
-    private static final String ACCESS_KEY = "F8BBA842ECF85";
-    private static final String SECRET_KEY = "K951B6PE1waDMi640xX08PD3vg6EkVlz";
+    private static final String PARTNER_CODE = "MOMO"; // Cập nhật với mã đối tác của bạn
+    private static final String ACCESS_KEY = "F8BBA842ECF85"; // Key Sandbox
+    private static final String SECRET_KEY = "K951B6PE1waDMi640xX08PD3vg6EkVlz"; // Key Sandbox
     private static final String REDIRECT_URL = "http://localhost:8080/thanhtoan/momo/return";
     private static final String IPN_URL = "http://localhost:8080/thanhtoan/momo/ipn";
     private static final String REQUEST_TYPE = "captureWallet";
+    
 
     public static class PaymentResponse {
         private String payUrl;
         private String qrCodeUrl;
         private int resultCode;
-        private String message;
+        private String message; 
 
         public PaymentResponse(String payUrl, String qrCodeUrl, int resultCode, String message) {
             this.payUrl = payUrl;
@@ -47,13 +48,13 @@ public class MomoService {
             String orderId = requestId;
             String orderInfo = "Thanh toán đơn hàng";
             String extraData = "";
-
+    
             String rawSignature = String.format(
                     "accessKey=%s&amount=%s&extraData=%s&ipnUrl=%s&orderId=%s&orderInfo=%s&partnerCode=%s&redirectUrl=%s&requestId=%s&requestType=%s",
                     ACCESS_KEY, amount, extraData, IPN_URL, orderId, orderInfo, PARTNER_CODE, REDIRECT_URL,
                     requestId, REQUEST_TYPE);
             String signature = signHmacSHA256(rawSignature, SECRET_KEY);
-
+    
             JSONObject requestBody = new JSONObject();
             requestBody.put("partnerCode", PARTNER_CODE);
             requestBody.put("accessKey", ACCESS_KEY);
@@ -67,12 +68,13 @@ public class MomoService {
             requestBody.put("requestType", REQUEST_TYPE);
             requestBody.put("signature", signature);
             requestBody.put("lang", "vi");
-
+    
+            // Chuyển sang môi trường Sandbox
             CloseableHttpClient httpClient = HttpClients.createDefault();
             HttpPost httpPost = new HttpPost("https://test-payment.momo.vn/v2/gateway/api/create");
             httpPost.setHeader("Content-Type", "application/json");
             httpPost.setEntity(new StringEntity(requestBody.toString(), StandardCharsets.UTF_8));
-
+    
             try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
                 BufferedReader reader = new BufferedReader(
                         new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8));
@@ -81,20 +83,31 @@ public class MomoService {
                 while ((line = reader.readLine()) != null) {
                     result.append(line);
                 }
-
+    
                 JSONObject jsonResponse = new JSONObject(result.toString());
-                String payUrl = jsonResponse.getString("payUrl");
-                String qrCodeUrl = jsonResponse.getString("qrCodeUrl");
                 int resultCode = jsonResponse.getInt("resultCode");
-                String message = jsonResponse.getString("message");
-
-                return new PaymentResponse(payUrl, qrCodeUrl, resultCode, message);
+                String message = jsonResponse.optString("message", "No message");
+    
+                if (resultCode == 0) {  // Nếu giao dịch thành công
+                    String payUrl = jsonResponse.getString("payUrl");
+                    String qrCodeUrl = jsonResponse.optString("qrCodeUrl", null);
+    
+                    // Nếu API không trả về mã QR, tạo thủ công từ payUrl
+                    if (qrCodeUrl == null || qrCodeUrl.isEmpty()) {
+                        qrCodeUrl = "https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=" + payUrl;
+                    }
+    
+                    return new PaymentResponse(payUrl, qrCodeUrl, resultCode, message);
+                } else {
+                    return new PaymentResponse(null, null, resultCode, "Lỗi MoMo: " + message);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
             return new PaymentResponse(null, null, -1, "Failed to create payment request: " + e.getMessage());
         }
     }
+    
 
     private static String signHmacSHA256(String data, String key) throws Exception {
         Mac hmacSHA256 = Mac.getInstance("HmacSHA256");
