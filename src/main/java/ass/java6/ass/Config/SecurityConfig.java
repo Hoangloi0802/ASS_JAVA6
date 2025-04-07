@@ -13,7 +13,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
 import ass.java6.ass.Entity.Account;
@@ -32,25 +31,29 @@ public class SecurityConfig {
 
     private final String[] PUBLIC_ENDPOINTS = {
         "/", "/Dangnhap", "/Dangky",
-        "/profile/update","/profile",
+        "/profile/update", "/profile",
         "/donmua", "/donhang", "/chitietdonhang/**", "/shop",
         "/giohang/**", "/thanhtoan/**", "/product/**",
         "/cart/**",
-        "/quenmk", "/datlaimk", "/checkotp","/otpquenmk","/datlaimk","/datlaimatkhau","/goilaiotp",
-        "/uploads/**","/admin/products/**",
-
-            "/css/**", "/js/**", "/img/**", "/bootstrap-5.3.3/dist/**", "/fonts/**", "/logout", "/doimk",
+        "/quenmk", "/datlaimk", "/checkotp", "/otpquenmk", "/datlaimatkhau", "/goilaiotp",
+        "/uploads/**", "/admin/products/**",
+        "/css/**", "/js/**", "/img/**", "/bootstrap-5.3.3/dist/**", "/fonts/**", "/logout", "/doimk"
     };
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(PUBLIC_ENDPOINTS).permitAll() // Các trang công khai
-                        .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN") // Chỉ admin mới truy cập được trang
-                                                                                 // admin
-                        .requestMatchers("/**").hasAuthority("ROLE_ADMIN") // Admin có quyền truy cập tất cả trang
-                        .anyRequest().denyAll() // User bị chặn nếu cố truy cập trang khác
+                        // Các endpoint công khai không cần đăng nhập
+                        .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
+                        // Các endpoint chỉ dành cho ROLE_ADMIN
+                        .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                        // Các endpoint dành cho ROLE_USER (bao gồm thanh toán VNPay)
+                        .requestMatchers("/vnpay/**", "/api/vnpay/**", "/thanhtoan/**", "/chitietdonhang/**").hasAuthority("ROLE_USER")
+                        // Cho phép ROLE_ADMIN truy cập mọi thứ
+                        .requestMatchers("/**").hasAuthority("ROLE_ADMIN")
+                        // Các yêu cầu khác cần xác thực (ROLE_USER hoặc ROLE_ADMIN)
+                        .anyRequest().authenticated() // Thay denyAll() bằng authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/Dangnhap")
@@ -82,8 +85,7 @@ public class SecurityConfig {
                                 req.getSession().setAttribute("username",
                                         currentUser.getFullname() != null ? currentUser.getFullname()
                                                 : currentUser.getEmail());
-                                req.getSession().setAttribute("role", currentUser.getRole().name()); // 👈 Lưu quyền vào
-                                                                                                     // session
+                                req.getSession().setAttribute("role", currentUser.getRole().name());
 
                                 res.sendRedirect("/shop");
                             } else {
@@ -112,7 +114,7 @@ public class SecurityConfig {
                 throw new BadCredentialsException("tài khoản không tồn tại");
             }
             Account account = optionalAccount.get();
-            if (account.isActivated() != true) {
+            if (!account.isActivated()) {
                 throw new DisabledException("tài khoản chưa được kích hoạt vui lòng liên hệ admin");
             }
             return account;
@@ -122,7 +124,7 @@ public class SecurityConfig {
     @Bean
     public AuthenticationFailureHandler customFailureHandler() {
         return (request, response, exception) -> {
-            String error = "true"; // Mặc định
+            String error = "true";
             if (exception instanceof BadCredentialsException) {
                 error = "userNotFound";
             } else if (exception instanceof DisabledException) {
@@ -131,5 +133,4 @@ public class SecurityConfig {
             response.sendRedirect("/Dangnhap?error=" + error);
         };
     }
-
 }

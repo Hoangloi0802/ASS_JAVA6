@@ -63,43 +63,53 @@ public class PayController {
     }
 
     @PostMapping("/thanhtoan/dathang")
-    public String placeOrder(
-            @RequestParam("address") String address,
-            @RequestParam("paymentMethod") String paymentMethod,
-            HttpServletRequest request,
-            RedirectAttributes redirectAttributes,
-            Model model) {
-        Account account = getAuthenticatedAccount();
-        if (account == null) {
-            return "redirect:/dangnhap";
-        }
-
-        try {
-            if ("vnpay".equalsIgnoreCase(paymentMethod)) {
-                long amount = (long) cartService.calculateTotalPrice(account);
-                if (amount < 5000) {
-                    redirectAttributes.addFlashAttribute("error", "Số tiền phải lớn hơn 5,000 VND");
-                    return "redirect:/thanhtoan";
-                }
-                if (amount >= 1_000_000_000) {
-                    redirectAttributes.addFlashAttribute("error", "Số tiền phải nhỏ hơn 1 tỷ VND");
-                    return "redirect:/thanhtoan";
-                }
-                Order tempOrder = cartService.createTemporaryOrder(account, address);
-                request.getSession().setAttribute("tempOrder", tempOrder);
-                model.addAttribute("orderId", "ORDER_" + System.currentTimeMillis());
-                model.addAttribute("amount", amount);
-                return "pay"; // Chuyển hướng đến trang xác nhận
-            } else {
-                // Thanh toán COD hoặc phương thức khác
-                Order order = cartService.createOrderFromCart(account, address); // Lưu đơn hàng
-                return "redirect:/thanhtoan/thanhcong?orderId=" + order.getId();
-            }
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Lỗi khi đặt hàng: " + e.getMessage());
-            return "redirect:/thanhtoan";
-        }
+public String placeOrder(
+        @RequestParam("address") String address,
+        @RequestParam("paymentMethod") String paymentMethod,
+        HttpServletRequest request,
+        RedirectAttributes redirectAttributes,
+        Model model) {
+    Account account = getAuthenticatedAccount();
+    if (account == null) {
+        return "redirect:/dangnhap";
     }
+
+    try {
+        if ("vnpay".equalsIgnoreCase(paymentMethod)) {
+            double subtotal = cartService.calculateSubtotal(account);
+            double discount = cartService.calculateDiscount(account);
+            double shippingFee = 50000;
+            long amount = (long) (subtotal - discount + shippingFee); // Chuyển thành long ngay tại đây
+
+            if (amount < 5000) {
+                redirectAttributes.addFlashAttribute("error", "Số tiền phải lớn hơn 5,000 VND");
+                return "redirect:/thanhtoan";
+            }
+            if (amount >= 1_000_000_000) {
+                redirectAttributes.addFlashAttribute("error", "Số tiền phải nhỏ hơn 1 tỷ VND");
+                return "redirect:/thanhtoan";
+            }
+
+            Order tempOrder = cartService.createTemporaryOrder(account, address);
+            request.getSession().setAttribute("tempOrder", tempOrder);
+
+            model.addAttribute("orderId", "ORDER_" + System.currentTimeMillis());
+            model.addAttribute("subtotal", subtotal);
+            model.addAttribute("discount", discount);
+            model.addAttribute("shippingFee", shippingFee);
+            model.addAttribute("totalAmount", amount); // Sử dụng amount kiểu long
+            model.addAttribute("amount", amount);
+
+            return "pay";
+        } else {
+            Order order = cartService.createOrderFromCart(account, address);
+            return "redirect:/thanhtoan/thanhcong?orderId=" + order.getId();
+        }
+    } catch (Exception e) {
+        redirectAttributes.addFlashAttribute("error", "Lỗi khi đặt hàng: " + e.getMessage());
+        return "redirect:/thanhtoan";
+    }
+}
 
     @PostMapping("/vnpay/create-payment")
     public String createPayment(
@@ -128,93 +138,102 @@ public class PayController {
 
     @GetMapping("/thanhtoan/thanhcong")
     public String orderSuccess(@RequestParam(value = "orderId", required = false) String orderId, Model model) {
-        if (orderId == null) {
-            return "redirect:/";
-        }
-
-        Long orderIdLong;
-        try {
-            orderIdLong = Long.parseLong(orderId.replace("ORDER_", ""));
-        } catch (NumberFormatException e) {
-            return "redirect:/";
-        }
-
-        Order order = cartService.getOrderById(orderIdLong);
-        if (order == null) {
-            return "redirect:/";
-        }
-
-        model.addAttribute("order", order);
-        double subtotal = order.getOrderDetails().stream()
-                .mapToDouble(detail -> detail.getPrice() * detail.getQuantity())
-                .sum();
-        double shippingFee = 50000;
-        double totalAmount = subtotal + shippingFee;
-
-        model.addAttribute("subtotal", subtotal);
-        model.addAttribute("shippingFee", shippingFee);
-        model.addAttribute("totalAmount", totalAmount);
-
-        return "home/donmua";
+    if (orderId == null) {
+        return "redirect:/";
     }
 
-    @GetMapping("/api/vnpay/callback")
-    public String handleVNPayCallback(HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
-        if (request == null || request.getParameterMap() == null) {
-            redirectAttributes.addFlashAttribute("message", "Yêu cầu không hợp lệ!");
-            return "redirect:/thanhtoan/thanhcong?orderId=" + request.getParameter("vnp_TxnRef").replace("ORDER_", "");
+    Long orderIdLong;
+    try {
+        orderIdLong = Long.parseLong(orderId.replace("ORDER_", ""));
+    } catch (NumberFormatException e) {
+        return "redirect:/";
+    }
+
+    Order order = cartService.getOrderById(orderIdLong);
+    if (order == null) {
+        return "redirect:/";
+    }
+
+    model.addAttribute("order", order);
+    double subtotal = order.getOrderDetails().stream()
+            .mapToDouble(detail -> detail.getPrice() * detail.getQuantity())
+            .sum();
+    double shippingFee = 50000;
+    double totalAmount = subtotal + shippingFee;
+
+    model.addAttribute("subtotal", subtotal);
+    model.addAttribute("shippingFee", shippingFee);
+    model.addAttribute("totalAmount", totalAmount);
+
+    return "home/donmua"; // Trả về donmua.html trong thư mục templates/home
+}
+
+@GetMapping("/api/vnpay/callback")
+public String handleVNPayCallback(HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
+    // Kiểm tra request hợp lệ
+    if (request == null || request.getParameterMap() == null) {
+        redirectAttributes.addFlashAttribute("message", "Yêu cầu không hợp lệ!");
+        return "redirect:/thanhtoan";
+    }
+
+    // Kiểm tra vnp_TxnRef
+    String vnp_TxnRef = request.getParameter("vnp_TxnRef");
+    if (vnp_TxnRef == null || vnp_TxnRef.isEmpty()) {
+        redirectAttributes.addFlashAttribute("message", "Không tìm thấy mã giao dịch (vnp_TxnRef)!");
+        return "redirect:/thanhtoan";
+    }
+
+    // Lấy tham số từ VNPAY
+    Map<String, String> params = new HashMap<>();
+    for (String key : request.getParameterMap().keySet()) {
+        String[] values = request.getParameterValues(key);
+        if (values != null && values.length > 0) {
+            params.put(key, values[0]);
         }
+    }
 
-        Map<String, String> params = new HashMap<>();
-        for (String key : request.getParameterMap().keySet()) {
-            String[] values = request.getParameterValues(key);
-            if (values != null && values.length > 0) {
-                params.put(key, values[0]);
-            }
-        }
+    String vnp_SecureHash = params.get("vnp_SecureHash");
+    if (vnp_SecureHash == null) {
+        redirectAttributes.addFlashAttribute("message", "Không tìm thấy chữ ký!");
+        return "redirect:/thanhtoan/thanhcong?orderId=" + vnp_TxnRef.replace("ORDER_", "");
+    }
 
-        String vnp_SecureHash = params.get("vnp_SecureHash");
-        if (vnp_SecureHash == null) {
-            redirectAttributes.addFlashAttribute("message", "Không tìm thấy chữ ký!");
-            return "redirect:/thanhtoan/thanhcong?orderId=" + params.get("vnp_TxnRef").replace("ORDER_", "");
-        }
+    params.remove("vnp_SecureHash");
+    params.remove("vnp_SecureHashType");
 
-        params.remove("vnp_SecureHash");
-        params.remove("vnp_SecureHashType");
-
-        try {
-            String signValue = vnPayService.hmacSHA512(VNPayConfig.VNP_HASHSECRET, buildQueryString(params));
-            if (signValue.equals(vnp_SecureHash)) {
-                String vnp_ResponseCode = params.get("vnp_ResponseCode");
-                String orderId = params.get("vnp_TxnRef").replace("ORDER_", "");
-                Order order = cartService.getOrderById(Long.parseLong(orderId));
-                if (order != null) {
-                    if ("00".equals(vnp_ResponseCode)) {
-                        System.out.println("Before update - Order ID: " + order.getId() + ", Status: " + order.getStatus());
-                        order.setStatus("SHIPPING");
-                        cartService.updateOrder(order);
-                        cartService.clearCart(getAuthenticatedAccount()); // Xóa giỏ hàng sau khi thành công
-                        redirectAttributes.addFlashAttribute("message",
-                                "Thanh toán thành công! Mã giao dịch: " + orderId);
-                    } else {
-                        order.setStatus("FAILED");
-                        cartService.updateOrder(order);
-                        redirectAttributes.addFlashAttribute("message",
-                                "Thanh toán thất bại! Mã lỗi: " + vnp_ResponseCode);
-                    }
+    try {
+        String signValue = vnPayService.hmacSHA512(VNPayConfig.VNP_HASHSECRET, buildQueryString(params));
+        if (signValue.equals(vnp_SecureHash)) {
+            String vnp_ResponseCode = params.get("vnp_ResponseCode");
+            String orderId = vnp_TxnRef.replace("ORDER_", "");
+            Order order = cartService.getOrderById(Long.parseLong(orderId));
+            if (order != null) {
+                if ("00".equals(vnp_ResponseCode)) {
+                    System.out.println("Before update - Order ID: " + order.getId() + ", Status: " + order.getStatus());
+                    order.setStatus("SHIPPING");
+                    cartService.updateOrder(order);
+                    cartService.clearCart(getAuthenticatedAccount());
+                    redirectAttributes.addFlashAttribute("message", "Thanh toán thành công! Mã giao dịch: " + orderId);
+                    return "redirect:/thanhtoan/thanhcong?orderId=" + orderId;
                 } else {
-                    redirectAttributes.addFlashAttribute("message", "Không tìm thấy đơn hàng!");
+                    order.setStatus("FAILED");
+                    cartService.updateOrder(order);
+                    redirectAttributes.addFlashAttribute("message", "Thanh toán thất bại! Mã lỗi: " + vnp_ResponseCode);
+                    return "redirect:/thanhtoan/thanhcong?orderId=" + orderId;
                 }
             } else {
-                redirectAttributes.addFlashAttribute("message", "Chữ ký không hợp lệ!");
+                redirectAttributes.addFlashAttribute("message", "Không tìm thấy đơn hàng!");
+                return "redirect:/thanhtoan/thanhcong?orderId=" + orderId;
             }
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("message", "Lỗi khi xử lý callback: " + e.getMessage());
+        } else {
+            redirectAttributes.addFlashAttribute("message", "Chữ ký không hợp lệ!");
+            return "redirect:/thanhtoan/thanhcong?orderId=" + vnp_TxnRef.replace("ORDER_", "");
         }
-
-        return "redirect:/thanhtoan/thanhcong?orderId=" + params.get("vnp_TxnRef").replace("ORDER_", "");
+    } catch (Exception e) {
+        redirectAttributes.addFlashAttribute("message", "Lỗi khi xử lý callback: " + e.getMessage());
+        return "redirect:/thanhtoan/thanhcong?orderId=" + vnp_TxnRef.replace("ORDER_", "");
     }
-
+}
     @GetMapping("/donhang")
     public String listOrders(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

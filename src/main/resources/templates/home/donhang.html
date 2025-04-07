@@ -2,163 +2,330 @@
 <html lang="en">
 <head th:replace="~{/layouts/header}">
   <title>Danh Sách Đơn Hàng</title>
-  <style>
-    .order-details {
-      display: none;
-      background-color: #f8f9fa;
-      padding: 15px;
-      border-radius: 5px;
-      margin-top: 10px;
-      border-left: 4px solid #6c757d;
-    }
-    
-    .page-header {
-      background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/images/header-bg.jpg');
-      background-size: cover;
-      background-position: center;
-    }
-    
-    .badge {
-      font-size: 0.85rem;
-    }
-    
-    .rotate-icon {
-      transition: transform 0.3s ease;
-    }
-    
-    .rotate-down {
-      transform: rotate(180deg);
-    }
-    
-    .timeline {
-      position: relative;
-      padding-left: 40px;
-    }
-    
-    .timeline-item {
-      position: relative;
-      padding-bottom: 25px;
-      padding-left: 15px;
-    }
-    
-    .timeline-item:last-child {
-      padding-bottom: 0;
-    }
-    
-    .timeline-item::before {
-      content: '';
-      position: absolute;
-      left: -30px;
-      top: 0;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background-color: #e9ecef;
-      border: 2px solid #adb5bd;
-      z-index: 2;
-    }
-    
-    .timeline-item:not(:last-child)::after {
-      content: '';
-      position: absolute;
-      left: -21px;
-      top: 20px;
-      width: 2px;
-      height: calc(100% - 20px);
-      background-color: #adb5bd;
-      z-index: 1;
-    }
-    
-    /* Trạng thái của các bước đã qua */
-    .timeline-item.completed::before {
-      background-color: #28a745;
-      border-color: #28a745;
-    }
-    
-    .timeline-item.completed::after {
-      background-color: #28a745;
-    }
-    
-    .timeline-item.completed .status-icon {
-      display: block;
-      position: absolute;
-      left: -26px;
-      top: 4px;
-      color: white;
-      font-size: 12px;
-      z-index: 3;
-    }
-    
-    /* Trạng thái của bước hiện tại */
-    .timeline-item.current::before {
-      border-color: #007bff;
-      border-width: 3px;
-      background-color: #e6f2ff;
-      box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3);
-    }
-    
-    .timeline-item.current {
-      font-weight: bold;
-      background-color: rgba(0, 123, 255, 0.1);
-      border-radius: 5px;
-      padding: 8px 15px;
-      margin-left: -15px;
-      margin-bottom: 10px;
-    }
-    
-    /* Trạng thái của các bước phía trước chưa tới */
-    .timeline-item .status-icon {
-      display: none;
-    }
-    
-    /* Trạng thái thất bại */
-    .timeline-item.failed::before {
-      background-color: #dc3545;
-      border-color: #dc3545;
-    }
-    
-    .timeline-item.failed.current {
-      background-color: rgba(220, 53, 69, 0.1);
-    }
-    
-    .timeline-item.failed::after {
-      background-color: #dc3545;
-    }
-    
-    .timeline-item.failed .status-icon {
-      display: block;
-      position: absolute;
-      left: -26px;
-      top: 4px;
-      color: white;
-      font-size: 12px;
-      z-index: 3;
-    }
-    
-    .order-row {
-      cursor: pointer;
-    }
-    
-    .order-row:hover {
-      background-color: rgba(0,0,0,0.05);
-    }
-    
-    .btn-action {
-      margin-left: 5px;
-    }
-    
-    /* Animation cho timeline */
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7); }
-      70% { box-shadow: 0 0 0 6px rgba(0, 123, 255, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0); }
-    }
-    
-    .timeline-item.current::before {
-      animation: pulse 2s infinite;
-    }
-  </style>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  
 </head>
+<style>
+  .page-header {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/images/header-bg.jpg');
+    background-size: cover;
+    background-position: center;
+  }
+  
+  /* Bảng đơn hàng */
+  .order-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .order-table th {
+    background-color: #212529;
+    color: white;
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
+  }
+  
+  .order-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #dee2e6;
+  }
+  
+  .order-row:hover {
+    background-color: #f8f9fa;
+  }
+  
+  /* Chi tiết đơn hàng */
+  .order-details {
+    display: none;
+    padding: 20px;
+    background-color: #fff;
+    border-top: 1px solid #dee2e6;
+  }
+  
+  .order-details h4 {
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+  
+  /* Trạng thái */
+  .status-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    min-width: 120px;
+  }
+  
+  .status-pending {
+    background-color: #ffc107;
+    color: #212529;
+  }
+  
+  .status-shipping {
+    background-color: #17a2b8;
+    color: white;
+  }
+  
+  .status-success {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .status-failed {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  /* Quy trình đơn hàng - Timeline */
+  .timeline {
+    position: relative;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  
+  .timeline::after {
+    content: '';
+    position: absolute;
+    width: 2px;
+    background-color: #e0e0e0;
+    top: 0;
+    bottom: 0;
+    left: 20px;
+    margin-left: -1px;
+  }
+  
+  .timeline-item {
+    padding: 10px 40px;
+    position: relative;
+    margin-bottom: 15px;
+  }
+  
+  .timeline-item:last-child {
+    margin-bottom: 0;
+  }
+  
+  .timeline-item::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    left: 12px;
+    background-color: white;
+    border: 2px solid #e0e0e0;
+    top: 15px;
+    border-radius: 50%;
+    z-index: 1;
+  }
+  
+  .timeline-item.active::after {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+  }
+  
+  .timeline-item.completed::after {
+    background-color: #28a745;
+    border-color: #28a745;
+  }
+  
+  .timeline-item.failed::after {
+    background-color: #dc3545;
+    border-color: #dc3545;
+  }
+  
+  .timeline-content {
+    padding: 10px 15px;
+    background-color: #f8f9fa;
+    position: relative;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  
+  .timeline-item.active .timeline-content {
+    background-color: #e8f4f8;
+    border-left: 3px solid #17a2b8;
+  }
+  
+  .timeline-item.completed .timeline-content {
+    background-color: #e8f8ee;
+    border-left: 3px solid #28a745;
+  }
+  
+  .timeline-item.failed .timeline-content {
+    background-color: #f8e8e8;
+    border-left: 3px solid #dc3545;
+  }
+  
+  .timeline-title {
+    margin: 0;
+    font-weight: 600;
+    font-size: 16px;
+    color: #333;
+  }
+  
+  .timeline-item.active .timeline-title {
+    color: #17a2b8;
+  }
+  
+  .timeline-item.completed .timeline-title {
+    color: #28a745;
+  }
+  
+  .timeline-item.failed .timeline-title {
+    color: #dc3545;
+  }
+  
+  .timeline-desc {
+    margin: 5px 0 0;
+    font-size: 14px;
+    color: #6c757d;
+  }
+  
+  .timeline-date {
+    display: block;
+    font-size: 12px;
+    color: #adb5bd;
+    margin-top: 5px;
+  }
+  
+  /* Bảng sản phẩm */
+  .product-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  
+  .product-table th {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    padding: 10px;
+    font-weight: 600;
+  }
+  
+  .product-table td {
+    border: 1px solid #dee2e6;
+    padding: 10px;
+  }
+  
+  .product-table tfoot td {
+    font-weight: bold;
+  }
+  
+  /* Nút hành động */
+  .action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  
+  .btn-view {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    background-color: #343a40;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  
+  .btn-view:hover {
+    background-color: #23272b;
+    color: white;
+  }
+  
+  .btn-view-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    background-color: transparent;
+    color: #0d6efd;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  
+  .btn-view-outline:hover {
+    background-color: #f8f9fa;
+    color: #0d6efd;
+  }
+  
+  .btn-received {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  
+  .btn-received:hover {
+    background-color: #218838;
+  }
+  
+  .btn-received:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+  }
+  
+  .icon {
+    margin-right: 6px;
+  }
+  
+  .btn-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    background-color: #343a40;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  
+  .btn-toggle i {
+    margin-left: 6px;
+    transition: transform 0.3s ease;
+  }
+  
+  .btn-toggle.active i {
+    transform: rotate(180deg);
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .action-buttons {
+      flex-direction: column;
+    }
+    
+    .order-details-container {
+      flex-direction: column;
+    }
+    
+    .order-details-left,
+    .order-details-right {
+      width: 100% !important;
+      padding-right: 0 !important;
+      margin-bottom: 20px;
+    }
+  }
+</style>
 <body>
   <header th:replace="~{/layouts/nav}"></header>
   
@@ -172,14 +339,14 @@
     <div class="container mb-5">
       <div class="card shadow-sm">
         <div class="card-body p-0">
-          <table class="table table-hover mb-0">
-            <thead class="table-dark">
+          <table class="order-table">
+            <thead>
               <tr>
-                <th scope="col" class="ps-3">Mã đơn hàng</th>
-                <th scope="col">Ngày đặt</th>
-                <th scope="col">Trạng thái</th>
-                <th scope="col">Tổng tiền</th>
-                <th scope="col" class="text-end pe-3">Hành động</th>
+                <th style="width: 15%;">Mã đơn hàng</th>
+                <th style="width: 20%;">Ngày đặt</th>
+                <th style="width: 20%;">Trạng thái</th>
+                <th style="width: 20%;">Tổng tiền</th>
+                <th style="width: 25%; text-align: right;">Hành động</th>
               </tr>
             </thead>
             <tbody>
@@ -189,111 +356,122 @@
               
               <!-- Lặp qua từng đơn hàng -->
               <th:block th:each="order, orderStat : ${orders}" th:if="${orders != null and !orders.isEmpty()}">
-                <tr class="order-row" th:attr="data-order-id=${order.id}">
-                  <td class="ps-3" th:text="'#DH' + ${order.id}"></td>
+                <tr class="order-row">
+                  <td th:text="'#DH' + ${order.id}"></td>
                   <td th:text="${order.createDate != null} ? ${#temporals.format(order.createDate, 'dd/MM/yyyy HH:mm')} : 'N/A'"></td>
                   <td>
-                    <span th:class="${order.status == 'SUCCESS'} ? 'badge bg-success' : (${order.status == 'FAILED'} ? 'badge bg-danger' : (${order.status == 'SHIPPING'} ? 'badge bg-info' : 'badge bg-warning'))" 
-                          th:text="${order.status == 'SUCCESS'} ? 'Đã giao hàng' : (${order.status == 'FAILED'} ? 'Thất bại' : (${order.status == 'SHIPPING'} ? 'Đang giao hàng' : 'Chờ xử lý'))">
+                    <span th:class="${order.status == 'SUCCESS'} ? 'status-badge status-success' : 
+                                    (${order.status == 'FAILED'} ? 'status-badge status-failed' : 
+                                    (${order.status == 'SHIPPING'} ? 'status-badge status-shipping' : 'status-badge status-pending'))" 
+                          th:text="${order.status == 'SUCCESS'} ? 'Đã giao hàng' : 
+                                  (${order.status == 'FAILED'} ? 'Thất bại' : 
+                                  (${order.status == 'SHIPPING'} ? 'Đang giao hàng' : 'Chờ xử lý'))">
                     </span>
                   </td>
-                  <td th:text="${order.orderDetails != null and !order.orderDetails.isEmpty()} ? ${#numbers.formatDecimal(#aggregates.sum(order.orderDetails.![(quantity != null ? quantity : 0) * (price != null ? price : 0)]), 0, 'COMMA', 0, 'POINT') + ' VNĐ'} : '0 VNĐ'"></td>
-                  <td class="text-end pe-3">
-                    <button class="btn btn-dark btn-sm toggle-details" th:attr="data-target='details-' + ${order.id}">
-                      Xem chi tiết <i class="bi bi-chevron-down rotate-icon"></i>
+                  <td th:text="${order.orderDetails != null and !order.orderDetails.isEmpty()} ? 
+                              ${#numbers.formatDecimal(#aggregates.sum(order.orderDetails.![(quantity != null ? quantity : 0) * (price != null ? price : 0)]), 0, 'COMMA', 0, 'POINT') + ' VNĐ'} : '0 VNĐ'">
+                  </td>
+                  <td style="text-align: right;">
+                    <button class="btn-toggle toggle-details" th:attr="data-target='details-' + ${order.id}">
+                      Xem chi tiết <i class="bi bi-chevron-down"></i>
                     </button>
-                    <a th:href="@{/chitietdonhang/{id}(id=${order.id})}" class="btn btn-primary btn-sm btn-action">
+                    <a th:href="@{/chitietdonhang/{id}(id=${order.id})}" class="btn-view">
                       Xem đơn hàng
                     </a>
                   </td>
                 </tr>
                 
                 <!-- Chi tiết đơn hàng (ẩn/hiện) -->
-                <tr class="details-row">
-                  <td colspan="5" class="p-0">
-                    <div th:id="'details-' + ${order.id}" class="order-details px-4 py-3">
-                      <div class="row">
-                        <div class="col-md-6">
-                          <h5 class="mb-3">Chi tiết đơn hàng</h5>
+                <tr>
+                  <td colspan="5" style="padding: 0;">
+                    <div th:id="'details-' + ${order.id}" class="order-details">
+                      <div class="d-flex order-details-container">
+                        <div class="order-details-left" style="width: 60%; padding-right: 20px;">
+                          <h4 th:text="'Chi tiết đơn hàng'"></h4>
+                          
                           <div class="table-responsive">
-                            <table class="table table-sm table-bordered">
-                              <thead class="table-light">
+                            <table class="product-table">
+                              <thead>
                                 <tr>
-                                  <th>Sản phẩm</th>
-                                  <th>Số lượng</th>
-                                  <th>Đơn giá</th>
-                                  <th>Thành tiền</th>
+                                  <th style="width: 40%;">Sản phẩm</th>
+                                  <th style="width: 15%; text-align: center;">Số lượng</th>
+                                  <th style="width: 20%; text-align: right;">Đơn giá</th>
+                                  <th style="width: 25%; text-align: right;">Thành tiền</th>
                                 </tr>
                               </thead>
                               <tbody>
                                 <tr th:each="detail : ${order.orderDetails}" th:if="${order.orderDetails != null and !order.orderDetails.isEmpty()}">
                                   <td th:text="${detail.product != null} ? ${detail.product.name} : 'N/A'"></td>
-                                  <td th:text="${detail.quantity}"></td>
-                                  <td th:text="${#numbers.formatDecimal(detail.price, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></td>
-                                  <td th:text="${#numbers.formatDecimal(detail.quantity * detail.price, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></td>
+                                  <td style="text-align: center;" th:text="${detail.quantity}"></td>
+                                  <td style="text-align: right;" th:text="${#numbers.formatDecimal(detail.price, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></td>
+                                  <td style="text-align: right;" th:text="${#numbers.formatDecimal(detail.quantity * detail.price, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></td>
+                                </tr>
+                                <tr>
+                                  <td colspan="3" style="text-align: right; font-weight: bold;">Tổng cộng:</td>
+                                  <td style="text-align: right; font-weight: bold;" th:text="${#numbers.formatDecimal(#aggregates.sum(order.orderDetails.![(quantity != null ? quantity : 0) * (price != null ? price : 0)]), 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></td>
                                 </tr>
                               </tbody>
-                              <tfoot>
-                                <tr>
-                                  <td colspan="3" class="text-end fw-bold">Tổng cộng:</td>
-                                  <td class="fw-bold" th:text="${#numbers.formatDecimal(#aggregates.sum(order.orderDetails.![(quantity != null ? quantity : 0) * (price != null ? price : 0)]), 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></td>
-                                </tr>
-                              </tfoot>
                             </table>
+                          </div>
+                          
+                          <div class="action-buttons">
+                            <a th:href="@{/chitietdonhang/{id}(id=${order.id})}" class="btn-view-outline">
+                              <i class="bi bi-eye icon"></i> Xem đơn hàng
+                            </a>
+                            <button class="btn-received confirm-received-btn" 
+                                    th:attr="data-order-id=${order.id}"
+                                    th:disabled="${order.status != 'SHIPPING'}"
+                                    th:onclick="'confirmReceipt(' + ${order.id} + ')'">
+                              <i class="bi bi-check-circle icon"></i> Đã nhận hàng
+                            </button>
                           </div>
                         </div>
                         
-                        <div class="col-md-6">
-                          <h5 class="mb-3">Quy trình đơn hàng</h5>
+                        <div class="order-details-right" style="width: 40%;">
+                          <h4>Quy trình đơn hàng</h4>
+                          
                           <div class="timeline">
-                            <!-- 
-                               Logic cho các trạng thái:
-                               - Bước đã qua: class="completed" (hiện dấu tích)
-                               - Bước hiện tại: class="current" (không có dấu tích, chỉ hiển thị đặc biệt)
-                               - Bước chưa tới: không có class đặc biệt
-                            -->
-                            
-                            <!-- Bước 1: Đặt hàng thành công (luôn đã qua) -->
-                            <div class="timeline-item" th:classappend="${order.status == 'PENDING'} ? 'current' : 'completed'">
-                              <i class="bi bi-check status-icon"></i>
-                              <h6 class="mb-1">Đặt hàng thành công</h6>
-                              <p class="text-muted small mb-0" th:text="${#temporals.format(order.createDate, 'dd/MM/yyyy HH:mm')}"></p>
-                            </div>
-                            
-                            <!-- Bước 2: Xác nhận đơn hàng -->
+                            <!-- Bước 1: Đặt hàng -->
                             <div class="timeline-item" 
-                                 th:classappend="${order.status == 'PENDING'} ? '' : 
-                                               (${order.status == 'CONFIRMED'} ? 'current' : 'completed')">
-                              <i class="bi bi-check status-icon"></i>
-                              <h6 class="mb-1">Xác nhận đơn hàng</h6>
-                              <p class="text-muted small mb-0">Đơn hàng đã được xác nhận và đang chuẩn bị</p>
+                                 th:classappend="${order.status == 'PENDING'} ? 'active' : 
+                                                 (${order.status == 'FAILED'} ? 'failed' : 'completed')">
+                              <div class="timeline-content">
+                                <h5 class="timeline-title">Đặt hàng thành công</h5>
+                                <p class="timeline-desc">Đơn hàng đã được hệ thống ghi nhận</p>
+                                <span class="timeline-date" th:text="${#temporals.format(order.createDate, 'dd/MM/yyyy HH:mm')}"></span>
+                              </div>
                             </div>
                             
-                            <!-- Bước 3: Đang giao hàng -->
+                            <!-- Bước 2: Xác nhận -->
                             <div class="timeline-item" 
-                                 th:classappend="${order.status == 'PENDING' || order.status == 'CONFIRMED'} ? '' : 
-                                               (${order.status == 'SHIPPING'} ? 'current' : 'completed')">
-                              <i class="bi bi-check status-icon"></i>
-                              <h6 class="mb-1">Đang giao hàng</h6>
-                              <p class="text-muted small mb-0">Đơn hàng đang được vận chuyển</p>
+                                 th:classappend="${order.status == 'CONFIRMED'} ? 'active' : 
+                                                 (${order.status == 'SHIPPING' || order.status == 'SUCCESS'} ? 'completed' : 
+                                                 (${order.status == 'FAILED'} ? 'failed' : ''))">
+                              <div class="timeline-content">
+                                <h5 class="timeline-title">Xác nhận đơn hàng</h5>
+                                <p class="timeline-desc">Đơn hàng đã được xác nhận và đang chuẩn bị</p>
+                              </div>
                             </div>
                             
-                           
-                           <!-- Bước 4: Giao hàng thành công -->
+                            <!-- Bước 3: Đang giao -->
                             <div class="timeline-item" 
-                            th:classappend="${order.status == 'SUCCESS'} ? 'current completed' : ''">
-                            <i class="bi bi-check status-icon" th:if="${order.status == 'SUCCESS'}"></i>
-                            <h6 class="mb-1">Giao hàng thành công</h6>
-                            <p class="text-muted small mb-0">Đơn hàng đã được giao thành công</p>
+                                 th:classappend="${order.status == 'SHIPPING'} ? 'active' : 
+                                                 (${order.status == 'SUCCESS'} ? 'completed' : 
+                                                 (${order.status == 'FAILED'} ? 'failed' : ''))">
+                              <div class="timeline-content">
+                                <h5 class="timeline-title">Đang giao hàng</h5>
+                                <p class="timeline-desc">Đơn hàng đang được vận chuyển đến bạn</p>
+                              </div>
                             </div>
                             
-                            <!-- Bước 5: Thất bại (nếu status là FAILED) -->
-                            <div class="timeline-item failed" 
-                                 th:classappend="${order.status == 'FAILED'} ? 'current' : ''" 
-                                 th:if="${order.status == 'FAILED'}">
-                              <i class="bi bi-x status-icon"></i>
-                              <h6 class="mb-1">Thất bại</h6>
-                              <p class="text-muted small mb-0">Đơn hàng đã bị hủy hoặc thất bại</p>
+                            <!-- Bước 4: Hoàn thành -->
+                            <div class="timeline-item" 
+                                 th:classappend="${order.status == 'SUCCESS'} ? 'completed' : 
+                                                 (${order.status == 'FAILED'} ? 'failed' : '')">
+                              <div class="timeline-content">
+                                <h5 class="timeline-title">Giao hàng thành công</h5>
+                                <p class="timeline-desc">Đơn hàng đã được giao thành công</p>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -309,39 +487,121 @@
     </div>
   </main>
   
+  <!-- Modal xác nhận đã nhận hàng -->
+  <div class="modal fade" id="confirmReceiptModal" tabindex="-1" aria-labelledby="confirmReceiptModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmReceiptModalLabel">Xác nhận đã nhận hàng</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Bạn xác nhận đã nhận được đơn hàng <span id="confirmOrderId" class="fw-bold"></span>?</p>
+          <p class="text-muted small">Lưu ý: Hành động này không thể hoàn tác sau khi xác nhận.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+          <button type="button" class="btn btn-success" id="confirmReceiptBtn">Xác nhận</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
   <div th:replace="~{/layouts/footer}"></div>
   
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+      // Xử lý nút toggle chi tiết đơn hàng
       const toggleButtons = document.querySelectorAll('.toggle-details');
       
       toggleButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-          e.stopPropagation();
+        button.addEventListener('click', function() {
           const targetId = this.getAttribute('data-target');
           const detailsDiv = document.getElementById(targetId);
-          const icon = this.querySelector('.rotate-icon');
           
           if (detailsDiv.style.display === 'block') {
             detailsDiv.style.display = 'none';
-            icon.classList.remove('rotate-down');
+            this.classList.remove('active');
           } else {
+            // Đóng tất cả các chi tiết khác
+            document.querySelectorAll('.order-details').forEach(detail => {
+              detail.style.display = 'none';
+            });
+            document.querySelectorAll('.toggle-details').forEach(btn => {
+              btn.classList.remove('active');
+            });
+            
+            // Mở chi tiết hiện tại
             detailsDiv.style.display = 'block';
-            icon.classList.add('rotate-down');
+            this.classList.add('active');
           }
         });
       });
       
-      // Có thể nhấp vào cả hàng để hiển thị chi tiết
-      const orderRows = document.querySelectorAll('.order-row');
-      orderRows.forEach(row => {
-        row.addEventListener('click', function(e) {
-          // Nếu không phải nhấp vào nút, thì kích hoạt nút xem chi tiết
-          if (!e.target.closest('.btn')) {
-            const button = this.querySelector('.toggle-details');
-            button.click();
-          }
-        });
+      // Xử lý nút "Đã nhận hàng"
+      const confirmReceiptModal = new bootstrap.Modal(document.getElementById('confirmReceiptModal'));
+      let currentOrderId = null;
+      
+      window.confirmReceipt = function(orderId) {
+        currentOrderId = orderId;
+        document.getElementById('confirmOrderId').textContent = '#DH' + orderId;
+        confirmReceiptModal.show();
+      };
+      
+      // Xử lý xác nhận đã nhận hàng
+      document.getElementById('confirmReceiptBtn').addEventListener('click', function() {
+        if (currentOrderId) {
+          // Gửi yêu cầu AJAX đến server để cập nhật trạng thái đơn hàng
+          fetch('/api/orders/' + currentOrderId + '/confirm-receipt', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').getAttribute('content')
+            }
+          })
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            }
+            throw new Error('Có lỗi xảy ra khi xác nhận đơn hàng');
+          })
+          .then(data => {
+            // Cập nhật UI sau khi xác nhận thành công
+            const orderRow = document.querySelector(`[data-target="details-${currentOrderId}"]`).closest('tr');
+            const statusBadge = orderRow.querySelector('.status-badge');
+            
+            // Cập nhật trạng thái
+            statusBadge.className = 'status-badge status-success';
+            statusBadge.textContent = 'Đã giao hàng';
+            
+            // Cập nhật quy trình
+            const detailsDiv = document.getElementById('details-' + currentOrderId);
+            const timelineItems = detailsDiv.querySelectorAll('.timeline-item');
+            timelineItems.forEach((item, index) => {
+              if (index < 4) { // Chỉ cập nhật 4 bước đầu tiên
+                if (index === 3) { // Bước cuối cùng (Giao hàng thành công)
+                  item.className = 'timeline-item completed';
+                } else {
+                  item.className = 'timeline-item completed';
+                }
+              }
+            });
+            
+            // Vô hiệu hóa nút "Đã nhận hàng"
+            const confirmBtn = detailsDiv.querySelector('.confirm-received-btn');
+            confirmBtn.disabled = true;
+            
+            // Đóng modal
+            confirmReceiptModal.hide();
+            
+            // Hiển thị thông báo thành công
+            alert('Xác nhận đã nhận hàng thành công!');
+          })
+          .catch(error => {
+            alert(error.message);
+            confirmReceiptModal.hide();
+          });
+        }
       });
     });
   </script>

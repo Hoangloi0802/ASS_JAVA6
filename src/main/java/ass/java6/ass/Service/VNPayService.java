@@ -23,7 +23,7 @@ public class VNPayService {
 
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
-        String vnp_OrderInfo = "Thanh toan don hang #" + orderId;
+        String vnp_OrderInfo = "Payment for order #" + orderId; // Sửa để không chứa ký tự tiếng Việt
         String vnp_OrderType = "250000"; // Loại hàng hóa
         String vnp_TxnRef = orderId; // Mã giao dịch
         String vnp_IpAddr = getIpAddress(request);
@@ -62,8 +62,8 @@ public class VNPayService {
         for (String fieldName : fieldNames) {
             String fieldValue = vnp_Params.get(fieldName);
             if ((fieldValue != null) && (fieldValue.length() > 0)) {
-                hashData.append(fieldName).append('=').append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
-                query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII.toString())).append('=').append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                hashData.append(fieldName).append('=').append(URLEncoder.encode(fieldValue, StandardCharsets.UTF_8.toString()));
+                query.append(URLEncoder.encode(fieldName, StandardCharsets.UTF_8.toString())).append('=').append(URLEncoder.encode(fieldValue, StandardCharsets.UTF_8.toString()));
                 if (fieldNames.indexOf(fieldName) < fieldNames.size() - 1) {
                     query.append('&');
                     hashData.append('&');
