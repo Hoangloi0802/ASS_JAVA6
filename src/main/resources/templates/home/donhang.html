@@ -1,299 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head th:replace="~{/layouts/header}">
   <title>Danh Sách Đơn Hàng</title>
-  <style>
-    .order-details {
-      display: none;
-      background-color: #f8f9fa;
-      padding: 15px;
-      border-radius: 5px;
-      margin-top: 10px;
-      border-left: 4px solid #6c757d;
-    }
-    
-    .page-header {
-      background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/images/header-bg.jpg');
-      background-size: cover;
-      background-position: center;
-    }
-    
-    .badge {
-      font-size: 0.85rem;
-    }
-    
-    .rotate-icon {
-      transition: transform 0.3s ease;
-    }
-    
-    .rotate-down {
-      transform: rotate(180deg);
-    }
-    
-    .timeline {
-      position: relative;
-      padding-left: 40px;
-    }
-    
-    .timeline-item {
-      position: relative;
-      padding-bottom: 25px;
-      padding-left: 15px;
-    }
-    
-    .timeline-item:last-child {
-      padding-bottom: 0;
-    }
-    
-    .timeline-item::before {
-      content: '';
-      position: absolute;
-      left: -30px;
-      top: 0;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background-color: #e9ecef;
-      border: 2px solid #adb5bd;
-      z-index: 2;
-    }
-    
-    .timeline-item:not(:last-child)::after {
-      content: '';
-      position: absolute;
-      left: -21px;
-      top: 20px;
-      width: 2px;
-      height: calc(100% - 20px);
-      background-color: #adb5bd;
-      z-index: 1;
-    }
-    
-    /* Trạng thái của các bước đã qua */
-    .timeline-item.completed::before {
-      background-color: #28a745;
-      border-color: #28a745;
-    }
-    
-    .timeline-item.completed::after {
-      background-color: #28a745;
-    }
-    
-    .timeline-item.completed .status-icon {
-      display: block;
-      position: absolute;
-      left: -26px;
-      top: 4px;
-      color: white;
-      font-size: 12px;
-      z-index: 3;
-    }
-    
-    /* Trạng thái của bước hiện tại */
-    .timeline-item.current::before {
-      border-color: #007bff;
-      border-width: 3px;
-      background-color: #e6f2ff;
-      box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3);
-    }
-    
-    .timeline-item.current {
-      font-weight: bold;
-      background-color: rgba(0, 123, 255, 0.1);
-      border-radius: 5px;
-      padding: 8px 15px;
-      margin-left: -15px;
-      margin-bottom: 10px;
-    }
-    
-    /* Trạng thái của các bước phía trước chưa tới */
-    .timeline-item .status-icon {
-      display: none;
-    }
-    
-    /* Trạng thái thất bại */
-    .timeline-item.failed::before {
-      background-color: #dc3545;
-      border-color: #dc3545;
-    }
-    
-    .timeline-item.failed.current {
-      background-color: rgba(220, 53, 69, 0.1);
-    }
-    
-    .timeline-item.failed::after {
-      background-color: #dc3545;
-    }
-    
-    .timeline-item.failed .status-icon {
-      display: block;
-      position: absolute;
-      left: -26px;
-      top: 4px;
-      color: white;
-      font-size: 12px;
-      z-index: 3;
-    }
-    
-    .order-row {
-      cursor: pointer;
-    }
-    
-    .order-row:hover {
-      background-color: rgba(0,0,0,0.05);
-    }
-    
-    .btn-action {
-      margin-left: 5px;
-    }
-    
-    /* Animation cho timeline */
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7); }
-      70% { box-shadow: 0 0 0 6px rgba(0, 123, 255, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0); }
-    }
-    
-    .timeline-item.current::before {
-      animation: pulse 2s infinite;
-    }
-  </style>
 </head>
+
 <body>
   <header th:replace="~{/layouts/nav}"></header>
-  
+
   <main>
     <div class="row mb-3">
       <div class="container-fluid page-header py-5">
         <h1 class="text-center text-white display-6">ĐƠN HÀNG CỦA BẠN</h1>
       </div>
     </div>
-    
+
     <div class="container mb-5">
       <div class="card shadow-sm">
         <div class="card-body p-0">
-          <table class="table table-hover mb-0">
-            <thead class="table-dark">
+          <table class="order-table">
+            <thead>
               <tr>
-                <th scope="col" class="ps-3">Mã đơn hàng</th>
-                <th scope="col">Ngày đặt</th>
-                <th scope="col">Trạng thái</th>
-                <th scope="col">Tổng tiền</th>
-                <th scope="col" class="text-end pe-3">Hành động</th>
+                <th style="width: 15%;">Mã đơn hàng</th>
+                <th style="width: 20%;">Ngày đặt</th>
+                <th style="width: 20%;">Trạng thái</th>
+                <th style="width: 20%;">Tổng tiền</th>
+                <th style="width: 25%; text-align: right;">Hành động</th>
               </tr>
             </thead>
             <tbody>
               <tr th:if="${orders == null or orders.isEmpty()}">
                 <td colspan="5" class="text-center py-4">Bạn chưa có đơn hàng nào.</td>
               </tr>
-              
-              <!-- Lặp qua từng đơn hàng -->
-              <th:block th:each="order, orderStat : ${orders}" th:if="${orders != null and !orders.isEmpty()}">
-                <tr class="order-row" th:attr="data-order-id=${order.id}">
-                  <td class="ps-3" th:text="'#DH' + ${order.id}"></td>
-                  <td th:text="${order.createDate != null} ? ${#temporals.format(order.createDate, 'dd/MM/yyyy HH:mm')} : 'N/A'"></td>
+
+              <!-- Lặp qua từng orders -->
+              <th:block th:each="summary : ${orders}" th:if="${orders != null and !orders.isEmpty()}">
+                <tr class="order-row">
+                  <td th:text="'#DH' + ${summary.id}"></td>
+                  <td
+                    th:text="${summary.createDate != null} ? ${#temporals.format(summary.createDate, 'dd/MM/yyyy HH:mm')} : 'N/A'">
+                  </td>
                   <td>
-                    <span th:class="${order.status == 'SUCCESS'} ? 'badge bg-success' : (${order.status == 'FAILED'} ? 'badge bg-danger' : (${order.status == 'SHIPPING'} ? 'badge bg-info' : 'badge bg-warning'))" 
-                          th:text="${order.status == 'SUCCESS'} ? 'Đã giao hàng' : (${order.status == 'FAILED'} ? 'Thất bại' : (${order.status == 'SHIPPING'} ? 'Đang giao hàng' : 'Chờ xử lý'))">
+                    <span
+                      th:class="${summary.status == 'SUCCESS'} ? 'status-badge status-success' : 
+                                    (${summary.status == 'FAILED'} ? 'status-badge status-failed' : 
+                                    (${summary.status == 'SHIPPING'} ? 'status-badge status-shipping' : 'status-badge status-pending'))"
+                      th:text="${summary.status == 'SUCCESS'} ? 'Đã giao hàng' : 
+                                  (${summary.status == 'FAILED'} ? 'Thất bại' : 
+                                  (${summary.status == 'SHIPPING'} ? 'Đang giao hàng' : 'Chờ xử lý'))">
                     </span>
                   </td>
-                  <td th:text="${order.orderDetails != null and !order.orderDetails.isEmpty()} ? ${#numbers.formatDecimal(#aggregates.sum(order.orderDetails.![(quantity != null ? quantity : 0) * (price != null ? price : 0)]), 0, 'COMMA', 0, 'POINT') + ' VNĐ'} : '0 VNĐ'"></td>
-                  <td class="text-end pe-3">
-                    <button class="btn btn-dark btn-sm toggle-details" th:attr="data-target='details-' + ${order.id}">
-                      Xem chi tiết <i class="bi bi-chevron-down rotate-icon"></i>
+                  <td th:text="${#numbers.formatDecimal(totalMap[summary.id], 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></td>
+                  <td style="text-align: right;">
+                    <button class="btn-toggle toggle-details" th:attr="data-target='details-' + ${summary.id}">
+                      Xem chi tiết <i class="bi bi-chevron-down"></i>
                     </button>
-                    <a th:href="@{/chitietdonhang/{id}(id=${order.id})}" class="btn btn-primary btn-sm btn-action">
-                      Xem đơn hàng
-                    </a>
                   </td>
                 </tr>
-                
+
                 <!-- Chi tiết đơn hàng (ẩn/hiện) -->
-                <tr class="details-row">
-                  <td colspan="5" class="p-0">
-                    <div th:id="'details-' + ${order.id}" class="order-details px-4 py-3">
-                      <div class="row">
-                        <div class="col-md-6">
-                          <h5 class="mb-3">Chi tiết đơn hàng</h5>
+                <tr>
+                  <td colspan="5" style="padding: 0;">
+                    <div th:id="'details-' + ${summary.id}" class="order-details">
+                      <div class="d-flex order-details-container">
+                        <div class="order-details-left" style="width: 60%; padding-right: 20px;">
+                          <h4 th:text="'Chi tiết đơn hàng'"></h4>
+
                           <div class="table-responsive">
-                            <table class="table table-sm table-bordered">
-                              <thead class="table-light">
+                            <table class="product-table">
+                              <thead class="table-dark">
                                 <tr>
-                                  <th>Sản phẩm</th>
-                                  <th>Số lượng</th>
-                                  <th>Đơn giá</th>
-                                  <th>Thành tiền</th>
+                                  <th style="width: 40%;">Sản phẩm</th>
+                                  <th style="width: 15%; text-align: center;">Số lượng</th>
+                                  <th style="width: 20%; text-align: right;">Đơn giá</th>
+                                  <th style="width: 25%; text-align: right;">Thành tiền</th>
                                 </tr>
                               </thead>
                               <tbody>
-                                <tr th:each="detail : ${order.orderDetails}" th:if="${order.orderDetails != null and !order.orderDetails.isEmpty()}">
-                                  <td th:text="${detail.product != null} ? ${detail.product.name} : 'N/A'"></td>
-                                  <td th:text="${detail.quantity}"></td>
-                                  <td th:text="${#numbers.formatDecimal(detail.price, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></td>
-                                  <td th:text="${#numbers.formatDecimal(detail.quantity * detail.price, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></td>
+                                <tr th:each="od : ${summary.orderDetails}">
+                                  <td>
+                                    <img
+                                      th:src="${od.product != null and od.product.productImages != null and !od.product.productImages.isEmpty()} ? ${od.product.productImages[0].imageUrl} : '/images/default-product.jpg'"
+                                      alt="Ảnh sản phẩm" class="product-img me-2" width="50">
+                                    <span th:text="${od.product.name}"></span>
+                                  </td>
+                                  <td th:text="${od.quantity}"></td>
+                                  <td th:text="${#numbers.formatDecimal(od.price, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}">
+                                  </td>
+                                  <td
+                                    th:text="${#numbers.formatDecimal(od.quantity * od.price, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}">
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td colspan="3" style="text-align: right;">Tổng cộng:</td>
+                                  <td
+                                    th:text="${#numbers.formatDecimal(totalMap[summary.id], 0, 'COMMA', 0, 'POINT') + ' VNĐ'}">
+                                  </td>
                                 </tr>
                               </tbody>
-                              <tfoot>
-                                <tr>
-                                  <td colspan="3" class="text-end fw-bold">Tổng cộng:</td>
-                                  <td class="fw-bold" th:text="${#numbers.formatDecimal(#aggregates.sum(order.orderDetails.![(quantity != null ? quantity : 0) * (price != null ? price : 0)]), 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></td>
-                                </tr>
-                              </tfoot>
                             </table>
                           </div>
+
+                          <div class="action-buttons">
+                            <a th:href="@{/chitietdonhang/{id}(id=${summary.id})}" class="btn-view-outline">
+                              Xem đơn hàng
+                            </a>
+                          </div>
                         </div>
-                        
-                        <div class="col-md-6">
-                          <h5 class="mb-3">Quy trình đơn hàng</h5>
+
+                        <div class="order-details-right" style="width: 40%;">
+                          <h4>Quy trình đơn hàng</h4>
+
                           <div class="timeline">
-                            <!-- 
-                               Logic cho các trạng thái:
-                               - Bước đã qua: class="completed" (hiện dấu tích)
-                               - Bước hiện tại: class="current" (không có dấu tích, chỉ hiển thị đặc biệt)
-                               - Bước chưa tới: không có class đặc biệt
-                            -->
-                            
-                            <!-- Bước 1: Đặt hàng thành công (luôn đã qua) -->
-                            <div class="timeline-item" th:classappend="${order.status == 'PENDING'} ? 'current' : 'completed'">
-                              <i class="bi bi-check status-icon"></i>
-                              <h6 class="mb-1">Đặt hàng thành công</h6>
-                              <p class="text-muted small mb-0" th:text="${#temporals.format(order.createDate, 'dd/MM/yyyy HH:mm')}"></p>
+                            <!-- Bước 1: Đặt hàng -->
+                            <div class="timeline-item" th:classappend="${summary.status == 'PENDING'} ? 'active' : 
+                                                 (${summary.status == 'FAILED'} ? 'failed' : 'completed')">
+                              <div class="timeline-content">
+                                <h5 class="timeline-title">Đặt hàng thành công</h5>
+                                <p class="timeline-desc">Đơn hàng đã được hệ thống ghi nhận</p>
+                                <span class="timeline-date"
+                                  th:text="${#temporals.format(summary.createDate, 'dd/MM/yyyy HH:mm')}"></span>
+                              </div>
                             </div>
-                            
-                            <!-- Bước 2: Xác nhận đơn hàng -->
-                            <div class="timeline-item" 
-                                 th:classappend="${order.status == 'PENDING'} ? '' : 
-                                               (${order.status == 'CONFIRMED'} ? 'current' : 'completed')">
-                              <i class="bi bi-check status-icon"></i>
-                              <h6 class="mb-1">Xác nhận đơn hàng</h6>
-                              <p class="text-muted small mb-0">Đơn hàng đã được xác nhận và đang chuẩn bị</p>
+
+                            <!-- Bước 2: Xác nhận -->
+                            <div class="timeline-item" th:classappend="${summary.status == 'CONFIRMED'} ? 'active' : 
+                                                 (${summary.status == 'SHIPPING' || summary.status == 'SUCCESS'} ? 'completed' : 
+                                                 (${summary.status == 'FAILED'} ? 'failed' : ''))">
+                              <div class="timeline-content">
+                                <h5 class="timeline-title">Xác nhận đơn hàng</h5>
+                                <p class="timeline-desc">Đơn hàng đã được xác nhận và đang chuẩn bị</p>
+                              </div>
                             </div>
-                            
-                            <!-- Bước 3: Đang giao hàng -->
-                            <div class="timeline-item" 
-                                 th:classappend="${order.status == 'PENDING' || order.status == 'CONFIRMED'} ? '' : 
-                                               (${order.status == 'SHIPPING'} ? 'current' : 'completed')">
-                              <i class="bi bi-check status-icon"></i>
-                              <h6 class="mb-1">Đang giao hàng</h6>
-                              <p class="text-muted small mb-0">Đơn hàng đang được vận chuyển</p>
+
+                            <!-- Bước 3: Đang giao -->
+                            <div class="timeline-item" th:classappend="${summary.status == 'SHIPPING'} ? 'active' : 
+                                                 (${summary.status == 'SUCCESS'} ? 'completed' : 
+                                                 (${summary.status == 'FAILED'} ? 'failed' : ''))">
+                              <div class="timeline-content">
+                                <h5 class="timeline-title">Đang giao hàng</h5>
+                                <p class="timeline-desc">Đơn hàng đang được vận chuyển đến bạn</p>
+                              </div>
                             </div>
-                            
-                           
-                           <!-- Bước 4: Giao hàng thành công -->
-                            <div class="timeline-item" 
-                            th:classappend="${order.status == 'SUCCESS'} ? 'current completed' : ''">
-                            <i class="bi bi-check status-icon" th:if="${order.status == 'SUCCESS'}"></i>
-                            <h6 class="mb-1">Giao hàng thành công</h6>
-                            <p class="text-muted small mb-0">Đơn hàng đã được giao thành công</p>
-                            </div>
-                            
-                            <!-- Bước 5: Thất bại (nếu status là FAILED) -->
-                            <div class="timeline-item failed" 
-                                 th:classappend="${order.status == 'FAILED'} ? 'current' : ''" 
-                                 th:if="${order.status == 'FAILED'}">
-                              <i class="bi bi-x status-icon"></i>
-                              <h6 class="mb-1">Thất bại</h6>
-                              <p class="text-muted small mb-0">Đơn hàng đã bị hủy hoặc thất bại</p>
+
+                            <!-- Bước 4: Giao hàng thành công -->
+                            <div class="timeline-item" th:classappend="${summary.status == 'SUCCESS'} ? 'completed' : 
+                                                 (${summary.status == 'FAILED'} ? 'failed' : '')">
+                              <div class="timeline-content">
+                                <h5 class="timeline-title">Giao hàng thành công</h5>
+                                <p class="timeline-desc">Đơn hàng đã được giao thành công</p>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -303,47 +159,78 @@
                 </tr>
               </th:block>
             </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="3" style="text-align: right; font-weight: bold;">Tổng cộng tất cả đơn hàng:</td>
+                <td style="text-align: right; font-weight: bold;"
+                  th:text="${#numbers.formatDecimal(grandTotal, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}">
+                </td>
+                <td>
+
+                </td>
+              </tr>
+
+            </tfoot>
+
           </table>
+
+
+          <div class="pagination justify-content-center mt-3" th:if="${totalPages > 1}">
+            <nav aria-label="Page navigation">
+              <ul class="pagination">
+                <!-- Nút Previous -->
+                <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                  <a class="page-link" th:href="@{/donhang(page=${currentPage - 1})}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                  </a>
+                </li>
+                <!-- Các trang -->
+                <th:block th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+                  <li class="page-item" th:classappend="${i == currentPage} ? 'active'">
+                    <a class="page-link" th:href="@{/donhang(page=${i})}" th:text="${i + 1}"></a>
+                  </li>
+                </th:block>
+                <!-- Nút Next -->
+                <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                  <a class="page-link" th:href="@{/donhang(page=${currentPage + 1})}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+
         </div>
       </div>
     </div>
   </main>
-  
+
   <div th:replace="~{/layouts/footer}"></div>
-  
+
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       const toggleButtons = document.querySelectorAll('.toggle-details');
-      
       toggleButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-          e.stopPropagation();
+        button.addEventListener('click', function () {
           const targetId = this.getAttribute('data-target');
           const detailsDiv = document.getElementById(targetId);
-          const icon = this.querySelector('.rotate-icon');
-          
           if (detailsDiv.style.display === 'block') {
             detailsDiv.style.display = 'none';
-            icon.classList.remove('rotate-down');
+            this.classList.remove('active');
           } else {
+            document.querySelectorAll('.order-details').forEach(detail => {
+              detail.style.display = 'none';
+            });
+            document.querySelectorAll('.toggle-details').forEach(btn => {
+              btn.classList.remove('active');
+            });
             detailsDiv.style.display = 'block';
-            icon.classList.add('rotate-down');
-          }
-        });
-      });
-      
-      // Có thể nhấp vào cả hàng để hiển thị chi tiết
-      const orderRows = document.querySelectorAll('.order-row');
-      orderRows.forEach(row => {
-        row.addEventListener('click', function(e) {
-          // Nếu không phải nhấp vào nút, thì kích hoạt nút xem chi tiết
-          if (!e.target.closest('.btn')) {
-            const button = this.querySelector('.toggle-details');
-            button.click();
+            this.classList.add('active');
           }
         });
       });
     });
   </script>
 </body>
+
 </html>

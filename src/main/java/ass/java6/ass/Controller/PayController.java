@@ -3,15 +3,21 @@ package ass.java6.ass.Controller;
 import ass.java6.ass.Config.VNPayConfig;
 import ass.java6.ass.Entity.Account;
 import ass.java6.ass.Entity.Order;
+import ass.java6.ass.Entity.OrderDetail;
 import ass.java6.ass.Service.AccoutService;
 import ass.java6.ass.Service.CartService;
 import ass.java6.ass.Service.VNPayService;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -19,21 +25,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import jakarta.servlet.http.HttpServletRequest;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import ass.java6.ass.Entity.Account;
-import ass.java6.ass.Entity.Order;
-import ass.java6.ass.Service.AccoutService;
-import ass.java6.ass.Service.CartService;
 import ass.java6.ass.Service.MomoService;
+import ass.java6.ass.Service.MomoService.PaymentResponse;
 
 @Controller
 public class PayController {
@@ -46,6 +47,7 @@ public class PayController {
 
     @Autowired
     private VNPayService vnPayService;
+
     @Autowired
     private MomoService momoService;
 
@@ -86,24 +88,51 @@ public class PayController {
         }
 
         try {
+            Order tempOrder = cartService.createTemporaryOrder(account, address);
+            List<OrderDetail> orderDetails = tempOrder.getOrderDetails();
+
+            // Tính toán tổng tiền
+            double subtotal = orderDetails.stream()
+                    .mapToDouble(detail -> detail.getPrice() * detail.getQuantity())
+                    .sum();
+            double discount = (tempOrder.getVoucher() != null) ? tempOrder.getVoucher().getDiscountAmount() : 0.0;
+            double shippingFee = 50000; // Phí vận chuyển cố định
+            double totalAmount = Math.max(subtotal - discount + shippingFee, 0);
+            long amount = (long) totalAmount;
+
+            if (amount < 5000) {
+                redirectAttributes.addFlashAttribute("error", "Số tiền phải lớn hơn 5,000 VND");
+                return "redirect:/thanhtoan";
+            }
+            if (amount >= 1_000_000_000) {
+                redirectAttributes.addFlashAttribute("error", "Số tiền phải nhỏ hơn 1 tỷ VND");
+                return "redirect:/thanhtoan";
+            }
+
+            cartService.saveOrder(tempOrder); // Lưu tempOrder để có ID
+            request.getSession().setAttribute("tempOrder", tempOrder);
+            request.getSession().setAttribute("account", account);
+            request.getSession().setAttribute("totalAmount", totalAmount);
+
             if ("vnpay".equalsIgnoreCase(paymentMethod)) {
-                long amount = (long) cartService.calculateTotalPrice(account);
-                if (amount < 5000) {
-                    redirectAttributes.addFlashAttribute("error", "Số tiền phải lớn hơn 5,000 VND");
+                model.addAttribute("orderId", "ORDER_" + tempOrder.getId());
+                model.addAttribute("subtotal", subtotal);
+                model.addAttribute("discount", discount);
+                model.addAttribute("shippingFee", shippingFee);
+                model.addAttribute("totalAmount", totalAmount);
+                model.addAttribute("amount", amount); // Để gửi qua form
+                return "pay"; // Chuyển đến trang xác nhận VNPay
+            } else if ("momo".equalsIgnoreCase(paymentMethod)) {
+                PaymentResponse response = momoService.createPaymentRequest(String.valueOf(amount));
+                if (response.getResultCode() == 0) {
+                    return "redirect:" + response.getPayUrl();
+                } else {
+                    redirectAttributes.addFlashAttribute("error", "Lỗi MoMo: " + response.getMessage());
                     return "redirect:/thanhtoan";
                 }
-                if (amount >= 1_000_000_000) {
-                    redirectAttributes.addFlashAttribute("error", "Số tiền phải nhỏ hơn 1 tỷ VND");
-                    return "redirect:/thanhtoan";
-                }
-                Order tempOrder = cartService.createTemporaryOrder(account, address);
-                request.getSession().setAttribute("tempOrder", tempOrder);
-                model.addAttribute("orderId", "ORDER_" + System.currentTimeMillis());
-                model.addAttribute("amount", amount);
-                return "pay"; // Chuyển hướng đến trang xác nhận
             } else {
-                // Thanh toán COD hoặc phương thức khác
-                Order order = cartService.createOrderFromCart(account, address); // Lưu đơn hàng
+                Order order = cartService.createOrderFromCart(account, address);
+                cartService.saveOrder(order);
                 return "redirect:/thanhtoan/thanhcong?orderId=" + order.getId();
             }
         } catch (Exception e) {
@@ -120,17 +149,17 @@ public class PayController {
             RedirectAttributes redirectAttributes) {
         try {
             Order tempOrder = (Order) request.getSession().getAttribute("tempOrder");
-            if (tempOrder == null) {
-                redirectAttributes.addFlashAttribute("error", "Không tìm thấy đơn hàng tạm thời!");
+            Double totalAmount = (Double) request.getSession().getAttribute("totalAmount");
+            if (tempOrder == null || totalAmount == null) {
+                redirectAttributes.addFlashAttribute("error", "Không tìm thấy đơn hàng hoặc tổng tiền!");
                 return "redirect:/thanhtoan";
             }
-            cartService.saveOrder(tempOrder); // Không cần setStatus vì createTemporaryOrder đã làm
-            String paymentUrl = vnPayService.createPaymentUrl(request, amount, orderId);
-            request.getSession().removeAttribute("tempOrder");
+            if (amount != (long) totalAmount.doubleValue()) {
+                redirectAttributes.addFlashAttribute("error", "Số tiền không khớp!");
+                return "redirect:/thanhtoan";
+            }
+            String paymentUrl = vnPayService.createPaymentUrl(request, amount, "ORDER_" + tempOrder.getId());
             return "redirect:" + paymentUrl;
-        } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/thanhtoan";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Lỗi khi tạo URL thanh toán: " + e.getMessage());
             return "redirect:/thanhtoan";
@@ -139,38 +168,36 @@ public class PayController {
 
     @GetMapping("/thanhtoan/thanhcong")
     public String orderSuccess(@RequestParam(value = "orderId", required = false) String orderId, Model model) {
-        if (orderId == null) {
+        if (orderId == null || orderId.trim().isEmpty()) {
+            model.addAttribute("error", "Mã đơn hàng không hợp lệ");
             return "redirect:/";
         }
 
         Long orderIdLong;
         try {
-            orderIdLong = Long.parseLong(orderId.replace("ORDER_", ""));
+            orderIdLong = Long.parseLong(orderId);
         } catch (NumberFormatException e) {
+            model.addAttribute("error", "Mã đơn hàng không đúng định dạng");
             return "redirect:/";
         }
 
         Order order = cartService.getOrderById(orderIdLong);
         if (order == null) {
+            model.addAttribute("error", "Không tìm thấy đơn hàng");
             return "redirect:/";
         }
 
+        List<OrderDetail> orderDetails = order.getOrderDetails();
+        if (orderDetails == null || orderDetails.isEmpty()) {
+            model.addAttribute("error", "Đơn hàng không có chi tiết");
+        }
 
-        model.addAttribute("order", order);
-        double subtotal = order.getOrderDetails().stream()
+        double subtotal = orderDetails.stream()
                 .mapToDouble(detail -> detail.getPrice() * detail.getQuantity())
                 .sum();
-        double shippingFee = 50000;
-        double totalAmount = subtotal + shippingFee;
-
-        double subtotal = order.getOrderDetails().stream()
-                .mapToDouble(detail -> detail.getPrice() * detail.getQuantity())
-                .sum();
-
-
         double discount = (order.getVoucher() != null) ? order.getVoucher().getDiscountAmount() : 0.0;
         double shippingFee = 50000;
-        double totalAmount = subtotal - discount + shippingFee;
+        double totalAmount = Math.max(subtotal - discount + shippingFee, 0);
 
         model.addAttribute("order", order);
         model.addAttribute("subtotal", subtotal);
@@ -181,11 +208,47 @@ public class PayController {
         return "home/donmua";
     }
 
+    @GetMapping("/donhang")
+    public String listOrders(Model model,
+            @RequestParam(defaultValue = "0") int page) {
+        // Lấy thông tin người dùng hiện tại
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+
+        // Thiết lập phân trang: 5 đơn hàng mỗi trang
+        int pageSize = 5;
+        Pageable pageable = PageRequest.of(page, pageSize);
+
+        // Lấy danh sách đơn hàng phân trang
+        Page<Order> orderPage = cartService.getOrdersByUsernamePaginated(username, pageable);
+
+        // Tính tổng tiền của tất cả đơn hàng (không phụ thuộc phân trang)
+        double grandTotal = cartService.getOrdersByUsername(username).stream()
+                .mapToDouble(order -> cartService.calculateOrderTotal(order))
+                .sum();
+
+        // Tạo Map để lưu tổng tiền cho từng đơn hàng
+        Map<Long, Double> totalMap = new HashMap<>();
+        for (Order order : orderPage.getContent()) {
+            totalMap.put(order.getId(), cartService.calculateOrderTotal(order));
+        }
+
+        // Thêm dữ liệu vào model
+        model.addAttribute("orders", orderPage.getContent()); // Danh sách đơn hàng trong trang hiện tại
+        model.addAttribute("grandTotal", grandTotal);
+        model.addAttribute("totalMap", totalMap);
+        model.addAttribute("currentPage", orderPage.getNumber()); // Trang hiện tại
+        model.addAttribute("totalPages", orderPage.getTotalPages()); // Tổng số trang
+        model.addAttribute("pageSize", pageSize); // Số đơn hàng mỗi trang
+
+        return "home/donhang";
+    }
+
     @GetMapping("/api/vnpay/callback")
     public String handleVNPayCallback(HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
         if (request == null || request.getParameterMap() == null) {
             redirectAttributes.addFlashAttribute("message", "Yêu cầu không hợp lệ!");
-            return "redirect:/thanhtoan/thanhcong?orderId=" + request.getParameter("vnp_TxnRef").replace("ORDER_", "");
+            return "redirect:/thanhtoan";
         }
 
         Map<String, String> params = new HashMap<>();
@@ -199,52 +262,99 @@ public class PayController {
         String vnp_SecureHash = params.get("vnp_SecureHash");
         if (vnp_SecureHash == null) {
             redirectAttributes.addFlashAttribute("message", "Không tìm thấy chữ ký!");
-            return "redirect:/thanhtoan/thanhcong?orderId=" + params.get("vnp_TxnRef").replace("ORDER_", "");
+            return "redirect:/thanhtoan";
         }
 
         params.remove("vnp_SecureHash");
         params.remove("vnp_SecureHashType");
+
+        Order tempOrder = (Order) request.getSession().getAttribute("tempOrder");
+        Double totalAmount = (Double) request.getSession().getAttribute("totalAmount");
+        if (tempOrder == null || totalAmount == null) {
+            redirectAttributes.addFlashAttribute("error", "Không tìm thấy đơn hàng tạm thời hoặc tổng tiền!");
+            return "redirect:/thanhtoan";
+        }
 
         try {
             String signValue = vnPayService.hmacSHA512(VNPayConfig.VNP_HASHSECRET, buildQueryString(params));
             if (signValue.equals(vnp_SecureHash)) {
                 String vnp_ResponseCode = params.get("vnp_ResponseCode");
                 String orderId = params.get("vnp_TxnRef").replace("ORDER_", "");
-                Order order = cartService.getOrderById(Long.parseLong(orderId));
-                if (order != null) {
-                    if ("00".equals(vnp_ResponseCode)) {
-                        System.out.println("Before update - Order ID: " + order.getId() + ", Status: " + order.getStatus());
-                        order.setStatus("SHIPPING");
-                        cartService.updateOrder(order);
-                        cartService.clearCart(getAuthenticatedAccount()); // Xóa giỏ hàng sau khi thành công
-                        redirectAttributes.addFlashAttribute("message",
-                                "Thanh toán thành công! Mã giao dịch: " + orderId);
-                    } else {
-                        order.setStatus("FAILED");
-                        cartService.updateOrder(order);
-                        redirectAttributes.addFlashAttribute("message",
-                                "Thanh toán thất bại! Mã lỗi: " + vnp_ResponseCode);
+
+                if (!orderId.equals(String.valueOf(tempOrder.getId()))) {
+                    redirectAttributes.addFlashAttribute("error", "Mã đơn hàng không khớp!");
+                    return "redirect:/thanhtoan";
+                }
+
+                if ("00".equals(vnp_ResponseCode)) {
+                    tempOrder.setStatus("SHIPPING");
+                    cartService.saveOrder(tempOrder);
+
+                    Account account = (Account) request.getSession().getAttribute("account");
+                    if (account != null) {
+                        cartService.clearCart(account);
                     }
+
+                    redirectAttributes.addFlashAttribute("message",
+                            "Thanh toán VNPay thành công! Tổng tiền: " + totalAmount);
                 } else {
-                    redirectAttributes.addFlashAttribute("message", "Không tìm thấy đơn hàng!");
+                    tempOrder.setStatus("FAILED");
+                    cartService.saveOrder(tempOrder);
+                    redirectAttributes.addFlashAttribute("error",
+                            "Thanh toán VNPay thất bại! Mã lỗi: " + vnp_ResponseCode);
                 }
             } else {
-                redirectAttributes.addFlashAttribute("message", "Chữ ký không hợp lệ!");
+                tempOrder.setStatus("FAILED");
+                cartService.saveOrder(tempOrder);
+                redirectAttributes.addFlashAttribute("error", "Chữ ký không hợp lệ!");
             }
+            request.getSession().removeAttribute("tempOrder");
+            request.getSession().removeAttribute("account");
+            request.getSession().removeAttribute("totalAmount");
+            return "redirect:/thanhtoan/thanhcong?orderId=" + tempOrder.getId();
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("message", "Lỗi khi xử lý callback: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Lỗi xử lý VNPay callback: " + e.getMessage());
+            return "redirect:/thanhtoan/thanhcong?orderId=" + tempOrder.getId();
+        }
+    }
+    @GetMapping("/thanhtoan/momo/return")
+    public String handleMoMoReturn(HttpServletRequest request, RedirectAttributes redirectAttributes) {
+        String resultCode = request.getParameter("resultCode");
+        Order tempOrder = (Order) request.getSession().getAttribute("tempOrder");
+        Double totalAmount = (Double) request.getSession().getAttribute("totalAmount");
+
+        if (tempOrder == null || totalAmount == null) {
+            redirectAttributes.addFlashAttribute("error", "Không tìm thấy đơn hàng tạm thời hoặc tổng tiền!");
+            return "redirect:/thanhtoan";
         }
 
-        return "redirect:/thanhtoan/thanhcong?orderId=" + params.get("vnp_TxnRef").replace("ORDER_", "");
-    }
-
-    @GetMapping("/donhang")
-    public String listOrders(Model model) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
-        List<Order> orders = cartService.getOrdersByUsername(username);
-        model.addAttribute("orders", orders);
-        return "home/donhang";
+        try {
+            if ("0".equals(resultCode)) {
+                tempOrder.setStatus("SHIPPING");
+                cartService.saveOrder(tempOrder);
+                Account account = (Account) request.getSession().getAttribute("account");
+                if (account != null) {
+                    cartService.clearCart(account);
+                }
+                redirectAttributes.addFlashAttribute("message",
+                        "Thanh toán MoMo thành công! Tổng tiền: " + totalAmount + " VNĐ");
+            } else {
+                tempOrder.setStatus("FAILED");
+                cartService.saveOrder(tempOrder);
+                redirectAttributes.addFlashAttribute("error",
+                        "Thanh toán MoMo thất bại! Mã lỗi: " + resultCode);
+            }
+            request.getSession().removeAttribute("tempOrder");
+            request.getSession().removeAttribute("account");
+            request.getSession().removeAttribute("totalAmount");
+            return "redirect:/thanhtoan/thanhcong?orderId=" + tempOrder.getId();
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Lỗi xử lý MoMo return: " + e.getMessage());
+            request.getSession().removeAttribute("tempOrder");
+            request.getSession().removeAttribute("account");
+            request.getSession().removeAttribute("totalAmount");
+            return "redirect:/thanhtoan/thanhcong?orderId=" + tempOrder.getId();
+        }
     }
 
     @GetMapping("/chitietdonhang/{orderId}")
@@ -253,15 +363,28 @@ public class PayController {
         if (order == null) {
             return "redirect:/";
         }
+
+        // Tính các giá trị tổng
+        double subtotal = cartService.calculateSubtotal(order);
+        double discount = cartService.calculateDiscount(order);
+        double shippingFee = 50000; // Phí ship
+        double totalAmount = cartService.calculateOrderTotal(order); // Tổng tiền đơn hàng
+
         model.addAttribute("order", order);
+        model.addAttribute("subtotal", subtotal);
+        model.addAttribute("discount", discount);
+        model.addAttribute("shippingFee", shippingFee);
+        model.addAttribute("totalAmount", totalAmount); // Truyền tổng tiền vào model
+
         return "home/chitietdonhang";
     }
-        // Xử lý hành động "Đã nhận hàng"
-        @PostMapping("/chitietdonhang/{id}/confirm-received")
-        public String confirmReceived(@PathVariable("id") Long id) {
-            cartService.confirmOrderReceived(id);
-            return "redirect:/chitietdonhang/" + id;
-        }
+
+    @PostMapping("/chitietdonhang/{id}/confirm-received")
+    public String confirmReceived(@PathVariable("id") Long id) {
+        cartService.confirmOrderReceived(id);
+        return "redirect:/chitietdonhang/" + id;
+    }
+
     private Account getAuthenticatedAccount() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal()))

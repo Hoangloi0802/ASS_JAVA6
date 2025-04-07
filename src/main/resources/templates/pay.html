@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-
 <head th:replace="~{/layouts/header}">
     <title>Xác nhận thanh toán qua VNPay</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -46,7 +45,6 @@
         }
     </style>
 </head>
-
 <body>
     <header th:replace="~{/layouts/nav}"></header>
 
@@ -68,12 +66,15 @@
 
                 <div class="payment-info">
                     <p><strong>Mã đơn hàng:</strong> <span th:text="${orderId}"></span></p>
-                    <p><strong>Số tiền:</strong> <span th:text="${#numbers.formatDecimal(amount + 50000, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span></p>
+                    <p><strong>Tổng tiền sản phẩm:</strong> <span th:text="${#numbers.formatDecimal(subtotal, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span></p>
+                    <p><strong>Giảm giá (Voucher):</strong> <span th:text="${#numbers.formatDecimal(discount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span></p>
+                    <p><strong>Phí vận chuyển:</strong> <span th:text="${#numbers.formatDecimal(shippingFee, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span></p>
+                    <p><strong>Tổng tiền thanh toán:</strong> <span th:text="${#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span></p>
                 </div>
 
                 <form th:action="@{/vnpay/create-payment}" method="post">
                     <input type="hidden" name="orderId" th:value="${orderId}">
-                    <input type="hidden" name="amount" th:value="${amount}">
+                    <input type="hidden" name="amount" th:value="${amount}"> <!-- Sử dụng amount thay vì totalAmount -->
                     <div class="payment-actions">
                         <button type="submit" class="btn btn-danger btn-confirm">Thanh toán qua VNPay</button>
                         <a th:href="@{/thanhtoan}" class="btn btn-secondary btn-back">Quay lại</a>
@@ -85,5 +86,4 @@
 
     <div th:replace="~{/layouts/footer}"></div>
 </body>
-
 </html>
