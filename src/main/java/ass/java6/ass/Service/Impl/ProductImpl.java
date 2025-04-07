@@ -51,17 +51,11 @@ public class ProductImpl implements ProductService {
             spec = spec.and((root, query, cb) -> cb.equal(root.get("category").get("id"), categoryId));
         }
 
-        if (sort != null && !sort.isEmpty()) {
-            if (sort.equals("5")) {
-                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-                        Sort.by("price").ascending());
-            } else if (sort.equals("6")) {
-                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-                        Sort.by("price").descending());
-            }
+        if (keywordPattern != null) {
+            spec = spec.and((root, query, cb) -> cb.like(cb.lower(root.get("name")), keywordPattern));
         }
 
-        return productRepository.filterProducts(keywordPattern, priceFilter, categoryId, pageable);
+        return productRepository.findAll(spec, pageable);
     }
 
     @Override

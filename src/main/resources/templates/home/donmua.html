@@ -60,6 +60,10 @@
             <strong th:text="'+' + ${#numbers.formatDecimal(shippingFee, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></strong>
           </li>
           <li class="list-group-item d-flex justify-content-between">
+            <span>Voucher giảm giá</span>
+            <strong th:text="'-' + ${#numbers.formatDecimal(discount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></strong>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
             <span>Tổng cộng</span>
             <strong th:text="${#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></strong>
           </li>

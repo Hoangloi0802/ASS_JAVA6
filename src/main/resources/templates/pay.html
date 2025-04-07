@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-
 <head th:replace="~{/layouts/header}">
     <title>Xác nhận thanh toán qua VNPay</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -46,7 +45,6 @@
         }
     </style>
 </head>
-
 <body>
     <header th:replace="~{/layouts/nav}"></header>
 
@@ -76,7 +74,7 @@
 
                 <form th:action="@{/vnpay/create-payment}" method="post">
                     <input type="hidden" name="orderId" th:value="${orderId}">
-                    <input type="hidden" name="amount" th:value="${totalAmount}">
+                    <input type="hidden" name="amount" th:value="${amount}"> <!-- Sử dụng amount thay vì totalAmount -->
                     <div class="payment-actions">
                         <button type="submit" class="btn btn-danger btn-confirm">Thanh toán qua VNPay</button>
                         <a th:href="@{/thanhtoan}" class="btn btn-secondary btn-back">Quay lại</a>
@@ -88,5 +86,4 @@
 
     <div th:replace="~{/layouts/footer}"></div>
 </body>
-
 </html>
