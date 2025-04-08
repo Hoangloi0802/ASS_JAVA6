@@ -87,8 +87,7 @@ public class CartServiceImpl implements CartService {
 
                     newOrder.setStatus("CART");
 
-                    newOrder.setStatus(false); // false nghĩa là giỏ hàng chưa thanh toán
-
+                  
                     return orderRepository.save(newOrder);
                 });
     }
@@ -112,9 +111,7 @@ public class CartServiceImpl implements CartService {
 
         return Math.max(subtotal - discount, 0);
 
-        
-        // Tính tổng tiền thanh toán
-        return Math.max(subtotal - discount , 0); // Đảm bảo không âm
+       
 
     }
 
@@ -131,9 +128,6 @@ public class CartServiceImpl implements CartService {
 
         double ship = 50000; // Đổi từ 500000 thành 50000 để hợp lý hơn với phí vận chuyển
         return Math.max(subtotal - discount + ship, 0); // Thêm phí vận chuyển vào tổng
-
-        double ship = 50000;
-        return Math.max(subtotal - discount + ship, 0); // Đảm bảo không âm
 
     }
 
@@ -290,18 +284,19 @@ public class CartServiceImpl implements CartService {
             updateOrder(order);
         }
     }
-}
+
 
     @Override
     @Transactional
-    public void updateOrderStatus(Long orderId, boolean isPaid) {
+    public void updateOrderStatus(Long orderId, String isPaid) {
         Order order = orderRepository.findById(orderId).orElse(null);
         if (order != null) {
-            order.setStatus(isPaid); // Nếu isPaid = true -> đơn hàng đã thanh toán, false -> chưa thanh toán
+            order.setStatus(isPaid);
             orderRepository.save(order);
         } else {
             throw new RuntimeException("Không tìm thấy đơn hàng với ID: " + orderId);
         }
     }
 }
+
 

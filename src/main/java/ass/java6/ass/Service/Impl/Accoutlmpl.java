@@ -112,9 +112,9 @@ public class Accoutlmpl implements AccoutService {
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("OTP không hợp lệ.");
         }
-    }
-
-
+    
+        
+        
         session.removeAttribute("otp");
     }
 
