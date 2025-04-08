@@ -39,7 +39,6 @@ public class SecurityConfig {
         "/uploads/**", "/admin/products/**",
         "/css/**", "/js/**", "/img/**", "/bootstrap-5.3.3/dist/**", "/fonts/**", "/logout", "/doimk"
     };
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
@@ -133,4 +132,28 @@ public class SecurityConfig {
             response.sendRedirect("/Dangnhap?error=" + error);
         };
     }
+    return (request, response, exception) -> {
+        String error = "true"; 
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+        Optional<Account> account = accountRepository.findByUsername(username);
+        if ( account.isEmpty()) {
+            
+            response.sendRedirect("/Dangnhap?error=Tai khoan khong ton tai");
+            return;
+        }
+        if(account.get().isActivated() == false){
+            response.sendRedirect("/Dangnhap?error=tai khoan chua duoc kick hoat vui long lien he admin");
+            return;
+        }
+        if ( !bCryptPasswordEncoder().matches(account.get().getPassword(), password)) {
+            response.sendRedirect("/Dangnhap?error=Mat khau khong chinh xac");
+            return;
+        }
+        
+      
+        response.sendRedirect("/Dangnhap?error=" + error);
+    };
 }
+
+

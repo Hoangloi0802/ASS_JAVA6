@@ -40,7 +40,6 @@ public interface CartService {
     Order getOrderById(Long orderId);
 
     List<Order> getOrdersByUsername(String username);
-
     Order createTemporaryOrder(Account account, String address);
 
     void saveOrder(Order order);
@@ -62,3 +61,4 @@ public interface CartService {
 
     double calculateOrderTotal(Order order);
 }
+

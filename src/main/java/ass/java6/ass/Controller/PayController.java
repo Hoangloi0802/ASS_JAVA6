@@ -1,5 +1,6 @@
-package ass.java6.ass.Controller;
+// package ass.java6.ass.Controller;
 
+<<<<<<< HEAD
 import ass.java6.ass.Config.VNPayConfig;
 import ass.java6.ass.Entity.Account;
 import ass.java6.ass.Entity.Order;
@@ -36,14 +37,16 @@ import java.util.ArrayList;
 import ass.java6.ass.Service.MomoService;
 import ass.java6.ass.Service.MomoService.PaymentResponse;
 
-@Controller
-public class PayController {
 
-    @Autowired
-    private CartService cartService;
+// @Controller
+// public class PayController {
 
-    @Autowired
-    private AccoutService accountService;
+//     @Autowired
+//     private CartService cartService;
+
+//     @Autowired
+//     private AccoutService accountService;
+
 
     @Autowired
     private VNPayService vnPayService;
@@ -51,95 +54,6 @@ public class PayController {
     @Autowired
     private MomoService momoService;
 
-    @GetMapping("/thanhtoan")
-    public String thanhtoan(Model model) {
-        Account account = getAuthenticatedAccount();
-        if (account == null) {
-            return "redirect:/dangnhap";
-        }
-
-        Order cart = cartService.getCurrentCart(account);
-        if (cart == null || cart.getOrderDetails().isEmpty()) {
-            model.addAttribute("cartItems", Collections.emptyList());
-            model.addAttribute("subtotal", 0.0);
-            model.addAttribute("discount", 0.0);
-            model.addAttribute("totalAmount", 0.0);
-        } else {
-            model.addAttribute("cartItems", cart.getOrderDetails());
-            model.addAttribute("subtotal", cartService.calculateSubtotal(account));
-            model.addAttribute("discount", cartService.calculateDiscount(account));
-            model.addAttribute("totalAmount", cartService.tongthanhtoan(account));
-        }
-        model.addAttribute("usedVoucherCode", cartService.getUsedVoucherCode(account));
-        model.addAttribute("account", account);
-        return "home/thanhtoan";
-    }
-
-    @PostMapping("/thanhtoan/dathang")
-    public String placeOrder(
-            @RequestParam("address") String address,
-            @RequestParam("paymentMethod") String paymentMethod,
-            HttpServletRequest request,
-            RedirectAttributes redirectAttributes,
-            Model model) {
-        Account account = getAuthenticatedAccount();
-        if (account == null) {
-            return "redirect:/dangnhap";
-        }
-
-        try {
-            Order tempOrder = cartService.createTemporaryOrder(account, address);
-            List<OrderDetail> orderDetails = tempOrder.getOrderDetails();
-
-            // Tính toán tổng tiền
-            double subtotal = orderDetails.stream()
-                    .mapToDouble(detail -> detail.getPrice() * detail.getQuantity())
-                    .sum();
-            double discount = (tempOrder.getVoucher() != null) ? tempOrder.getVoucher().getDiscountAmount() : 0.0;
-            double shippingFee = 50000; // Phí vận chuyển cố định
-            double totalAmount = Math.max(subtotal - discount + shippingFee, 0);
-            long amount = (long) totalAmount;
-
-            if (amount < 5000) {
-                redirectAttributes.addFlashAttribute("error", "Số tiền phải lớn hơn 5,000 VND");
-                return "redirect:/thanhtoan";
-            }
-            if (amount >= 1_000_000_000) {
-                redirectAttributes.addFlashAttribute("error", "Số tiền phải nhỏ hơn 1 tỷ VND");
-                return "redirect:/thanhtoan";
-            }
-
-            cartService.saveOrder(tempOrder); // Lưu tempOrder để có ID
-            request.getSession().setAttribute("tempOrder", tempOrder);
-            request.getSession().setAttribute("account", account);
-            request.getSession().setAttribute("totalAmount", totalAmount);
-
-            if ("vnpay".equalsIgnoreCase(paymentMethod)) {
-                model.addAttribute("orderId", "ORDER_" + tempOrder.getId());
-                model.addAttribute("subtotal", subtotal);
-                model.addAttribute("discount", discount);
-                model.addAttribute("shippingFee", shippingFee);
-                model.addAttribute("totalAmount", totalAmount);
-                model.addAttribute("amount", amount); // Để gửi qua form
-                return "pay"; // Chuyển đến trang xác nhận VNPay
-            } else if ("momo".equalsIgnoreCase(paymentMethod)) {
-                PaymentResponse response = momoService.createPaymentRequest(String.valueOf(amount));
-                if (response.getResultCode() == 0) {
-                    return "redirect:" + response.getPayUrl();
-                } else {
-                    redirectAttributes.addFlashAttribute("error", "Lỗi MoMo: " + response.getMessage());
-                    return "redirect:/thanhtoan";
-                }
-            } else {
-                Order order = cartService.createOrderFromCart(account, address);
-                cartService.saveOrder(order);
-                return "redirect:/thanhtoan/thanhcong?orderId=" + order.getId();
-            }
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Lỗi khi đặt hàng: " + e.getMessage());
-            return "redirect:/thanhtoan";
-        }
-    }
 
     @PostMapping("/vnpay/create-payment")
     public String createPayment(
@@ -187,6 +101,7 @@ public class PayController {
             return "redirect:/";
         }
 
+
         List<OrderDetail> orderDetails = order.getOrderDetails();
         if (orderDetails == null || orderDetails.isEmpty()) {
             model.addAttribute("error", "Đơn hàng không có chi tiết");
@@ -198,15 +113,6 @@ public class PayController {
         double discount = (order.getVoucher() != null) ? order.getVoucher().getDiscountAmount() : 0.0;
         double shippingFee = 50000;
         double totalAmount = Math.max(subtotal - discount + shippingFee, 0);
-
-        model.addAttribute("order", order);
-        model.addAttribute("subtotal", subtotal);
-        model.addAttribute("discount", discount);
-        model.addAttribute("shippingFee", shippingFee);
-        model.addAttribute("totalAmount", totalAmount);
-
-        return "home/donmua";
-    }
 
     @GetMapping("/donhang")
     public String listOrders(Model model,
@@ -251,22 +157,15 @@ public class PayController {
             return "redirect:/thanhtoan";
         }
 
-        Map<String, String> params = new HashMap<>();
-        for (String key : request.getParameterMap().keySet()) {
-            String[] values = request.getParameterValues(key);
-            if (values != null && values.length > 0) {
-                params.put(key, values[0]);
-            }
-        }
-
         String vnp_SecureHash = params.get("vnp_SecureHash");
         if (vnp_SecureHash == null) {
             redirectAttributes.addFlashAttribute("message", "Không tìm thấy chữ ký!");
             return "redirect:/thanhtoan";
         }
 
-        params.remove("vnp_SecureHash");
-        params.remove("vnp_SecureHashType");
+
+//         return "redirect:/thanhtoan/thanhcong?orderId=" + params.get("vnp_TxnRef").replace("ORDER_", "");
+//     }
 
         Order tempOrder = (Order) request.getSession().getAttribute("tempOrder");
         Double totalAmount = (Double) request.getSession().getAttribute("totalAmount");
@@ -414,3 +313,4 @@ public class PayController {
         return query.toString();
     }
 }
+
