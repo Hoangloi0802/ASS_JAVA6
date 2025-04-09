@@ -119,4 +119,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
         Optional<Order> findByAccountAndStatus(Account account, String status);
         Page<Order> findByAccountUsername(String username, Pageable pageable);
         List<Order> findByAccount_Username(String username);
+
+        @Query("SELECT o FROM Order o WHERE o.id = :id")
+        Page<Order> findByIdContaining(Long id, Pageable pageable);
 }
