@@ -37,10 +37,33 @@ public class BillController {
     OrderDetailRepository orderDetailRepository;
 
     @GetMapping("/admin/bill")
-    public String getBill(Model model) {
+    public String getBill(
+            Model model,
+            @RequestParam(required = false) String search,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size) {
         try {
-            List<Order> orders = orderRepository.findAll();
-            model.addAttribute("orders", orders);
+            Page<Order> orderPage;
+            Pageable pageable = PageRequest.of(page - 1, size);
+
+            if (search != null && !search.trim().isEmpty()) {
+                try {
+                    Long id = Long.parseLong(search.trim());
+                    orderPage = orderRepository.findByIdContaining(id, pageable);
+                } catch (NumberFormatException e) {
+                    orderPage = orderRepository.findAll(pageable);
+                }
+            } else {
+                orderPage = orderRepository.findAll(pageable);
+            }
+
+            model.addAttribute("orders", orderPage.getContent());
+            model.addAttribute("currentPage", page);
+            model.addAttribute("totalPages", orderPage.getTotalPages());
+            model.addAttribute("totalItems", orderPage.getTotalElements());
+            model.addAttribute("pageSize", size);
+            model.addAttribute("search", search);
+
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy danh sách đơn hàng: " + e.getMessage());
             e.printStackTrace();
@@ -211,28 +234,39 @@ public class BillController {
     }
 
     @PostMapping("/admin/bill/delete/{id}")
-    public String deleteOrder(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> deleteOrder(@PathVariable("id") Long id) {
+        Map<String, Object> response = new HashMap<>();
         try {
             Order order = orderRepository.findById(id).orElse(null);
             if (order == null) {
-                redirectAttributes.addFlashAttribute("errorMessage", "Đơn hàng không tồn tại!");
-                return "redirect:/admin/bill";
+                response.put("success", false);
+                response.put("message", "Đơn hàng không tồn tại!");
+                return ResponseEntity.badRequest().body(response);
             }
+
             if (Order.STATUS_CART.equals(order.getStatus())) {
-                redirectAttributes.addFlashAttribute("errorMessage", "Không thể xóa giỏ hàng tạm thời!");
-                return "redirect:/admin/bill";
+                response.put("success", false);
+                response.put("message", "Không thể xóa giỏ hàng tạm thời!");
+                return ResponseEntity.badRequest().body(response);
             }
+
             if (order.getOrderDetails() != null && !order.getOrderDetails().isEmpty()) {
-                redirectAttributes.addFlashAttribute("errorMessage",
-                        "Không thể xóa đơn hàng vì có sản phẩm liên quan!");
+                orderDetailRepository.deleteByOrderId(id);
+                orderRepository.delete(order);
+                response.put("success", true);
+                response.put("message", "Xóa đơn hàng và chi tiết đơn hàng thành công!");
             } else {
                 orderRepository.delete(order);
-                redirectAttributes.addFlashAttribute("successMessage", "Xóa đơn hàng thành công!");
+                response.put("success", true);
+                response.put("message", "Xóa đơn hàng thành công!");
             }
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Lỗi khi xóa đơn hàng: " + e.getMessage());
+            response.put("success", false);
+            response.put("message", "Lỗi khi xóa đơn hàng: " + e.getMessage());
             e.printStackTrace();
+            return ResponseEntity.badRequest().body(response);
         }
-        return "redirect:/admin/bill";
     }
 }
