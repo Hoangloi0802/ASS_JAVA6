@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head th:replace="~{/layouts/header}">
@@ -33,7 +34,7 @@
                     <p><strong>Họ và tên:</strong> <span th:text="${order.account != null and order.account.fullname != null} ? ${order.account.fullname} : 'N/A'"></span></p>
                     <p><strong>Email:</strong> <span th:text="${order.account != null and order.account.email != null} ? ${order.account.email} : 'N/A'"></span></p>
                     <p><strong>Số điện thoại:</strong> <span th:text="${order.account != null and order.account.mobile != null} ? ${order.account.mobile} : 'N/A'"></span></p>
-                    <p><strong>Địa chỉ giao hàng:</strong> <span th:text="${order.account != null and order.account.address != null} ? ${order.account.address} : 'N/A'"></span></p>
+                    <p><strong>Địa chỉ giao hàng:</strong> <span th:text="${order.address != null and order.address != null} ? ${order.address} : 'N/A'"></span></p>
                 </div>
             </div>
 
