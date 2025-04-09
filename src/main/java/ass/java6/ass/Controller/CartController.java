@@ -63,6 +63,11 @@ public class CartController {
             switch (String.valueOf(action)) {
                 case "add":
                     if (product != null) {
+                        // Kiểm tra số lượng tồn kho khi thêm vào giỏ hàng
+                        if (quantity > product.getQuantity()) {
+                            redirectAttributes.addFlashAttribute("error", "Số lượng yêu cầu vượt quá tồn kho!");
+                            return "redirect:/product/" + product.getId();
+                        }
                         cartService.addToCart(account, product, quantity);
                         redirectAttributes.addFlashAttribute("message", "Sản phẩm đã thêm vào giỏ hàng!");
                         return "redirect:/product/" + product.getId();
@@ -70,6 +75,11 @@ public class CartController {
                     break;
                 case "update":
                     if (product != null) {
+                        // Kiểm tra số lượng tồn kho khi cập nhật
+                        if (quantity > product.getQuantity()) {
+                            redirectAttributes.addFlashAttribute("error", "Số lượng yêu cầu vượt quá tồn kho!");
+                            return "redirect:/cart";
+                        }
                         cartService.updateQuantity(account, product, quantity);
                         redirectAttributes.addFlashAttribute("message", "Giỏ hàng đã được cập nhật!");
                         return "redirect:/cart";
@@ -114,9 +124,19 @@ public class CartController {
         try {
             Product product = productRepository.findById(productId)
                     .orElseThrow(() -> new IllegalArgumentException("Sản phẩm không tồn tại"));
+
+            // Kiểm tra số lượng tồn kho
+            if (quantity > product.getQuantity()) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("error",
+                        "Số lượng yêu cầu (" + quantity + ") vượt quá tồn kho (" + product.getQuantity() + ")!");
+                response.put("maxQuantity", product.getQuantity()); // Trả về số lượng tối đa
+                return ResponseEntity.badRequest().body(response);
+            }
+
             cartService.updateQuantity(account, product, quantity);
             Order cart = cartService.getCurrentCart(account);
-            validateVoucher(cart); // Kiểm tra và xóa voucher nếu không hợp lệ
+            validateVoucher(cart);
             return ResponseEntity.ok(createCartResponse(account));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
@@ -153,19 +173,57 @@ public class CartController {
             return ResponseEntity.badRequest().body(Map.of("error", "Đơn hàng chưa đủ điều kiện áp dụng voucher."));
         }
 
-        // ✅ Kiểm tra xem giỏ hàng có sản phẩm thuộc danh mục của voucher không
-        boolean hasValidProduct = cart.getOrderDetails().stream()
-                .anyMatch(orderDetail -> orderDetail.getProduct().getCategory().getId()
-                        .equals(voucher.getCategory().getId()));
+        // Calculate applicable subtotal
+        double applicableSubtotal;
+        if (voucher.getCategory() == null) {
+            // If voucher has no category, apply to all products
+            applicableSubtotal = subtotal;
+        } else {
+            // Only sum products matching the voucher's category
+            applicableSubtotal = cart.getOrderDetails().stream()
+                    .filter(orderDetail -> orderDetail.getProduct().getCategory() != null &&
+                            orderDetail.getProduct().getCategory().getId()
+                                    .equals(voucher.getCategory().getId()))
+                    .mapToDouble(orderDetail -> orderDetail.getPrice() * orderDetail.getQuantity())
+                    .sum();
+        }
 
-        if (!hasValidProduct) {
+        if (applicableSubtotal == 0) {
             cart.setVoucher(null);
             cartService.saveCart(cart);
             return ResponseEntity.badRequest()
                     .body(Map.of("error", "Voucher không áp dụng cho sản phẩm trong giỏ hàng."));
         }
 
+        if (applicableSubtotal < voucher.getMinOrderValue()) {
+            cart.setVoucher(null);
+            cartService.saveCart(cart);
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Tổng giá trị sản phẩm áp dụng voucher chưa đủ điều kiện."));
+        }
+
         cart.setVoucher(voucher);
+        cartService.saveCart(cart);
+        return ResponseEntity.ok(createCartResponse(account));
+    }
+
+    @GetMapping("/remove-voucher")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> removeVoucher() {
+        Account account = getAuthenticatedAccount();
+        if (account == null)
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+        Order cart = cartService.getCurrentCart(account);
+        if (cart == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Không tìm thấy giỏ hàng."));
+        }
+
+        if (cart.getVoucher() == null) {
+            return ResponseEntity.ok(createCartResponse(account)); // Không có voucher để hủy
+        }
+
+        cart.setVoucher(null);
         cartService.saveCart(cart);
         return ResponseEntity.ok(createCartResponse(account));
     }
@@ -182,10 +240,10 @@ public class CartController {
             return "redirect:/cart";
         }
 
-        return "redirect:/thanhtoan"; // Chuyển sang trang thanh toán
+        return "redirect:/thanhtoan";
     }
 
-    // Helper methods
+    // Helper methods (giữ nguyên)
     private void populateCartModel(Order cart, Model model) {
         if (cart == null || cart.getOrderDetails().isEmpty()) {
             if (cart != null && cart.getVoucher() != null) {
@@ -199,7 +257,7 @@ public class CartController {
             model.addAttribute("cartItems", Collections.emptyList());
             model.addAttribute("totalPrice", 0.0);
         } else {
-            validateVoucher(cart); // Kiểm tra và xóa voucher nếu không hợp lệ
+            validateVoucher(cart);
             List<OrderDetail> cartItems = cart.getOrderDetails();
             double subtotal = cartService.calculateSubtotal(cart.getAccount());
             double discount = cartService.calculateDiscount(cart.getAccount());

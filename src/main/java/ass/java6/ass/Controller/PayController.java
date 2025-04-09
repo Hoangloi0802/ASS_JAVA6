@@ -4,6 +4,7 @@ import ass.java6.ass.Config.VNPayConfig;
 import ass.java6.ass.Entity.Account;
 import ass.java6.ass.Entity.Order;
 import ass.java6.ass.Entity.OrderDetail;
+import ass.java6.ass.Repository.OrderRepository;
 import ass.java6.ass.Service.AccoutService;
 import ass.java6.ass.Service.CartService;
 import ass.java6.ass.Service.VNPayService;
@@ -13,10 +14,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -51,6 +54,8 @@ public class PayController {
     @Autowired
     private MomoService momoService;
 
+    @Autowired
+    private OrderRepository orderRepository;
     @GetMapping("/thanhtoan")
     public String thanhtoan(Model model) {
         Account account = getAuthenticatedAccount();
@@ -209,38 +214,37 @@ public class PayController {
     }
 
     @GetMapping("/donhang")
-    public String listOrders(Model model,
-            @RequestParam(defaultValue = "0") int page) {
+    public String listOrders(Model model, @RequestParam(defaultValue = "0") int page) {
         // Lấy thông tin người dùng hiện tại
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
-
-        // Thiết lập phân trang: 5 đơn hàng mỗi trang
-        int pageSize = 5;
-        Pageable pageable = PageRequest.of(page, pageSize);
-
-        // Lấy danh sách đơn hàng phân trang
+    
+        // Thiết lập phân trang: 10 đơn hàng mỗi trang
+        int pageSize = 10;
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "createDate"));
+        
+        // Lấy danh sách đơn hàng, loại trừ trạng thái "PENDING"
         Page<Order> orderPage = cartService.getOrdersByUsernamePaginated(username, pageable);
-
+    
         // Tính tổng tiền của tất cả đơn hàng (không phụ thuộc phân trang)
         double grandTotal = cartService.getOrdersByUsername(username).stream()
                 .mapToDouble(order -> cartService.calculateOrderTotal(order))
                 .sum();
-
+    
         // Tạo Map để lưu tổng tiền cho từng đơn hàng
         Map<Long, Double> totalMap = new HashMap<>();
         for (Order order : orderPage.getContent()) {
             totalMap.put(order.getId(), cartService.calculateOrderTotal(order));
         }
-
+    
         // Thêm dữ liệu vào model
-        model.addAttribute("orders", orderPage.getContent()); // Danh sách đơn hàng trong trang hiện tại
+        model.addAttribute("orders", orderPage.getContent());
         model.addAttribute("grandTotal", grandTotal);
         model.addAttribute("totalMap", totalMap);
-        model.addAttribute("currentPage", orderPage.getNumber()); // Trang hiện tại
-        model.addAttribute("totalPages", orderPage.getTotalPages()); // Tổng số trang
-        model.addAttribute("pageSize", pageSize); // Số đơn hàng mỗi trang
-
+        model.addAttribute("currentPage", orderPage.getNumber());
+        model.addAttribute("totalPages", orderPage.getTotalPages());
+        model.addAttribute("pageSize", pageSize);
+    
         return "home/donhang";
     }
 
