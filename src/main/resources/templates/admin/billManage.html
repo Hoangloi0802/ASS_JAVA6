@@ -190,6 +190,12 @@
                                     </button>
                                 </form>
                             </div>
+                            <div class="col-md-8 text-end">
+                                <button id="clearSearchBtn" class="btn btn-outline-secondary"
+                                    th:if="${search != null && search != ''}">
+                                    <i class="fas fa-times"></i> Xóa tìm kiếm
+                                </button>
+                            </div>
                         </div>
 
                         <div class="table-container">
@@ -592,6 +598,7 @@
                 } else {
                     document.getElementById('customerNameInfo').textContent = 'N/A';
                     document.getElementById('customerEmailInfo').textContent = 'N/A';
+                    document.getElementById('customerEmailInfo').textContent = 'N/A';
                     document.getElementById('customerPhoneInfo').textContent = 'N/A';
                 }
                 document.getElementById('customerAddressInfo').textContent = order.address || 'N/A';
@@ -619,18 +626,14 @@
                         const productName = document.createElement('div');
                         productName.className = 'fw-medium';
                         productName.textContent = item.product ? item.product.name : 'N/A';
-
                         const categoryName = document.createElement('div');
                         categoryName.className = 'small text-muted';
                         categoryName.textContent = item.product && item.product.category ? item.product.category.name : 'N/A';
-
                         productDetails.appendChild(productName);
                         productDetails.appendChild(categoryName);
                         productInfo.appendChild(productDetails);
-
                         productCell.appendChild(productInfo);
                         row.appendChild(productCell);
-
                         const priceCell = document.createElement('td');
                         priceCell.textContent = formatCurrency(item.price || 0);
                         row.appendChild(priceCell);
@@ -733,7 +736,6 @@
                     }
                 });
             }
-
             function confirmDeleteOrder(orderId) {
                 Swal.fire({
                     title: "Bạn có chắc chắn muốn xóa?",
@@ -758,21 +760,35 @@
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/x-www-form-urlencoded',
+                                'Accept': 'application/json'
                             }
                         })
                             .then(response => {
-                                if (response.redirected) {
-                                    window.location.href = response.url;
-                                    return;
+                                if (!response.ok) {
+                                    throw new Error('Network response was not ok');
                                 }
-                                return response.text();
+                                return response.json();
                             })
-                            .then(html => {
-                                if (html) {
+                            .then(data => {
+                                if (data.success) {
+                                    const row = document.getElementById(`order-row-${orderId}`);
+                                    if (row) {
+                                        row.remove();
+                                    }
+                                    if (currentOrderId == orderId) {
+                                        modal.hide();
+                                    }
                                     Swal.fire({
-                                        title: 'Thông báo',
-                                        text: 'Đã xử lý yêu cầu, vui lòng kiểm tra kết quả.',
-                                        icon: 'info',
+                                        title: 'Thành công!',
+                                        text: data.message,
+                                        icon: 'success',
+                                        confirmButtonText: 'Đóng'
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        title: 'Lỗi!',
+                                        text: data.message,
+                                        icon: 'error',
                                         confirmButtonText: 'Đóng'
                                     });
                                 }
@@ -789,7 +805,6 @@
                     }
                 });
             }
-
             function formatCurrency(amount) {
                 return new Intl.NumberFormat('vi-VN', {
                     style: 'currency',
@@ -797,6 +812,22 @@
                     maximumFractionDigits: 0
                 }).format(amount || 0);
             }
+            const clearSearchBtn = document.getElementById('clearSearchBtn');
+            if (clearSearchBtn) {
+                clearSearchBtn.addEventListener('click', function () {
+                    window.location.href = '/admin/bill';
+                });
+            }
+            function checkEmptyTable() {
+                const tableBody = document.querySelector('#ordersTable tbody');
+                if (tableBody && tableBody.children.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="7" class="text-center">Không tìm thấy hóa đơn nào</td></tr>';
+                }
+            }
+            orderDetailModal.addEventListener('hidden.bs.modal', function () {
+                currentOrderId = null;
+                currentOrderStatus = null;
+            });
         });
     </script>
 </body>
