@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -113,8 +115,13 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                         "GROUP BY c.name " +
                         "ORDER BY SUM(od.quantity) DESC")
         List<Object[]> getProductQuantityByCategoryNoTimeFilter();
+        Page<Order> findByAccountUsernameAndStatusNotIn(String username, List<String> statuses, Pageable pageable);
+
 
         Optional<Order> findByAccountAndStatus(Account account, String status);
-
+        Page<Order> findByAccountUsername(String username, Pageable pageable);
         List<Order> findByAccount_Username(String username);
+
+        @Query("SELECT o FROM Order o WHERE o.id = :id")
+        Page<Order> findByIdContaining(Long id, Pageable pageable);
 }

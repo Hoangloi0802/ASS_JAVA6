@@ -572,8 +572,8 @@ th {
   outline: none;
   border-radius: 50%;
   transition: 0.5s ease-in-out;
-  background-color: #000000;
-  box-shadow: 0px 0px 3px #161616;
+  background-color: #fffafa;
+  box-shadow: 0px 0px 3px #000000;
   padding-right: 30px;
   color: #000000;
   /* cho text dễ thấy */
@@ -662,4 +662,360 @@ th {
 
 .form-check input:checked + label {
   font-weight: bold;
+}
+/* Bảng đơn hàng */
+.order-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.order-table th {
+  background-color: #212529;
+  color: white;
+  padding: 12px 15px;
+  text-align: center; /* Căn giữa chữ trong tiêu đề */
+  border-bottom: 1px solid #dee2e6;
+}
+
+.order-table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #dee2e6;
+  text-align: center; /* Căn giữa chữ trong ô dữ liệu */
+}
+
+.order-row:hover {
+  background-color: #f8f9fa;
+}
+
+/* Bảng sản phẩm */
+.product-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.product-table th {
+  background-color: #000000;
+  border: 1px solid #ffffff;
+  padding: 10px;
+  font-weight: 600;
+  text-align: center; /* Căn giữa chữ trong tiêu đề */
+}
+
+.product-table td {
+  border: 1px solid #dee2e6;
+  padding: 10px;
+  text-align: center; /* Căn giữa chữ trong ô dữ liệu */
+}
+
+.product-table tfoot td {
+  font-weight: bold;
+  text-align: center; /* Căn giữa chữ trong chân bảng */
+}
+.order-row:hover {
+  background-color: #f8f9fa;
+}
+
+/* Chi tiết đơn hàng */
+.order-details {
+  display: none;
+  padding: 20px;
+  background-color: #fff;
+  border-top: 1px solid #dee2e6;
+}
+
+.order-details h4 {
+  color: #333;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+/* Trạng thái */
+.status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  min-width: 120px;
+}
+
+.status-pending {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.status-shipping {
+  background-color: #17a2b8;
+  color: white;
+}
+
+.status-success {
+  background-color: #28a745;
+  color: white;
+}
+
+.status-failed {
+  background-color: #dc3545;
+  color: white;
+}
+
+/* Quy trình đơn hàng - Timeline */
+.timeline {
+  position: relative;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.timeline::after {
+  content: '';
+  position: absolute;
+  width: 2px;
+  background-color: #e0e0e0;
+  top: 0;
+  bottom: 0;
+  left: 20px;
+  margin-left: -1px;
+}
+
+.timeline-item {
+  padding: 10px 40px;
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.timeline-item:last-child {
+  margin-bottom: 0;
+}
+
+.timeline-item::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  left: 12px;
+  background-color: white;
+  border: 2px solid #e0e0e0;
+  top: 15px;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.timeline-item.active::after {
+  background-color: #17a2b8;
+  border-color: #17a2b8;
+}
+
+.timeline-item.completed::after {
+  background-color: #28a745;
+  border-color: #28a745;
+}
+
+.timeline-item.failed::after {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+.timeline-content {
+  padding: 10px 15px;
+  background-color: #f8f9fa;
+  position: relative;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.timeline-item.active .timeline-content {
+  background-color: #e8f4f8;
+  border-left: 3px solid #17a2b8;
+}
+
+.timeline-item.completed .timeline-content {
+  background-color: #e8f8ee;
+  border-left: 3px solid #28a745;
+}
+
+.timeline-item.failed .timeline-content {
+  background-color: #f8e8e8;
+  border-left: 3px solid #dc3545;
+}
+
+.timeline-title {
+  margin: 0;
+  font-weight: 600;
+  font-size: 16px;
+  color: #333;
+}
+
+.timeline-item.active .timeline-title {
+  color: #17a2b8;
+}
+
+.timeline-item.completed .timeline-title {
+  color: #28a745;
+}
+
+.timeline-item.failed .timeline-title {
+  color: #dc3545;
+}
+
+.timeline-desc {
+  margin: 5px 0 0;
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.timeline-date {
+  display: block;
+  font-size: 12px;
+  color: #adb5bd;
+  margin-top: 5px;
+}
+
+/* Bảng sản phẩm */
+.product-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.product-table th {
+  background-color: #000000;
+  border: 1px solid #ffffff;
+  padding: 10px;
+  font-weight: 600;
+}
+
+.product-table td {
+  border: 1px solid #dee2e6;
+  padding: 10px;
+}
+
+.product-table tfoot td {
+  font-weight: bold;
+}
+
+/* Nút hành động */
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-view {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  background-color: #343a40;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-view:hover {
+  background-color: #23272b;
+  color: white;
+}
+
+.btn-view-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  background-color: transparent;
+  color: #000000;
+  border: 1px solid #000000;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-view-outline:hover {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+.btn-received {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn-received:hover {
+  background-color: #218838;
+}
+
+.btn-received:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.btn-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  background-color: #343a40;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn-toggle i {
+  margin-left: 6px;
+  transition: transform 0.3s ease;
+}
+
+.btn-toggle.active i {
+  transform: rotate(180deg);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .action-buttons {
+    flex-direction: column;
+  }
+  
+  .order-details-container {
+    flex-direction: column;
+  }
+  
+  .order-details-left,
+  .order-details-right {
+    width: 100% !important;
+    padding-right: 0 !important;
+    margin-bottom: 20px;
+  }
+}
+
+.pagination .page-item .page-link {
+  color: #343a40;
+  border: 1px solid #dee2e6;
+  padding: 8px 16px;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #343a40;
+  border-color: #343a40;
+  color: white;
+}
+
+.pagination .page-item.disabled .page-link {
+  color: #6c757d;
+  pointer-events: none;
+  background-color: #f8f9fa;
 }

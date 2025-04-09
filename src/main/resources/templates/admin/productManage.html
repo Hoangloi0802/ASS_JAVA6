@@ -105,6 +105,22 @@
                         <h5 class="card-title">Danh sách sản phẩm</h5>
                     </div>
                     <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <form th:action="@{/admin/products}" method="get" class="d-flex">
+                                    <input class="form-control me-2" type="search" name="keyword" th:value="${keyword}"
+                                        placeholder="Tìm kiếm sản phẩm..." aria-label="Search">
+                                    <button class="btn btn-outline-primary" type="submit">
+                                        <i class="fa-solid fa-search"></i> Tìm
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="col-md-6 text-end">
+                                <small class="text-muted">
+                                    Tổng: <span th:text="${totalItems}"></span> sản phẩm
+                                </small>
+                            </div>
+                        </div>
                         <div class="table-container">
                             <table class="table">
                                 <thead>
@@ -128,8 +144,7 @@
                                             <div class="fw-semibold" th:text="${product.name}"></div>
                                             <small class="text-muted" th:text="${product.id}"></small>
                                         </td>
-                                        <td th:text="${product.category != null ? product.category.name : 'N/A'}">
-                                        </td>
+                                        <td th:text="${product.category != null ? product.category.name : 'N/A'}"></td>
                                         <td
                                             th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">
                                         </td>
@@ -154,14 +169,37 @@
                                             </div>
                                         </td>
                                     </tr>
+                                    <tr th:if="${products.empty}">
+                                        <td colspan="7" class="text-center">Không tìm thấy sản phẩm nào</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
+                        <nav aria-label="Page navigation" th:if="${totalPages > 1}">
+                            <ul class="pagination justify-content-center mt-3">
+                                <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+                                    <a class="page-link"
+                                        th:href="@{/admin/products(page=${currentPage - 1}, keyword=${keyword})}">Trước</a>
+                                </li>
+                                <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                                    th:classappend="${i == currentPage ? 'active' : ''}">
+                                    <a class="page-link" th:href="@{/admin/products(page=${i}, keyword=${keyword})}"
+                                        th:text="${i + 1}"></a>
+                                </li>
+                                <li class="page-item"
+                                    th:classappend="${currentPage == totalPages - 1 ? 'disabled' : ''}">
+                                    <a class="page-link"
+                                        th:href="@{/admin/products(page=${currentPage + 1}, keyword=${keyword})}">Sau</a>
+                                </li>
+                            </ul>
+                        </nav>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Modal for adding/editing products -->
     <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -199,9 +237,9 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Trạng thái</label>
-                            <select class="form-select" name="available" id="productAvailable" required>
+                            <select class="form-select" name="available" id="productAvailable" >
                                 <option value="">Chọn trạng thái</option>
-                                <option value="true">Có hàng</option>
+                                <option value="true">Còn hàng</option>
                                 <option value="false">Hết hàng</option>
                             </select>
                         </div>

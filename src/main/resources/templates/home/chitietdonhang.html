@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head th:replace="~{/layouts/header}">
     <title>Chi Tiết Đơn Hàng</title>
 </head>
+
 <body>
     <header th:replace="~{/layouts/nav}">
     </header>
@@ -12,34 +14,39 @@
                 <h1 class="text-center text-white display-6">CHI TIẾT ĐƠN HÀNG CỦA BẠN</h1>
             </div>
         </div>
-        <div class="container">
+        <div class="container my-5">
             <div class="row">
                 <!-- Thông tin đơn hàng -->
                 <div class="mb-4 col-6">
                     <h5>Thông tin đơn hàng</h5>
 
-                    <p><strong>Mã đơn hàng:</strong> <span th:text="${order.id != null} ? ${order.id} : 'N/A'"></span></p>
-                    <p><strong>Ngày đặt:</strong> <span th:text="${order.createDate != null} ? ${#temporals.format(order.createDate, 'dd/MM/yyyy HH:mm')} : 'N/A'"></span></p>
+                    <p><strong>Mã đơn hàng:</strong> <span th:text="${order.id != null} ? ${order.id} : 'N/A'"></span>
+                    </p>
+                    <p><strong>Ngày đặt:</strong> <span
+                            th:text="${order.createDate != null} ? ${#temporals.format(order.createDate, 'dd/MM/yyyy HH:mm')} : 'N/A'"></span>
+                    </p>
                     <p><strong>Trạng thái:</strong>
                         <span class="badge"
-                              th:classappend="${order.status == 'SUCCESS'} ? 'bg-success' : (${order.status == 'FAILED'} ? 'bg-danger' : (${order.status == 'SHIPPING'} ? 'bg-info' : 'bg-warning'))"
-                              th:text="${order.status == 'SUCCESS'} ? 'Đã giao hàng' : (${order.status == 'FAILED'} ? 'Thất bại' : (${order.status == 'SHIPPING'} ? 'Đang giao hàng' : 'Chờ xử lý'))">
+                            th:classappend="${order.status == 'SUCCESS'} ? 'bg-success' : (${order.status == 'FAILED'} ? 'bg-danger' : (${order.status == 'SHIPPING'} ? 'bg-info' : 'bg-warning'))"
+                            th:text="${order.status == 'SUCCESS'} ? 'Đã giao hàng' : (${order.status == 'FAILED'} ? 'Đã hủy' : (${order.status == 'SHIPPING'} ? 'Đang giao hàng' : 'Chờ xử lý'))">
                         </span>
-
-                    <p><strong>Mã đơn hàng:</strong> <span th:text="${order.id}"></span></p>
-                    <p><strong>Ngày đặt:</strong>    <td th:text="${#temporals.format(order.createDate, 'dd/MM/yyyy HH:mm')}"></td></p>
-                        <p><strong>Trạng thái:</strong> <span class="badge" th:classappend="${order.status} ? 'bg-success' : 'bg-danger'" th:text="${order.status} ? 'Hoàn thành' : 'Chưa hoàn thành'"></span></p>
-
-                    </p>
                 </div>
 
                 <!-- Thông tin khách hàng -->
                 <div class="mb-4 col-6">
                     <h5>Thông tin khách hàng</h5>
-                    <p><strong>Họ và tên:</strong> <span th:text="${order.account != null and order.account.fullname != null} ? ${order.account.fullname} : 'N/A'"></span></p>
-                    <p><strong>Email:</strong> <span th:text="${order.account != null and order.account.email != null} ? ${order.account.email} : 'N/A'"></span></p>
-                    <p><strong>Số điện thoại:</strong> <span th:text="${order.account != null and order.account.mobile != null} ? ${order.account.mobile} : 'N/A'"></span></p>
-                    <p><strong>Địa chỉ:</strong> <span th:text="${order.account != null and order.account.address != null} ? ${order.account.address} : 'N/A'"></span></p>
+                    <p><strong>Họ và tên:</strong> <span
+                            th:text="${order.account != null and order.account.fullname != null} ? ${order.account.fullname} : 'N/A'"></span>
+                    </p>
+                    <p><strong>Email:</strong> <span
+                            th:text="${order.account != null and order.account.email != null} ? ${order.account.email} : 'N/A'"></span>
+                    </p>
+                    <p><strong>Số điện thoại:</strong> <span
+                            th:text="${order.account != null and order.account.mobile != null} ? ${order.account.mobile} : 'N/A'"></span>
+                    </p>
+                    <p><strong>Địa chỉ giao hàng:</strong> <span
+                            th:text="${order.address != null and order.address != null} ? ${order.address} : 'N/A'"></span>
+                    </p>
                 </div>
             </div>
 
@@ -59,34 +66,66 @@
                         <tr th:if="${order.orderDetails == null or order.orderDetails.isEmpty()}">
                             <td colspan="4" class="text-center">Không có sản phẩm nào trong đơn hàng.</td>
                         </tr>
-                        <tr th:each="detail : ${order.orderDetails}" th:if="${order.orderDetails != null and !order.orderDetails.isEmpty()}">
+                        <tr th:each="detail : ${order.orderDetails}"
+                            th:if="${order.orderDetails != null and !order.orderDetails.isEmpty()}">
                             <td>
                                 <div class="d-flex align-items-center">
                                     <img th:src="${detail.product != null and detail.product.productImages != null and !detail.product.productImages.isEmpty()} ? ${detail.product.productImages[0].imageUrl} : '/images/default-product.jpg'"
-                                         alt="Ảnh sản phẩm" class="product-img me-2" width="50">
-                                    <span th:text="${detail.product != null and detail.product.name != null} ? ${detail.product.name} : 'N/A'"></span>
+                                        alt="Ảnh sản phẩm" class="product-img me-2" width="50">
+                                    <span
+                                        th:text="${detail.product != null and detail.product.name != null} ? ${detail.product.name} : 'N/A'"></span>
                                 </div>
                             </td>
                             <td th:text="${detail.quantity != null} ? ${detail.quantity} : '0'"></td>
-                            <td th:text="${detail.price != null} ? ${#numbers.formatDecimal(detail.price, 0, 'COMMA', 0, 'POINT') + ' đ'} : '0 đ'"></td>
-                            <td th:text="${detail.quantity != null and detail.price != null} ? ${#numbers.formatDecimal(detail.quantity * detail.price, 0, 'COMMA', 0, 'POINT') + ' đ'} : '0 đ'"></td>
+                            <td
+                                th:text="${detail.price != null} ? ${#numbers.formatDecimal(detail.price, 0, 'COMMA', 0, 'POINT') + ' đ'} : '0 đ'">
+                            </td>
+                            <td
+                                th:text="${detail.quantity != null and detail.price != null} ? ${#numbers.formatDecimal(detail.quantity * detail.price, 0, 'COMMA', 0, 'POINT') + ' đ'} : '0 đ'">
+                            </td>
                         </tr>
                     </tbody>
                     <tfoot>
                         <tr>
-                            <th colspan="3" class="text-end">Tổng cộng:</th>
-                            <th th:text="${order.orderDetails != null and !order.orderDetails.isEmpty()} ? ${#numbers.formatDecimal(#aggregates.sum(order.orderDetails.![(quantity != null ? quantity : 0) * (price != null ? price : 0)]), 0, 'COMMA', 0, 'POINT') + ' đ'} : '0 đ'"></th>
+                            <th colspan="3" class="text-end">Tổng tiền sản phẩm:</th>
+                            <th
+                                th:text="${order.orderDetails != null and !order.orderDetails.isEmpty() ? 
+                                         #numbers.formatDecimal(#aggregates.sum(order.orderDetails.![(quantity != null ? quantity : 0) * (price != null ? price : 0)]), 0, 'COMMA', 0, 'POINT') + ' đ' : '0 đ'}">
+                            </th>
                         </tr>
+                        <tr>
+                            <th colspan="3" class="text-end">Giảm giá:</th>
+                            <th th:text="${#numbers.formatDecimal(discount, 0, 'COMMA', 0, 'POINT') + ' đ'}"></th>
+                        </tr>
+                        <tr>
+                            <th colspan="3" class="text-end">Phí giao hàng:</th>
+                            <th th:text="${#numbers.formatDecimal(shippingFee, 0, 'COMMA', 0, 'POINT') + ' đ'}"></th>
+                        </tr>
+                        <tr>
+                            <th colspan="3" class="text-end">Tổng đơn:</th>
+                            <th th:text="${#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT') + ' đ'}"></th>
+                        </tr>
+
                     </tfoot>
                 </table>
             </div>
 
             <!-- Nút hành động -->
+            <!-- Nút hành động -->
             <div class="text-end">
                 <!-- Nút "Đã nhận hàng" chỉ hiển thị nếu trạng thái là SHIPPING -->
-                <form th:action="@{/chitietdonhang/{id}/confirm-received(id=${order.id})}" method="post" style="display: inline;" th:if="${order.status == 'SHIPPING'}">
+                <form th:action="@{/chitietdonhang/{id}/confirm-received(id=${order.id})}" method="post"
+                    style="display: inline;" th:if="${order.status == 'SHIPPING'}">
                     <button type="submit" class="btn btn-success me-2">Đã nhận hàng</button>
                 </form>
+
+                <!-- Nút "Hủy đơn hàng" chỉ hiển thị nếu trạng thái là PENDING hoặc SHIPPING -->
+                <form th:action="@{/chitietdonhang/{id}/cancel(id=${order.id})}" method="post" style="display: inline;"
+                    th:if="${order.status == 'PENDING' or order.status == 'SHIPPING'}">
+                    <button type="submit" class="btn btn-danger me-2"
+                        onclick="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')">Hủy đơn hàng</button>
+                </form>
+
                 <a href="/donhang" class="btn btn-secondary">Quay lại</a>
             </div>
         </div>
@@ -94,4 +133,5 @@
     <div th:replace="~{/layouts/footer}">
     </div>
 </body>
+
 </html>

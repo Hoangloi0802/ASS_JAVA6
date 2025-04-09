@@ -13,7 +13,11 @@ public interface VoucherRepository extends JpaRepository<Voucher, Integer> {
     List<Voucher> findByExpiryDateGreaterThanEqualAndTrangThaiTrue(Date expiryDate);
 
     List<Voucher> findByMinOrderValueLessThanEqual(Double orderAmount);
+
     List<Voucher> findByTrangThaiTrue();
+
     List<Voucher> findByCategory_IdAndExpiryDateGreaterThanEqualAndTrangThaiTrue(
             String categoryId, Date expiryDate);
+
+    List<Voucher> findByExpiryDateLessThanAndTrangThaiTrue(Date expiryDate);
 }
