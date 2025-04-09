@@ -64,7 +64,8 @@ public class BillController {
             Map<String, Object> orderMap = new HashMap<>();
             orderMap.put("id", order.getId());
             orderMap.put("address", order.getAddress());
-            orderMap.put("status", order.getStatus()); // Sử dụng status kiểu String
+            orderMap.put("status", order.getStatus()); // Giữ nguyên status dạng String
+            orderMap.put("statusDisplay", order.getStatusDisplayName()); // Thêm tên hiển thị
             orderMap.put("createDate", order.getCreateDate());
 
             if (order.getAccount() != null) {
@@ -122,9 +123,7 @@ public class BillController {
 
             double discountAmount = 0;
             if (order.getVoucher() != null) {
-                // Thay đổi: Giảm giá là số tiền cố định từ voucher
                 discountAmount = order.getVoucher().getDiscountAmount();
-                // Giới hạn giảm giá không vượt quá tổng tiền hàng
                 if (discountAmount > totalAmount) {
                     discountAmount = totalAmount;
                 }
@@ -151,11 +150,18 @@ public class BillController {
                 redirectAttributes.addFlashAttribute("errorMessage", "Đơn hàng không tồn tại!");
                 return "redirect:/admin/bill";
             }
+
+            // Kiểm tra trạng thái hợp lệ
+            if (!Order.isValidStatus(newStatus)) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Trạng thái không hợp lệ: " + newStatus);
+                return "redirect:/admin/bill";
+            }
+
             order.setStatus(newStatus);
             orderRepository.save(order);
 
             redirectAttributes.addFlashAttribute("successMessage",
-                    "Cập nhật trạng thái đơn hàng thành " + newStatus + " thành công!");
+                    "Cập nhật trạng thái đơn hàng thành " + order.getStatusDisplayName() + " thành công!");
             return "redirect:/admin/bill";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage",
@@ -179,13 +185,21 @@ public class BillController {
                 return ResponseEntity.badRequest().body(response);
             }
 
-            // Cập nhật trạng thái đơn hàng
+            // Kiểm tra trạng thái hợp lệ
+            if (!Order.isValidStatus(newStatus)) {
+                response.put("success", false);
+                response.put("message", "Trạng thái không hợp lệ: " + newStatus);
+                return ResponseEntity.badRequest().body(response);
+            }
+
             order.setStatus(newStatus);
             orderRepository.save(order);
 
             response.put("success", true);
             response.put("status", order.getStatus());
-            response.put("message", "Cập nhật trạng thái đơn hàng thành " + newStatus + " thành công!");
+            response.put("statusDisplay", order.getStatusDisplayName());
+            response.put("message",
+                    "Cập nhật trạng thái đơn hàng thành " + order.getStatusDisplayName() + " thành công!");
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -204,7 +218,7 @@ public class BillController {
                 redirectAttributes.addFlashAttribute("errorMessage", "Đơn hàng không tồn tại!");
                 return "redirect:/admin/bill";
             }
-            if ("CART".equals(order.getStatus())) {
+            if (Order.STATUS_CART.equals(order.getStatus())) {
                 redirectAttributes.addFlashAttribute("errorMessage", "Không thể xóa giỏ hàng tạm thời!");
                 return "redirect:/admin/bill";
             }
@@ -221,7 +235,4 @@ public class BillController {
         }
         return "redirect:/admin/bill";
     }
-
-    
-    
 }

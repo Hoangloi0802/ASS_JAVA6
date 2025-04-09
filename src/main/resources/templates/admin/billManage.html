@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,71 +13,81 @@
     <link rel="icon" href="/photo/bill.png" type="image/png">
     <link rel="stylesheet" href="/css/bill.css">
     <style>
-    .loading-spinner {
-        display: inline-block;
-        width: 1.5rem;
-        height: 1.5rem;
-        border: 3px solid rgba(0, 0, 0, 0.1);
-        border-radius: 50%;
-        border-top-color: #3b82f6;
-        animation: spin 1s ease-in-out infinite;
-    }
-
-    @keyframes spin {
-        to {
-            transform: rotate(360deg);
+        .loading-spinner {
+            display: inline-block;
+            width: 1.5rem;
+            height: 1.5rem;
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: #3b82f6;
+            animation: spin 1s ease-in-out infinite;
         }
-    }
 
-    .order-summary {
-        background-color: #f8fafc;
-        border-radius: 0.5rem;
-        padding: 1rem;
-        margin-top: 1rem;
-    }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
 
-    .order-summary-item {
-        display: flex;
-        justify-content: space-between;
-        padding: 0.5rem 0;
-        border-bottom: 1px dashed #e2e8f0;
-    }
+        .order-summary {
+            background-color: #f8fafc;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
 
-    .order-summary-item:last-child {
-        border-bottom: none;
-        font-weight: bold;
-    }
+        .order-summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px dashed #e2e8f0;
+        }
 
-    .badge-success {
-        background-color: #10b981;
-        color: white;
-    }
+        .order-summary-item:last-child {
+            border-bottom: none;
+            font-weight: bold;
+        }
 
-    .badge-warning {
-        background-color: #f59e0b;
-        color: white;
-    }
+        .badge-success {
+            background-color: #10b981;
+            color: white !important;
+        }
 
-    .modal-table th,
-    .modal-table td {
-        vertical-align: middle;
-    }
+        .badge-warning {
+            background-color: #f59e0b;
+            color: white !important;
+        }
 
-    .product-image {
-        width: 50px;
-        height: 50px;
-        object-fit: cover;
-        border-radius: 4px;
-    }
+        .badge-danger {
+            background-color: #ef4444;
+            color: white !important;
+        }
 
-    .action-buttons {
-        display: flex;
-        gap: 0.5rem;
-    }
+        .badge-info {
+            background-color: #3b82f6;
+            color: white !important;
+        }
 
-    .action-buttons button {
-        transition: all 0.2s;
-    }
+        .modal-table th,
+        .modal-table td {
+            vertical-align: middle;
+        }
+
+        .product-image {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-buttons button {
+            transition: all 0.2s;
+        }
 
         .action-buttons button:hover {
             transform: translateY(-2px);
@@ -214,20 +225,20 @@
                                         </td>
                                         <td th:text="${o.account != null ? o.account.mobile : 'N/A'}"></td>
                                         <td>
-                                            <span class="badge"
-                                                  th:classappend="${o.status == 'SUCCESS'} ? 'badge-success' : (${o.status == 'FAILED'} ? 'badge-danger' : (${o.status == 'SHIPPING'} ? 'badge-info' : 'badge-warning'))"
-                                                  th:text="${o.status == 'SUCCESS'} ? 'Đã giao hàng' : (${o.status == 'FAILED'} ? 'Thất bại' : (${o.status == 'SHIPPING'} ? 'Đang giao hàng' : 'Chờ xử lý'))"
-                                                  th:id="'status-badge-' + ${o.id}" style="color: black;"></span>
+                                            <span class="badge" th:data-status="${o.status}"
+                                                th:classappend="${o.status == 'SUCCESS'} ? 'badge-success' : (${o.status == 'FAILED'} ? 'badge-danger' : (${o.status == 'SHIPPING'} ? 'badge-info' : 'badge-warning'))"
+                                                th:text="${o.getStatusDisplayName()}"
+                                                th:id="'status-badge-' + ${o.id}"></span>
                                         </td>
                                         <td>
                                             <div class="action-buttons">
                                                 <button type="button"
-                                                        class="btn btn-sm btn-outline-primary view-order-btn"
-                                                        th:data-order-id="${o.id}">
+                                                    class="btn btn-sm btn-outline-primary view-order-btn"
+                                                    th:data-order-id="${o.id}">
                                                     <i class="fa-solid fa-eye"></i>
                                                 </button>
                                                 <button type="button" class="btn btn-sm btn-outline-danger delete-btn"
-                                                        th:data-order-id="${o.id}">
+                                                    th:data-order-id="${o.id}">
                                                     <i class="fa-solid fa-trash"></i>
                                                 </button>
                                             </div>
@@ -279,7 +290,7 @@
     </div>
 
     <div class="modal fade" id="orderDetailModal" tabindex="-1" aria-labelledby="orderDetailModalLabel"
-         aria-hidden="true">
+        aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -395,6 +406,55 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            const STATUS_PENDING = "PENDING";
+            const STATUS_SHIPPING = "SHIPPING";
+            const STATUS_SUCCESS = "SUCCESS";
+            const STATUS_FAILED = "FAILED";
+            const STATUS_CART = "CART";
+            const statusDisplayNames = {
+                [STATUS_PENDING]: "Chờ xử lý",
+                [STATUS_SHIPPING]: "Đang giao hàng",
+                [STATUS_SUCCESS]: "Đã giao hàng",
+                [STATUS_FAILED]: "Thất bại",
+                [STATUS_CART]: "Giỏ hàng"
+            };
+            const statusClasses = {
+                [STATUS_PENDING]: "badge-warning",
+                [STATUS_SHIPPING]: "badge-info",
+                [STATUS_SUCCESS]: "badge-success",
+                [STATUS_FAILED]: "badge-danger",
+                [STATUS_CART]: "badge-warning"
+            };
+
+            function getNextStatus(currentStatus) {
+                switch (currentStatus) {
+                    case STATUS_PENDING:
+                        return STATUS_SHIPPING;
+                    case STATUS_SHIPPING:
+                        return STATUS_SUCCESS;
+                    case STATUS_SUCCESS:
+                        return STATUS_FAILED;
+                    case STATUS_FAILED:
+                        return STATUS_PENDING;
+                    default:
+                        return STATUS_PENDING;
+                }
+            }
+            function getUpdateButtonText(currentStatus) {
+                switch (currentStatus) {
+                    case STATUS_PENDING:
+                        return "Đánh Dấu Đang Giao";
+                    case STATUS_SHIPPING:
+                        return "Đánh Dấu Đã Giao";
+                    case STATUS_SUCCESS:
+                        return "Đánh Dấu Thất Bại";
+                    case STATUS_FAILED:
+                        return "Đánh Dấu Chờ Xử Lý";
+                    default:
+                        return "Cập Nhật Trạng Thái";
+                }
+            }
+
             const successNotification = document.querySelector('.notification.success');
             const errorNotification = document.querySelector('.notification.error');
 
@@ -417,6 +477,7 @@
             const orderDetailModal = document.getElementById('orderDetailModal');
             const modal = new bootstrap.Modal(orderDetailModal);
             let currentOrderId = null;
+            let currentOrderStatus = null;
 
             document.querySelectorAll('.view-order-btn').forEach(button => {
                 button.addEventListener('click', function () {
@@ -425,16 +486,15 @@
                     showOrderDetailModal(orderId);
                 });
             });
-
-            // Update order status from table
             document.querySelectorAll('.update-status-btn').forEach(button => {
                 button.addEventListener('click', function () {
                     const orderId = this.getAttribute('data-order-id');
-                    updateOrderStatus(orderId);
+                    const statusBadge = document.getElementById(`status-badge-${orderId}`);
+                    const currentStatus = statusBadge.getAttribute('data-status');
+                    updateOrderStatus(orderId, getNextStatus(currentStatus));
                 });
             });
 
-            // Delete order from table
             document.querySelectorAll('.delete-btn').forEach(button => {
                 button.addEventListener('click', function () {
                     const orderId = this.getAttribute('data-order-id');
@@ -443,8 +503,8 @@
             });
 
             document.getElementById('updateStatusBtn').addEventListener('click', function () {
-                if (currentOrderId) {
-                    updateOrderStatus(currentOrderId);
+                if (currentOrderId && currentOrderStatus) {
+                    updateOrderStatus(currentOrderId, getNextStatus(currentOrderStatus));
                 }
             });
 
@@ -491,17 +551,14 @@
             }
 
             function displayOrderDetails(data) {
-                console.log('API response:', data); // Debug log
-
+                console.log('API response:', data);
                 const order = data.order;
                 const orderDetails = data.orderDetails || [];
                 const totalAmount = data.totalAmount || 0;
                 const discountAmount = data.discountAmount || 0;
                 const finalAmount = data.finalAmount;
 
-                console.log('Order details count:', orderDetails.length); // Debug log
-
-                // Hide loading spinner and show content
+                currentOrderStatus = order.status;
                 document.getElementById('modalLoadingSpinner').style.display = 'none';
                 document.getElementById('modalContent').style.display = 'block';
 
@@ -512,8 +569,10 @@
                 document.getElementById('orderDateInfo').textContent = formattedDate;
 
                 const statusBadge = document.createElement('span');
-                statusBadge.className = 'badge ' + (order.status === 'SUCCESS' ? 'badge-success' : (order.status === 'FAILED' ? 'badge-danger' : (order.status === 'SHIPPING' ? 'badge-info' : 'badge-warning')));
-                statusBadge.textContent = order.status === 'SUCCESS' ? 'Đã giao hàng' : (order.status === 'FAILED' ? 'Thất bại' : (order.status === 'SHIPPING' ? 'Đang giao hàng' : 'Chờ xử lý'));
+                statusBadge.className = 'badge ' + (statusClasses[order.status] || 'badge-warning');
+                statusBadge.textContent = order.statusDisplay || statusDisplayNames[order.status] || order.status;
+                statusBadge.setAttribute('data-status', order.status);
+
                 document.getElementById('orderStatusInfo').innerHTML = '';
                 document.getElementById('orderStatusInfo').appendChild(statusBadge);
 
@@ -521,7 +580,6 @@
                 const voucherTextElement = document.getElementById('voucherInfo');
                 if (order.voucher && order.voucher.code) {
                     voucherInfoElement.style.display = 'block';
-                    // Hiển thị giá trị giảm giá bằng số tiền cố định
                     voucherTextElement.textContent = `${order.voucher.code} (${formatCurrency(order.voucher.discountAmount)})`;
                 } else {
                     voucherInfoElement.style.display = 'none';
@@ -537,9 +595,7 @@
                     document.getElementById('customerPhoneInfo').textContent = 'N/A';
                 }
                 document.getElementById('customerAddressInfo').textContent = order.address || 'N/A';
-
-                document.getElementById('updateStatusBtnText').textContent =
-                    order.status === 'SUCCESS' ? 'Đánh Dấu Thất Bại' : (order.status === 'SHIPPING' ? 'Đánh Dấu Đã Giao' : 'Đánh Dấu Đang Giao');
+                document.getElementById('updateStatusBtnText').textContent = getUpdateButtonText(order.status);
 
                 const tableBody = document.getElementById('orderDetailsTable').querySelector('tbody');
                 tableBody.innerHTML = '';
@@ -556,15 +612,8 @@
                         const productInfo = document.createElement('div');
                         productInfo.className = 'd-flex align-items-center gap-2';
 
-                        // Add product image if available
                         if (item.product && item.product.image) {
-                            const img = document.createElement('img');
-                            img.src = item.product.image;
-                            img.alt = item.product.name;
-                            img.className = 'product-image'; 
-                            productInfo.appendChild(img);
                         }
-
                         const productDetails = document.createElement('div');
 
                         const productName = document.createElement('div');
@@ -582,17 +631,12 @@
                         productCell.appendChild(productInfo);
                         row.appendChild(productCell);
 
-                        // Ensure price is displayed correctly
                         const priceCell = document.createElement('td');
                         priceCell.textContent = formatCurrency(item.price || 0);
                         row.appendChild(priceCell);
-
-                        // Ensure quantity is displayed correctly
                         const quantityCell = document.createElement('td');
                         quantityCell.textContent = item.quantity || 0;
                         row.appendChild(quantityCell);
-
-                        // Calculate and display subtotal
                         const subtotalCell = document.createElement('td');
                         const subtotal = (item.price || 0) * (item.quantity || 0);
                         subtotalCell.textContent = formatCurrency(subtotal);
@@ -615,7 +659,7 @@
                 document.getElementById('finalAmount').textContent = formatCurrency(finalAmount);
             }
 
-            function updateOrderStatus(orderId) {
+            function updateOrderStatus(orderId, newStatus) {
                 Swal.fire({
                     title: "Cập nhật trạng thái đơn hàng?",
                     text: "Bạn có chắc chắn muốn thay đổi trạng thái đơn hàng này?",
@@ -635,32 +679,32 @@
                                 Swal.showLoading();
                             }
                         });
-
-                        // Send AJAX request to update status
                         fetch(`/admin/bill/update-status-ajax/${orderId}`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/x-www-form-urlencoded',
-                            }
+                            },
+                            body: `status=${newStatus}`
                         })
                             .then(response => response.json())
                             .then(data => {
                                 if (data.success) {
+                                    currentOrderStatus = data.status;
+
                                     const statusBadge = document.getElementById(`status-badge-${orderId}`);
                                     if (statusBadge) {
-                                        statusBadge.className = `badge ${data.status === 'SUCCESS' ? 'badge-success' : (data.status === 'FAILED' ? 'badge-danger' : (data.status === 'SHIPPING' ? 'badge-info' : 'badge-warning'))}`;
-                                        statusBadge.textContent = data.status === 'SUCCESS' ? 'Đã giao hàng' : (data.status === 'FAILED' ? 'Thất bại' : (data.status === 'SHIPPING' ? 'Đang giao hàng' : 'Chờ xử lý'));
+                                        statusBadge.className = `badge ${statusClasses[data.status] || 'badge-warning'}`;
+                                        statusBadge.textContent = data.statusDisplay || statusDisplayNames[data.status] || data.status;
+                                        statusBadge.setAttribute('data-status', data.status);
                                     }
-
-                                    // If modal is open with this order, update modal UI too
                                     if (currentOrderId == orderId) {
                                         const modalStatusBadge = document.getElementById('orderStatusInfo').querySelector('.badge');
                                         if (modalStatusBadge) {
-                                            modalStatusBadge.className = `badge ${data.status === 'SUCCESS' ? 'badge-success' : (data.status === 'FAILED' ? 'badge-danger' : (data.status === 'SHIPPING' ? 'badge-info' : 'badge-warning'))}`;
-                                            modalStatusBadge.textContent = data.status === 'SUCCESS' ? 'Đã giao hàng' : (data.status === 'FAILED' ? 'Thất bại' : (data.status === 'SHIPPING' ? 'Đang giao hàng' : 'Chờ xử lý'));
+                                            modalStatusBadge.className = `badge ${statusClasses[data.status] || 'badge-warning'}`;
+                                            modalStatusBadge.textContent = data.statusDisplay || statusDisplayNames[data.status] || data.status;
+                                            modalStatusBadge.setAttribute('data-status', data.status);
                                         }
-                                        document.getElementById('updateStatusBtnText').textContent =
-                                            data.status === 'SUCCESS' ? 'Đánh Dấu Thất Bại' : (data.status === 'SHIPPING' ? 'Đánh Dấu Đã Giao' : 'Đánh Dấu Đang Giao');
+                                        document.getElementById('updateStatusBtnText').textContent = getUpdateButtonText(data.status);
                                     }
                                     Swal.fire({
                                         title: 'Thành công!',
@@ -710,39 +754,25 @@
                                 Swal.showLoading();
                             }
                         });
-
-                        // Send AJAX request to delete order
-                        fetch(`/admin/bill/delete-ajax/${orderId}`, {
+                        fetch(`/admin/bill/delete/${orderId}`, {
                             method: 'POST',
                             headers: {
-                                'Content-Type': 'application/json',
+                                'Content-Type': 'application/x-www-form-urlencoded',
                             }
                         })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    // Remove row from table
-                                    const orderRow = document.getElementById(`order-row-${orderId}`);
-                                    if (orderRow) {
-                                        orderRow.remove();
-                                    }
-
-                                    // Close modal if open
-                                    if (currentOrderId == orderId) {
-                                        modal.hide();
-                                    }
-
+                            .then(response => {
+                                if (response.redirected) {
+                                    window.location.href = response.url;
+                                    return;
+                                }
+                                return response.text();
+                            })
+                            .then(html => {
+                                if (html) {
                                     Swal.fire({
-                                        title: 'Thành công!',
-                                        text: data.message,
-                                        icon: 'success',
-                                        confirmButtonText: 'Đóng'
-                                    });
-                                } else {
-                                    Swal.fire({
-                                        title: 'Lỗi!',
-                                        text: data.message,
-                                        icon: 'error',
+                                        title: 'Thông báo',
+                                        text: 'Đã xử lý yêu cầu, vui lòng kiểm tra kết quả.',
+                                        icon: 'info',
                                         confirmButtonText: 'Đóng'
                                     });
                                 }
