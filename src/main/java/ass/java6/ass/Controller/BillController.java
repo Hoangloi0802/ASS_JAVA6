@@ -1,11 +1,15 @@
 package ass.java6.ass.Controller;
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -31,13 +36,40 @@ public class BillController {
     OrderDetailRepository orderDetailRepository;
 
     @GetMapping("/admin/bill")
-    public String getBill(Model model) {
+    public String getBill(Model model,
+            @RequestParam("page") Optional<Integer> page,
+            @RequestParam("size") Optional<Integer> size,
+            @RequestParam("search") Optional<String> search) {
         try {
-            List<Order> orders = orderRepository.findAll();
-            model.addAttribute("orders", orders);
+            int currentPage = page.orElse(1);
+            int pageSize = size.orElse(10); // 10 orders per page
+            Pageable pageable = PageRequest.of(currentPage - 1, pageSize);
+            Page<Order> orderPage;
+
+            if (search.isPresent() && !search.get().isEmpty()) {
+                try {
+                    Long orderId = Long.parseLong(search.get());
+                    orderPage = orderRepository.findByIdContaining(orderId, pageable);
+                    model.addAttribute("search", search.get());
+                } catch (NumberFormatException e) {
+                    model.addAttribute("errorMessage", "Mã hóa đơn phải là số!");
+                    orderPage = Page.empty();
+                }
+            } else {
+                orderPage = orderRepository.findAll(pageable);
+            }
+
+            model.addAttribute("orders", orderPage.getContent());
+            model.addAttribute("currentPage", orderPage.getNumber() + 1);
+            model.addAttribute("totalPages", orderPage.getTotalPages());
+            model.addAttribute("totalItems", orderPage.getTotalElements());
+            model.addAttribute("pageSize", pageSize);
+
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy danh sách đơn hàng: " + e.getMessage());
             e.printStackTrace();
+            model.addAttribute("orders", new ArrayList<>());
+            model.addAttribute("errorMessage", "Lỗi khi tải dữ liệu!");
         }
         return "admin/billManage";
     }
@@ -52,20 +84,15 @@ public class BillController {
                 return ResponseEntity.notFound().build();
             }
 
-            // Lấy chi tiết đơn hàng trực tiếp từ repository
             List<OrderDetail> orderDetails = orderDetailRepository.findByOrderId(id);
-
-            // Tạo response map để tránh circular references
             Map<String, Object> response = new HashMap<>();
 
-            // Thông tin cơ bản của order
             Map<String, Object> orderMap = new HashMap<>();
             orderMap.put("id", order.getId());
             orderMap.put("address", order.getAddress());
             orderMap.put("status", order.isStatus());
             orderMap.put("createDate", order.getCreateDate());
 
-            // Thông tin account
             if (order.getAccount() != null) {
                 Map<String, Object> accountMap = new HashMap<>();
                 accountMap.put("username", order.getAccount().getUsername());
@@ -75,7 +102,6 @@ public class BillController {
                 orderMap.put("account", accountMap);
             }
 
-            // Thông tin voucher
             if (order.getVoucher() != null) {
                 Map<String, Object> voucherMap = new HashMap<>();
                 voucherMap.put("id", order.getVoucher().getId());
@@ -84,7 +110,6 @@ public class BillController {
                 orderMap.put("voucher", voucherMap);
             }
 
-            // Tạo danh sách chi tiết đơn hàng đã được đơn giản hóa
             List<Map<String, Object>> orderDetailsList = new ArrayList<>();
             double totalAmount = 0;
 
@@ -94,7 +119,6 @@ public class BillController {
                 detailMap.put("price", detail.getPrice());
                 detailMap.put("quantity", detail.getQuantity());
 
-                // Thông tin sản phẩm
                 if (detail.getProduct() != null) {
                     Map<String, Object> productMap = new HashMap<>();
                     Product product = detail.getProduct();
@@ -102,7 +126,6 @@ public class BillController {
                     productMap.put("name", product.getName());
                     productMap.put("image", product.getImage());
 
-                    // Thông tin danh mục
                     if (product.getCategory() != null) {
                         Map<String, Object> categoryMap = new HashMap<>();
                         Category category = product.getCategory();
@@ -110,35 +133,32 @@ public class BillController {
                         categoryMap.put("name", category.getName());
                         productMap.put("category", categoryMap);
                     }
-
                     detailMap.put("product", productMap);
                 }
 
                 orderDetailsList.add(detailMap);
-
-                // Tính tổng tiền
                 if (detail.getPrice() != null && detail.getQuantity() != null) {
                     totalAmount += detail.getPrice() * detail.getQuantity();
                 }
             }
 
-            // Thêm vào response
             response.put("order", orderMap);
             response.put("orderDetails", orderDetailsList);
             response.put("totalAmount", totalAmount);
 
-            // Tính giảm giá nếu có voucher
             double discountAmount = 0;
             if (order.getVoucher() != null) {
-                discountAmount = totalAmount * order.getVoucher().getDiscountAmount() / 100;
+                // Thay đổi: Giảm giá là số tiền cố định từ voucher
+                discountAmount = order.getVoucher().getDiscountAmount();
+                // Giới hạn giảm giá không vượt quá tổng tiền hàng
+                if (discountAmount > totalAmount) {
+                    discountAmount = totalAmount;
+                }
                 response.put("discountAmount", discountAmount);
             }
-
-            // Tính tổng thanh toán
             response.put("finalAmount", totalAmount - discountAmount);
 
             System.out.println("Order details count: " + orderDetails.size());
-
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             e.printStackTrace();
@@ -154,7 +174,6 @@ public class BillController {
                 redirectAttributes.addFlashAttribute("errorMessage", "Đơn hàng không tồn tại!");
                 return "redirect:/admin/bill";
             }
-            // Toggle the status
             order.setStatus(!order.isStatus());
             orderRepository.save(order);
             redirectAttributes.addFlashAttribute("successMessage",
@@ -181,7 +200,6 @@ public class BillController {
                 return ResponseEntity.badRequest().body(response);
             }
 
-            // Toggle the status
             order.setStatus(!order.isStatus());
             orderRepository.save(order);
 
@@ -189,7 +207,6 @@ public class BillController {
             response.put("status", order.isStatus());
             response.put("message", "Cập nhật trạng thái đơn hàng thành " +
                     (order.isStatus() ? "Đã thanh toán" : "Chưa thanh toán") + " thành công!");
-
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             response.put("success", false);

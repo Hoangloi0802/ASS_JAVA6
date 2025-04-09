@@ -113,22 +113,6 @@ public void Checkotpquenmk(HttpSession session, Integer otpInput) {
     }
 
 
-    // Chuyển OTP từ session thành số nguyên
-    int otpFromSession = Integer.parseInt(otpObj.toString());
-
-    // Kiểm tra nếu OTP nhập vào không đúng
-    if (!otpInput.equals(otpFromSession)) {
-        throw new IllegalArgumentException("❌ OTP không chính xác. Vui lòng thử lại.");
-    }
-
-    // Nếu đúng thì xóa OTP khỏi session
-    session.removeAttribute("otp");
-}
-
-
-
-
-
     @Override
     public void doiMatKhau(String email, String password) {
         Account account = accountRepository.findByEmail(email)

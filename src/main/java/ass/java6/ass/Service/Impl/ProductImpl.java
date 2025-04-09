@@ -11,7 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -51,17 +50,36 @@ public class ProductImpl implements ProductService {
             spec = spec.and((root, query, cb) -> cb.equal(root.get("category").get("id"), categoryId));
         }
 
-        if (sort != null && !sort.isEmpty()) {
-            if (sort.equals("5")) {
-                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-                        Sort.by("price").ascending());
-            } else if (sort.equals("6")) {
-                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-                        Sort.by("price").descending());
-            }
+        if (keywordPattern != null) {
+            spec = spec.and((root, query, cb) -> cb.like(cb.lower(root.get("name")), keywordPattern));
         }
 
-        return productRepository.filterProducts(keywordPattern, priceFilter, categoryId, pageable);
+        return productRepository.findAll(spec, pageable);
+    }
+
+    @Override
+    public Page<Product> searchProducts(String keyword, Pageable pageable) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            Page<Product> products = productRepository.findAll(pageable);
+            updateProductStatus(products);
+            return products;
+        }
+
+        String keywordPattern = "%" + keyword.trim().toLowerCase() + "%";
+        Specification<Product> spec = (root, query, cb) -> cb.like(cb.lower(root.get("name")), keywordPattern);
+
+        Page<Product> products = productRepository.findAll(spec, pageable);
+        updateProductStatus(products);
+        return products;
+    }
+
+    private void updateProductStatus(Page<Product> products) {
+        products.getContent().forEach(product -> {
+            if (product.getQuantity() == 0 && product.getAvailable()) {
+                product.setAvailable(false);
+                productRepository.save(product);
+            }
+        });
     }
 
     @Override
@@ -79,6 +97,9 @@ public class ProductImpl implements ProductService {
     @Override
     @Transactional
     public Product add(Product product) {
+        if (product.getQuantity() == 0) {
+            product.setAvailable(false);
+        }
         return productRepository.save(product);
     }
 
@@ -91,6 +112,9 @@ public class ProductImpl implements ProductService {
     @Override
     @Transactional
     public Product save(Product product) {
+        if (product.getQuantity() == 0) {
+            product.setAvailable(false);
+        }
         return productRepository.save(product);
     }
 
@@ -119,8 +143,10 @@ public class ProductImpl implements ProductService {
         updatedProduct.setPrice(product.getPrice());
         updatedProduct.setDescription(product.getDescription());
         updatedProduct.setQuantity(product.getQuantity());
-        updatedProduct.setAvailable(product.getAvailable());
         updatedProduct.setCategory(product.getCategory());
+
+        // Auto-update status based on quantity
+        updatedProduct.setAvailable(product.getQuantity() > 0);
 
         if (mainImageFile != null && !mainImageFile.isEmpty()) {
             try {

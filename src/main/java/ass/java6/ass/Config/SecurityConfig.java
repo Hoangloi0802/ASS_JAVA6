@@ -38,7 +38,7 @@ public class SecurityConfig {
             "/giohang/**", "/thanhtoan/**", "/product/**",
             "/chitiet", "/cart/**",
             "/quenmk", "/datlaimk", "/checkotp", "/otpquenmk", "/datlaimk", "/datlaimatkhau", "/goilaiotp",
-            "/uploads/**", "/admin/products/**", "/admin/categoríe/**", "/admin/account/**", "/admin/bill/**",
+            "/uploads/**", "/admin/products/**", "/admin/categories/**", "/admin/account/**", "/admin/bill/**",
 
             "/css/**", "/js/**", "/img/**", "/bootstrap-5.3.3/dist/**", "/fonts/**", "/logout", "/doimk",
     };
@@ -46,7 +46,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-        .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(PUBLIC_ENDPOINTS).permitAll() // Các trang công khai
                         .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN") // Chỉ admin mới truy cập được trang
@@ -121,7 +121,6 @@ public class SecurityConfig {
                     .build();
         };
     }
-
     @Bean
     public AuthenticationFailureHandler customFailureHandler() {
         return (request, response, exception) -> {
@@ -130,7 +129,6 @@ public class SecurityConfig {
             String password = request.getParameter("password");
             Optional<Account> account = accountRepository.findByUsername(username);
             if (account.isEmpty()) {
-
                 response.sendRedirect("/Dangnhap?error=Tai khoan khong ton tai");
                 return;
             }
@@ -142,7 +140,6 @@ public class SecurityConfig {
                 response.sendRedirect("/Dangnhap?error=Mat khau khong chinh xac");
                 return;
             }
-
             response.sendRedirect("/Dangnhap?error=" + error);
         };
     }

@@ -82,6 +82,18 @@
         .action-buttons button:hover {
             transform: translateY(-2px);
         }
+
+        .pagination {
+            margin-bottom: 0;
+        }
+
+        .input-group {
+            max-width: 300px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
     </style>
 </head>
 
@@ -170,6 +182,18 @@
                         <h5 class="card-title">Danh sách hóa đơn</h5>
                     </div>
                     <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <form th:action="@{/admin/bill}" method="get" class="input-group">
+                                    <input type="text" class="form-control" name="search"
+                                        placeholder="Nhập mã hóa đơn..." th:value="${search}">
+                                    <button class="btn btn-primary" type="submit">
+                                        <i class="fas fa-search"></i> Tìm kiếm
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
                         <div class="table-container">
                             <table class="table" id="ordersTable">
                                 <thead>
@@ -189,15 +213,19 @@
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <div>
-                                                    <div class="fw-medium" th:text="${o.account.fullname}"></div>
-                                                    <div class="small text-muted" th:text="${o.account.email}">
+                                                    <div class="fw-medium"
+                                                        th:text="${o.account != null ? o.account.fullname : 'N/A'}">
                                                     </div>
+                                                    <div class="small text-muted"
+                                                        th:text="${o.account != null ? o.account.email : 'N/A'}"></div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td th:text="${o.address}"></td>
-                                        <td th:text="${#temporals.format(o.createDate, 'dd/MM/yyyy')}"></td>
-                                        <td th:text="${o.account.mobile}"></td>
+                                        <td th:text="${o.address != null ? o.address : 'N/A'}"></td>
+                                        <td
+                                            th:text="${o.createDate != null ? #temporals.format(o.createDate, 'dd/MM/yyyy') : 'N/A'}">
+                                        </td>
+                                        <td th:text="${o.account != null ? o.account.mobile : 'N/A'}"></td>
                                         <td>
                                             <span class="badge"
                                                 th:classappend="${o.status} ? 'badge-success' : 'badge-warning'"
@@ -211,11 +239,6 @@
                                                     th:data-order-id="${o.id}">
                                                     <i class="fa-solid fa-eye"></i>
                                                 </button>
-                                                <button type="button"
-                                                    class="btn btn-sm btn-outline-warning update-status-btn"
-                                                    th:data-order-id="${o.id}">
-                                                    <i class="fa-solid fa-exchange-alt"></i>
-                                                </button>
                                                 <button type="button" class="btn btn-sm btn-outline-danger delete-btn"
                                                     th:data-order-id="${o.id}">
                                                     <i class="fa-solid fa-trash"></i>
@@ -223,14 +246,51 @@
                                             </div>
                                         </td>
                                     </tr>
+                                    <tr th:unless="${orders} and ${#lists.size(orders) > 0}">
+                                        <td colspan="7" class="text-center">Không tìm thấy hóa đơn nào</td>
+                                    </tr>
                                 </tbody>
                             </table>
+
+                            <div th:if="${totalPages > 0}"
+                                class="d-flex justify-content-between align-items-center mt-3">
+                                <div>
+                                    Hiển thị <span th:text="${(currentPage - 1) * pageSize + 1}"></span> -
+                                    <span
+                                        th:text="${currentPage * pageSize > totalItems ? totalItems : currentPage * pageSize}"></span>
+                                    trong tổng số <span th:text="${totalItems}"></span> hóa đơn
+                                </div>
+                                <nav>
+                                    <ul class="pagination">
+                                        <li class="page-item" th:classappend="${currentPage == 1 ? 'disabled' : ''}">
+                                            <a class="page-link"
+                                                th:href="@{/admin/bill(page=${currentPage - 1}, size=${pageSize}, search=${search})}">
+                                                Trước
+                                            </a>
+                                        </li>
+                                        <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}"
+                                            th:classappend="${currentPage == i ? 'active' : ''}">
+                                            <a class="page-link"
+                                                th:href="@{/admin/bill(page=${i}, size=${pageSize}, search=${search})}"
+                                                th:text="${i}"></a>
+                                        </li>
+                                        <li class="page-item"
+                                            th:classappend="${currentPage == totalPages ? 'disabled' : ''}">
+                                            <a class="page-link"
+                                                th:href="@{/admin/bill(page=${currentPage + 1}, size=${pageSize}, search=${search})}">
+                                                Sau
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
     <div class="modal fade" id="orderDetailModal" tabindex="-1" aria-labelledby="orderDetailModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -343,11 +403,11 @@
             </div>
         </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Show notifications
             const successNotification = document.querySelector('.notification.success');
             const errorNotification = document.querySelector('.notification.error');
 
@@ -367,12 +427,10 @@
                 }, 5000);
             }
 
-            // Initialize modal
             const orderDetailModal = document.getElementById('orderDetailModal');
             const modal = new bootstrap.Modal(orderDetailModal);
             let currentOrderId = null;
 
-            // View order details
             document.querySelectorAll('.view-order-btn').forEach(button => {
                 button.addEventListener('click', function () {
                     const orderId = this.getAttribute('data-order-id');
@@ -381,15 +439,6 @@
                 });
             });
 
-            // Update order status from table
-            document.querySelectorAll('.update-status-btn').forEach(button => {
-                button.addEventListener('click', function () {
-                    const orderId = this.getAttribute('data-order-id');
-                    updateOrderStatus(orderId);
-                });
-            });
-
-            // Delete order from table
             document.querySelectorAll('.delete-btn').forEach(button => {
                 button.addEventListener('click', function () {
                     const orderId = this.getAttribute('data-order-id');
@@ -397,14 +446,12 @@
                 });
             });
 
-            // Update status button in modal
             document.getElementById('updateStatusBtn').addEventListener('click', function () {
                 if (currentOrderId) {
                     updateOrderStatus(currentOrderId);
                 }
             });
 
-            // Delete button in modal
             document.getElementById('deleteOrderBtn').addEventListener('click', function () {
                 if (currentOrderId) {
                     confirmDeleteOrder(currentOrderId);
@@ -412,21 +459,23 @@
             });
 
             function showOrderDetailModal(orderId) {
-                // Reset and show modal
                 document.getElementById('orderIdSpan').textContent = orderId;
                 document.getElementById('modalContent').style.display = 'none';
                 document.getElementById('modalLoadingSpinner').style.display = 'block';
                 modal.show();
-
-                // Fetch order details
                 fetchOrderDetails(orderId);
             }
 
             function fetchOrderDetails(orderId) {
-                fetch(`/admin/bill/detail/${orderId}`)
+                fetch(`/admin/bill/detail/${orderId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                })
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error('Network response was not ok');
+                            throw new Error('Network response was not ok: ' + response.statusText);
                         }
                         return response.json();
                     })
@@ -445,140 +494,90 @@
                     });
             }
 
-            // Sửa lại hàm displayOrderDetails để đảm bảo hiển thị đúng thông tin
             function displayOrderDetails(data) {
-                console.log('API response:', data); // Debug log
+                console.log('API response:', data);
 
                 const order = data.order;
                 const orderDetails = data.orderDetails || [];
-                const totalAmount = data.totalAmount;
+                const totalAmount = data.totalAmount || 0;
                 const discountAmount = data.discountAmount || 0;
-                const finalAmount = data.finalAmount;
+                const finalAmount = data.finalAmount || 0; 
 
-                console.log('Order details count:', orderDetails.length); // Debug log
-
-                // Hide loading spinner and show content
                 document.getElementById('modalLoadingSpinner').style.display = 'none';
                 document.getElementById('modalContent').style.display = 'block';
 
-                // Order information
                 document.getElementById('orderIdInfo').textContent = order.id;
-
                 const orderDate = new Date(order.createDate);
                 const formattedDate = orderDate.toLocaleDateString('vi-VN') + ' ' +
                     orderDate.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
                 document.getElementById('orderDateInfo').textContent = formattedDate;
 
-                // Status badge
                 const statusBadge = document.createElement('span');
                 statusBadge.className = 'badge ' + (order.status ? 'badge-success' : 'badge-warning');
                 statusBadge.textContent = order.status ? 'Đã thanh toán' : 'Chưa thanh toán';
                 document.getElementById('orderStatusInfo').innerHTML = '';
                 document.getElementById('orderStatusInfo').appendChild(statusBadge);
 
-                // Voucher information
-                if (order.voucher) {
-                    document.getElementById('orderVoucherInfo').style.display = 'flex';
-                    document.getElementById('voucherInfo').textContent =
-                        `${order.voucher.code} (${order.voucher.discountAmount}%)`;
+                const voucherInfoElement = document.getElementById('orderVoucherInfo');
+                const voucherTextElement = document.getElementById('voucherInfo');
+                if (order.voucher && order.voucher.code) {
+                    voucherInfoElement.style.display = 'block';
+                    // Hiển thị giá trị giảm giá bằng số tiền cố định
+                    voucherTextElement.textContent = `${order.voucher.code} (${formatCurrency(order.voucher.discountAmount)})`;
                 } else {
-                    document.getElementById('orderVoucherInfo').style.display = 'none';
+                    voucherInfoElement.style.display = 'none';
                 }
 
-                // Customer information
                 if (order.account) {
                     document.getElementById('customerNameInfo').textContent = order.account.fullname || 'N/A';
                     document.getElementById('customerEmailInfo').textContent = order.account.email || 'N/A';
                     document.getElementById('customerPhoneInfo').textContent = order.account.mobile || 'N/A';
+                } else {
+                    document.getElementById('customerNameInfo').textContent = 'N/A';
+                    document.getElementById('customerEmailInfo').textContent = 'N/A';
+                    document.getElementById('customerPhoneInfo').textContent = 'N/A';
                 }
                 document.getElementById('customerAddressInfo').textContent = order.address || 'N/A';
 
-                // Update status button text
                 document.getElementById('updateStatusBtnText').textContent =
                     order.status ? 'Đánh Dấu Chưa Thanh Toán' : 'Đánh Dấu Đã Thanh Toán';
 
-                // Order details table
                 const tableBody = document.getElementById('orderDetailsTable').querySelector('tbody');
                 tableBody.innerHTML = '';
 
-                if (orderDetails && orderDetails.length > 0) {
+                if (orderDetails.length > 0) {
                     orderDetails.forEach(item => {
-                        console.log('Processing item:', item); // Debug log
-
                         const row = document.createElement('tr');
-
-                        const idCell = document.createElement('td');
-                        idCell.textContent = item.id;
-                        row.appendChild(idCell);
-
-                        const productCell = document.createElement('td');
-                        const productInfo = document.createElement('div');
-                        productInfo.className = 'd-flex align-items-center gap-2';
-
-                        // Add product image if available
-                        if (item.product && item.product.image) {
-                            const img = document.createElement('img');
-                            img.src = item.product.image;
-                            img.alt = item.product.name;
-                            img.className = 'product-image';
-                            productInfo.appendChild(img);
-                        }
-
-                        const productDetails = document.createElement('div');
-
-                        const productName = document.createElement('div');
-                        productName.className = 'fw-medium';
-                        productName.textContent = item.product ? item.product.name : 'N/A';
-
-                        const categoryName = document.createElement('div');
-                        categoryName.className = 'small text-muted';
-                        categoryName.textContent = item.product && item.product.category ? item.product.category.name : 'N/A';
-
-                        productDetails.appendChild(productName);
-                        productDetails.appendChild(categoryName);
-                        productInfo.appendChild(productDetails);
-
-                        productCell.appendChild(productInfo);
-                        row.appendChild(productCell);
-
-                        // Ensure price is displayed correctly
-                        const priceCell = document.createElement('td');
-                        priceCell.textContent = formatCurrency(item.price || 0);
-                        row.appendChild(priceCell);
-
-                        // Ensure quantity is displayed correctly
-                        const quantityCell = document.createElement('td');
-                        quantityCell.textContent = item.quantity || 0;
-                        row.appendChild(quantityCell);
-
-                        // Calculate and display subtotal
-                        const subtotalCell = document.createElement('td');
-                        const subtotal = (item.price || 0) * (item.quantity || 0);
-                        subtotalCell.textContent = formatCurrency(subtotal);
-                        row.appendChild(subtotalCell);
-
+                        row.innerHTML = `
+                            <td>${item.id}</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    ${item.product && item.product.image ?
+                                `<img src="${item.product.image}" class="product-image">` : ''}
+                                    <div>
+                                        <div class="fw-medium">${item.product ? item.product.name : 'N/A'}</div>
+                                        <div class="small text-muted">${item.product && item.product.category ? item.product.category.name : 'N/A'}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>${formatCurrency(item.price || 0)}</td>
+                            <td>${item.quantity || 0}</td>
+                            <td>${formatCurrency((item.price || 0) * (item.quantity || 0))}</td>
+                        `;
                         tableBody.appendChild(row);
                     });
                 } else {
-                    const emptyRow = document.createElement('tr');
-                    const emptyCell = document.createElement('td');
-                    emptyCell.colSpan = 5;
-                    emptyCell.textContent = 'Không có sản phẩm nào trong đơn hàng';
-                    emptyCell.className = 'text-center py-4 text-muted';
-                    emptyRow.appendChild(emptyCell);
-                    tableBody.appendChild(emptyRow);
+                    tableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-muted">Không có sản phẩm nào trong đơn hàng</td></tr>';
                 }
 
-                // Order summary
                 document.getElementById('subtotalAmount').textContent = formatCurrency(totalAmount);
-
+                const discountRow = document.getElementById('discountRow');
                 if (discountAmount > 0) {
-                    document.getElementById('discountRow').style.display = 'flex';
+                    discountRow.style.display = 'flex';
                     document.getElementById('discountAmount').textContent = '- ' + formatCurrency(discountAmount);
                 } else {
-                    document.getElementById('discountRow').style.display = 'none';
+                    discountRow.style.display = 'none';
                 }
-
                 document.getElementById('finalAmount').textContent = formatCurrency(finalAmount);
             }
 
@@ -594,7 +593,6 @@
                     cancelButtonText: "Hủy"
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        // Show loading indicator
                         Swal.fire({
                             title: 'Đang xử lý...',
                             html: 'Vui lòng đợi trong giây lát',
@@ -603,8 +601,6 @@
                                 Swal.showLoading();
                             }
                         });
-
-                        // Send AJAX request to update status
                         fetch(`/admin/bill/update-status-ajax/${orderId}`, {
                             method: 'POST',
                             headers: {
@@ -614,25 +610,20 @@
                             .then(response => response.json())
                             .then(data => {
                                 if (data.success) {
-                                    // Update UI
                                     const statusBadge = document.getElementById(`status-badge-${orderId}`);
                                     if (statusBadge) {
                                         statusBadge.className = `badge ${data.status ? 'badge-success' : 'badge-warning'}`;
                                         statusBadge.textContent = data.status ? 'Đã thanh toán' : 'Chưa thanh toán';
                                     }
-
-                                    // If modal is open with this order, update modal UI too
                                     if (currentOrderId == orderId) {
                                         const modalStatusBadge = document.getElementById('orderStatusInfo').querySelector('.badge');
                                         if (modalStatusBadge) {
                                             modalStatusBadge.className = `badge ${data.status ? 'badge-success' : 'badge-warning'}`;
                                             modalStatusBadge.textContent = data.status ? 'Đã thanh toán' : 'Chưa thanh toán';
                                         }
-
                                         document.getElementById('updateStatusBtnText').textContent =
                                             data.status ? 'Đánh Dấu Chưa Thanh Toán' : 'Đánh Dấu Đã Thanh Toán';
                                     }
-
                                     Swal.fire({
                                         title: 'Thành công!',
                                         text: data.message,
@@ -673,7 +664,6 @@
                     cancelButtonText: "Hủy"
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        // Show loading indicator
                         Swal.fire({
                             title: 'Đang xử lý...',
                             html: 'Vui lòng đợi trong giây lát',
@@ -682,41 +672,29 @@
                                 Swal.showLoading();
                             }
                         });
-
-                        // Send AJAX request to delete order
-                        fetch(`/admin/bill/delete-ajax/${orderId}`, {
+                        fetch(`/admin/bill/delete/${orderId}`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
                             }
                         })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    // Remove row from table
+                            .then(response => {
+                                if (response.ok) {
                                     const orderRow = document.getElementById(`order-row-${orderId}`);
                                     if (orderRow) {
                                         orderRow.remove();
                                     }
-
-                                    // Close modal if open
                                     if (currentOrderId == orderId) {
                                         modal.hide();
                                     }
-
                                     Swal.fire({
                                         title: 'Thành công!',
-                                        text: data.message,
+                                        text: 'Xóa đơn hàng thành công!',
                                         icon: 'success',
                                         confirmButtonText: 'Đóng'
                                     });
                                 } else {
-                                    Swal.fire({
-                                        title: 'Lỗi!',
-                                        text: data.message,
-                                        icon: 'error',
-                                        confirmButtonText: 'Đóng'
-                                    });
+                                    throw new Error('Failed to delete order');
                                 }
                             })
                             .catch(error => {

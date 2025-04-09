@@ -24,6 +24,6 @@ public interface CartService {
     Order createOrderFromCart(Account account, String address);
     Order getOrderById(Long orderId);
     List<Order> getOrdersByUsername(String username);
-
+    void updateOrderStatus(Long orderId, boolean isPaid);
 }
     
