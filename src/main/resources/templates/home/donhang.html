@@ -45,7 +45,7 @@
                                     (${summary.status == 'FAILED'} ? 'status-badge status-failed' : 
                                     (${summary.status == 'SHIPPING'} ? 'status-badge status-shipping' : 'status-badge status-pending'))"
                       th:text="${summary.status == 'SUCCESS'} ? 'Đã giao hàng' : 
-                                  (${summary.status == 'FAILED'} ? 'Thất bại' : 
+                                  (${summary.status == 'FAILED'} ? 'Đã hủy' : 
                                   (${summary.status == 'SHIPPING'} ? 'Đang giao hàng' : 'Chờ xử lý'))">
                     </span>
                   </td>

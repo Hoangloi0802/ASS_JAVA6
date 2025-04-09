@@ -86,13 +86,18 @@
             <li>
               <hr class="dropdown-divider my-1">
             </li>
+
+            <!-- Chỉ hiển thị "Đơn hàng của bạn" nếu KHÔNG phải admin -->
+            <th:block sec:authorize="!hasAuthority('ROLE_ADMIN')">
+              <li>
+                <a class="dropdown-item" href="/donhang">
+                  <i class="bi bi-cart-check me-1"></i> Đơn hàng của bạn
+                </a>
+              </li>
+            </th:block>
+
             <li>
-              <a class="dropdown-item" href="/donhang">
-                <i class="bi bi-cart-check me-1"></i> Đơn hàng của bạn
-              </a>
-            </li>
-            <li>
-              <a class="dropdown-item" href="/doimk">
+              <a class="dropdown-item" href="/datlaimk">
                 <i class="bi bi-lock me-1"></i> Đổi mật khẩu
               </a>
             </li>

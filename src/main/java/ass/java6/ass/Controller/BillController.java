@@ -1,12 +1,14 @@
 package ass.java6.ass.Controller;
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,24 +36,18 @@ public class BillController {
     @Autowired
     OrderDetailRepository orderDetailRepository;
 
-  
-
     @GetMapping("/admin/bill")
-public String getBill(Model model) {
-    try {
-        List<Order> orders = orderRepository.findAll()
-                .stream()
-                .filter(order -> !"CART".equals(order.getStatus())) // Chỉ lọc bỏ CART
-                .collect(Collectors.toList());
-        System.out.println("Total orders after filtering: " + orders.size());
-        orders.forEach(order -> System.out.println("Order ID: " + order.getId() + ", Status: " + order.getStatus()));
-        model.addAttribute("orders", orders);
-    } catch (Exception e) {
-        System.out.println("Lỗi khi lấy danh sách đơn hàng: " + e.getMessage());
-        e.printStackTrace();
+    public String getBill(Model model) {
+        try {
+            List<Order> orders = orderRepository.findAll();
+            model.addAttribute("orders", orders);
+        } catch (Exception e) {
+            System.out.println("Lỗi khi lấy danh sách đơn hàng: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return "admin/billManage";
     }
-    return "admin/billManage";
-}
+
     @GetMapping("/admin/bill/detail/{id}")
     @ResponseBody
     @Transactional
@@ -62,20 +58,16 @@ public String getBill(Model model) {
                 return ResponseEntity.notFound().build();
             }
 
-            // Lấy chi tiết đơn hàng trực tiếp từ repository
             List<OrderDetail> orderDetails = orderDetailRepository.findByOrderId(id);
-
-            // Tạo response map để tránh circular references
             Map<String, Object> response = new HashMap<>();
 
-            // Thông tin cơ bản của order
             Map<String, Object> orderMap = new HashMap<>();
             orderMap.put("id", order.getId());
             orderMap.put("address", order.getAddress());
-            orderMap.put("status", order.getStatus()); // Sử dụng status kiểu String
+            orderMap.put("status", order.getStatus()); // Giữ nguyên status dạng String
+            orderMap.put("statusDisplay", order.getStatusDisplayName()); // Thêm tên hiển thị
             orderMap.put("createDate", order.getCreateDate());
 
-            // Thông tin account
             if (order.getAccount() != null) {
                 Map<String, Object> accountMap = new HashMap<>();
                 accountMap.put("username", order.getAccount().getUsername());
@@ -85,7 +77,6 @@ public String getBill(Model model) {
                 orderMap.put("account", accountMap);
             }
 
-            // Thông tin voucher
             if (order.getVoucher() != null) {
                 Map<String, Object> voucherMap = new HashMap<>();
                 voucherMap.put("id", order.getVoucher().getId());
@@ -94,7 +85,6 @@ public String getBill(Model model) {
                 orderMap.put("voucher", voucherMap);
             }
 
-            // Tạo danh sách chi tiết đơn hàng đã được đơn giản hóa
             List<Map<String, Object>> orderDetailsList = new ArrayList<>();
             double totalAmount = 0;
 
@@ -104,7 +94,6 @@ public String getBill(Model model) {
                 detailMap.put("price", detail.getPrice());
                 detailMap.put("quantity", detail.getQuantity());
 
-                // Thông tin sản phẩm
                 if (detail.getProduct() != null) {
                     Map<String, Object> productMap = new HashMap<>();
                     Product product = detail.getProduct();
@@ -112,7 +101,6 @@ public String getBill(Model model) {
                     productMap.put("name", product.getName());
                     productMap.put("image", product.getImage());
 
-                    // Thông tin danh mục
                     if (product.getCategory() != null) {
                         Map<String, Object> categoryMap = new HashMap<>();
                         Category category = product.getCategory();
@@ -120,35 +108,30 @@ public String getBill(Model model) {
                         categoryMap.put("name", category.getName());
                         productMap.put("category", categoryMap);
                     }
-
                     detailMap.put("product", productMap);
                 }
 
                 orderDetailsList.add(detailMap);
-
-                // Tính tổng tiền
                 if (detail.getPrice() != null && detail.getQuantity() != null) {
                     totalAmount += detail.getPrice() * detail.getQuantity();
                 }
             }
 
-            // Thêm vào response
             response.put("order", orderMap);
             response.put("orderDetails", orderDetailsList);
             response.put("totalAmount", totalAmount);
 
-            // Tính giảm giá nếu có voucher
             double discountAmount = 0;
             if (order.getVoucher() != null) {
-                discountAmount = totalAmount * order.getVoucher().getDiscountAmount() / 100;
+                discountAmount = order.getVoucher().getDiscountAmount();
+                if (discountAmount > totalAmount) {
+                    discountAmount = totalAmount;
+                }
                 response.put("discountAmount", discountAmount);
             }
-
-            // Tính tổng thanh toán
             response.put("finalAmount", totalAmount - discountAmount);
 
             System.out.println("Order details count: " + orderDetails.size());
-
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             e.printStackTrace();
@@ -168,12 +151,17 @@ public String getBill(Model model) {
                 return "redirect:/admin/bill";
             }
 
-            // Cập nhật trạng thái đơn hàng
+            // Kiểm tra trạng thái hợp lệ
+            if (!Order.isValidStatus(newStatus)) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Trạng thái không hợp lệ: " + newStatus);
+                return "redirect:/admin/bill";
+            }
+
             order.setStatus(newStatus);
             orderRepository.save(order);
 
             redirectAttributes.addFlashAttribute("successMessage",
-                    "Cập nhật trạng thái đơn hàng thành " + newStatus + " thành công!");
+                    "Cập nhật trạng thái đơn hàng thành " + order.getStatusDisplayName() + " thành công!");
             return "redirect:/admin/bill";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage",
@@ -197,13 +185,21 @@ public String getBill(Model model) {
                 return ResponseEntity.badRequest().body(response);
             }
 
-            // Cập nhật trạng thái đơn hàng
+            // Kiểm tra trạng thái hợp lệ
+            if (!Order.isValidStatus(newStatus)) {
+                response.put("success", false);
+                response.put("message", "Trạng thái không hợp lệ: " + newStatus);
+                return ResponseEntity.badRequest().body(response);
+            }
+
             order.setStatus(newStatus);
             orderRepository.save(order);
 
             response.put("success", true);
             response.put("status", order.getStatus());
-            response.put("message", "Cập nhật trạng thái đơn hàng thành " + newStatus + " thành công!");
+            response.put("statusDisplay", order.getStatusDisplayName());
+            response.put("message",
+                    "Cập nhật trạng thái đơn hàng thành " + order.getStatusDisplayName() + " thành công!");
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -222,7 +218,7 @@ public String getBill(Model model) {
                 redirectAttributes.addFlashAttribute("errorMessage", "Đơn hàng không tồn tại!");
                 return "redirect:/admin/bill";
             }
-            if ("CART".equals(order.getStatus())) {
+            if (Order.STATUS_CART.equals(order.getStatus())) {
                 redirectAttributes.addFlashAttribute("errorMessage", "Không thể xóa giỏ hàng tạm thời!");
                 return "redirect:/admin/bill";
             }
@@ -239,8 +235,4 @@ public String getBill(Model model) {
         }
         return "redirect:/admin/bill";
     }
-
 }
-    
-
-

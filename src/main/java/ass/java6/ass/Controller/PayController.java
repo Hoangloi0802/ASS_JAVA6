@@ -4,7 +4,6 @@ import ass.java6.ass.Config.VNPayConfig;
 import ass.java6.ass.Entity.Account;
 import ass.java6.ass.Entity.Order;
 import ass.java6.ass.Entity.OrderDetail;
-import ass.java6.ass.Repository.OrderRepository;
 import ass.java6.ass.Service.AccoutService;
 import ass.java6.ass.Service.CartService;
 import ass.java6.ass.Service.VNPayService;
@@ -14,13 +13,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -28,7 +26,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -54,8 +51,6 @@ public class PayController {
     @Autowired
     private MomoService momoService;
 
-    @Autowired
-    private OrderRepository orderRepository;
     @GetMapping("/thanhtoan")
     public String thanhtoan(Model model) {
         Account account = getAuthenticatedAccount();
@@ -91,42 +86,40 @@ public class PayController {
         if (account == null) {
             return "redirect:/dangnhap";
         }
-
+    
         try {
-            Order tempOrder = cartService.createTemporaryOrder(account, address);
-            List<OrderDetail> orderDetails = tempOrder.getOrderDetails();
-
+            // Tạo đơn hàng tạm thời
+            Order order = cartService.createTemporaryOrder(account, address);
+            List<OrderDetail> orderDetails = order.getOrderDetails();
+    
             // Tính toán tổng tiền
             double subtotal = orderDetails.stream()
                     .mapToDouble(detail -> detail.getPrice() * detail.getQuantity())
                     .sum();
-            double discount = (tempOrder.getVoucher() != null) ? tempOrder.getVoucher().getDiscountAmount() : 0.0;
-            double shippingFee = 50000; // Phí vận chuyển cố định
+            double discount = (order.getVoucher() != null) ? order.getVoucher().getDiscountAmount() : 0.0;
+            double shippingFee = 50000;
             double totalAmount = Math.max(subtotal - discount + shippingFee, 0);
             long amount = (long) totalAmount;
-
-            if (amount < 5000) {
-                redirectAttributes.addFlashAttribute("error", "Số tiền phải lớn hơn 5,000 VND");
+    
+            if (amount < 5000 || amount >= 1_000_000_000) {
+                redirectAttributes.addFlashAttribute("error", "Số tiền không hợp lệ!");
                 return "redirect:/thanhtoan";
             }
-            if (amount >= 1_000_000_000) {
-                redirectAttributes.addFlashAttribute("error", "Số tiền phải nhỏ hơn 1 tỷ VND");
-                return "redirect:/thanhtoan";
-            }
-
-            cartService.saveOrder(tempOrder); // Lưu tempOrder để có ID
-            request.getSession().setAttribute("tempOrder", tempOrder);
+    
+            // Lưu đơn hàng tạm thời
+            cartService.saveOrder(order);
+            request.getSession().setAttribute("tempOrder", order);
             request.getSession().setAttribute("account", account);
             request.getSession().setAttribute("totalAmount", totalAmount);
-
+    
             if ("vnpay".equalsIgnoreCase(paymentMethod)) {
-                model.addAttribute("orderId", "ORDER_" + tempOrder.getId());
+                model.addAttribute("orderId", "ORDER_" + order.getId());
                 model.addAttribute("subtotal", subtotal);
                 model.addAttribute("discount", discount);
                 model.addAttribute("shippingFee", shippingFee);
                 model.addAttribute("totalAmount", totalAmount);
-                model.addAttribute("amount", amount); // Để gửi qua form
-                return "pay"; // Chuyển đến trang xác nhận VNPay
+                model.addAttribute("amount", amount);
+                return "pay";
             } else if ("momo".equalsIgnoreCase(paymentMethod)) {
                 PaymentResponse response = momoService.createPaymentRequest(String.valueOf(amount));
                 if (response.getResultCode() == 0) {
@@ -136,8 +129,10 @@ public class PayController {
                     return "redirect:/thanhtoan";
                 }
             } else {
-                Order order = cartService.createOrderFromCart(account, address);
+                // Thanh toán thường: Cập nhật trạng thái thay vì tạo mới
+                order.setStatus("SHIPPING"); // Hoặc trạng thái phù hợp
                 cartService.saveOrder(order);
+                cartService.clearCart(account); // Xóa giỏ hàng sau khi đặt hàng thành công
                 return "redirect:/thanhtoan/thanhcong?orderId=" + order.getId();
             }
         } catch (Exception e) {
@@ -215,36 +210,32 @@ public class PayController {
 
     @GetMapping("/donhang")
     public String listOrders(Model model, @RequestParam(defaultValue = "0") int page) {
-        // Lấy thông tin người dùng hiện tại
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
-    
-        // Thiết lập phân trang: 10 đơn hàng mỗi trang
+
         int pageSize = 10;
         Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "createDate"));
-        
-        // Lấy danh sách đơn hàng, loại trừ trạng thái "PENDING"
+
+        // Sử dụng phương thức đã cập nhật, sẽ tự động loại trừ PENDING và CART
         Page<Order> orderPage = cartService.getOrdersByUsernamePaginated(username, pageable);
-    
-        // Tính tổng tiền của tất cả đơn hàng (không phụ thuộc phân trang)
+
         double grandTotal = cartService.getOrdersByUsername(username).stream()
+                .filter(order -> !List.of(Order.STATUS_PENDING, Order.STATUS_CART).contains(order.getStatus()))
                 .mapToDouble(order -> cartService.calculateOrderTotal(order))
                 .sum();
-    
-        // Tạo Map để lưu tổng tiền cho từng đơn hàng
+
         Map<Long, Double> totalMap = new HashMap<>();
         for (Order order : orderPage.getContent()) {
             totalMap.put(order.getId(), cartService.calculateOrderTotal(order));
         }
-    
-        // Thêm dữ liệu vào model
+
         model.addAttribute("orders", orderPage.getContent());
         model.addAttribute("grandTotal", grandTotal);
         model.addAttribute("totalMap", totalMap);
         model.addAttribute("currentPage", orderPage.getNumber());
         model.addAttribute("totalPages", orderPage.getTotalPages());
         model.addAttribute("pageSize", pageSize);
-    
+
         return "home/donhang";
     }
 
@@ -321,6 +312,7 @@ public class PayController {
             return "redirect:/thanhtoan/thanhcong?orderId=" + tempOrder.getId();
         }
     }
+
     @GetMapping("/thanhtoan/momo/return")
     public String handleMoMoReturn(HttpServletRequest request, RedirectAttributes redirectAttributes) {
         String resultCode = request.getParameter("resultCode");
@@ -386,6 +378,41 @@ public class PayController {
     @PostMapping("/chitietdonhang/{id}/confirm-received")
     public String confirmReceived(@PathVariable("id") Long id) {
         cartService.confirmOrderReceived(id);
+        return "redirect:/chitietdonhang/" + id;
+    }
+
+    @PostMapping("/chitietdonhang/{id}/cancel")
+    public String cancelOrder(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+        Account account = getAuthenticatedAccount();
+        if (account == null) {
+            redirectAttributes.addFlashAttribute("error", "Vui lòng đăng nhập để thực hiện hành động này!");
+            return "redirect:/dangnhap";
+        }
+
+        Order order = cartService.getOrderById(id);
+        if (order == null) {
+            redirectAttributes.addFlashAttribute("error", "Không tìm thấy đơn hàng!");
+            return "redirect:/donhang";
+        }
+
+        // Kiểm tra quyền truy cập: Chỉ người sở hữu đơn hàng mới được hủy
+        if (!order.getAccount().getUsername().equals(account.getUsername())) {
+            redirectAttributes.addFlashAttribute("error", "Bạn không có quyền hủy đơn hàng này!");
+            return "redirect:/donhang";
+        }
+
+        // Kiểm tra trạng thái đơn hàng: Chỉ cho phép hủy nếu trạng thái là PENDING hoặc
+        // SHIPPING
+        if (!order.getStatus().equals(Order.STATUS_PENDING) && !order.getStatus().equals(Order.STATUS_SHIPPING)) {
+            redirectAttributes.addFlashAttribute("error", "Đơn hàng không thể hủy ở trạng thái hiện tại!");
+            return "redirect:/chitietdonhang/" + id;
+        }
+
+        // Cập nhật trạng thái thành FAILED
+        order.setStatus(Order.STATUS_FAILED);
+        cartService.saveOrder(order);
+
+        redirectAttributes.addFlashAttribute("message", "Đơn hàng đã được hủy thành công!");
         return "redirect:/chitietdonhang/" + id;
     }
 

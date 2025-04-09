@@ -6,8 +6,10 @@ import ass.java6.ass.Service.CategoryService;
 import ass.java6.ass.Service.FileUploadService;
 import ass.java6.ass.Service.ProductImageService;
 import ass.java6.ass.Service.ProductService;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,7 +17,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import jakarta.validation.Valid;
 import java.util.Date;
 import java.util.List;
@@ -38,10 +39,18 @@ public class ProductController {
     private FileUploadService fileUploadService;
 
     @GetMapping
-    public String listProducts(Model model) {
-        List<Product> products = productService.findAll();
-        System.out.println("listProducts: Hiển thị danh sách sản phẩm, số lượng: " + products.size());
-        model.addAttribute("products", products);
+    public String listProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(required = false) String keyword,
+            Model model) {
+        Pageable pageable = PageRequest.of(page, 10);
+        Page<Product> productPage = productService.searchProducts(keyword, pageable);
+
+        model.addAttribute("products", productPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", productPage.getTotalPages());
+        model.addAttribute("totalItems", productPage.getTotalElements());
+        model.addAttribute("keyword", keyword);
         model.addAttribute("product", new Product());
         model.addAttribute("categories", categoryService.findAll());
         return "admin/productManage";

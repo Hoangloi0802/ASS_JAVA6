@@ -312,6 +312,7 @@ public class CartServiceImpl implements CartService {
     }
 
     public Page<Order> getOrdersByUsernamePaginated(String username, Pageable pageable) {
-        return orderRepository.findByAccountUsernameAndStatusNot(username, "PENDING", pageable);
+        List<String> excludedStatuses = List.of(Order.STATUS_PENDING, Order.STATUS_CART);
+        return orderRepository.findByAccountUsernameAndStatusNotIn(username, excludedStatuses, pageable);
     }
 }
