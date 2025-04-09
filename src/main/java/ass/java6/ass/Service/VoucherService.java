@@ -1,11 +1,9 @@
 package ass.java6.ass.Service;
 
+import ass.java6.ass.Entity.Voucher;
+
 import java.util.List;
 import java.util.Optional;
-
-import ass.java6.ass.Entity.Account;
-import ass.java6.ass.Entity.Order;
-import ass.java6.ass.Entity.Voucher;
 
 public interface VoucherService {
     List<Voucher> findAll();
@@ -19,9 +17,14 @@ public interface VoucherService {
     Voucher findByCode(String code);
 
     List<Voucher> findByCategory(String categoryId);
-    List<Voucher> getValidVouchers(double totalOrderValue);
+
     List<Voucher> findActiveVouchers();
+
     List<Voucher> findByTrangThaiTrue();
+
+    List<Voucher> getValidVouchers(double totalOrderValue);
+
+    void updateExpiredVouchers();
+
     List<Voucher> findValidVouchersForCategory(String categoryId, Double orderAmount);
-   
 }

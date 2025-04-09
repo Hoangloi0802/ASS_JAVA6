@@ -1,7 +1,10 @@
 package ass.java6.ass.Repository;
 
 import ass.java6.ass.Entity.OrderDetail;
+import jakarta.transaction.Transactional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -38,4 +41,9 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> 
 
         @Query("SELECT od FROM OrderDetail od JOIN FETCH od.product p JOIN FETCH p.category WHERE od.order.id = ?1")
         List<OrderDetail> findByOrderId(Long orderId);
+
+        @Modifying
+        @Transactional
+        @Query("DELETE FROM OrderDetail od WHERE od.order.id = :orderId")
+        void deleteByOrderId(@Param("orderId") Long orderId);
 }
