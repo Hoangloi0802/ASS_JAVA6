@@ -115,6 +115,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                         "GROUP BY c.name " +
                         "ORDER BY SUM(od.quantity) DESC")
         List<Object[]> getProductQuantityByCategoryNoTimeFilter();
+        Page<Order> findByAccountUsernameAndStatusNotIn(String username, List<String> statuses, Pageable pageable);
+
 
         Optional<Order> findByAccountAndStatus(Account account, String status);
         Page<Order> findByAccountUsername(String username, Pageable pageable);

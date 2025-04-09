@@ -14,6 +14,7 @@ import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -283,15 +284,14 @@ public class CartServiceImpl implements CartService {
         }
     }
 
-
     @Override
     public double calculateSubtotal(Order order) {
         if (order == null || order.getOrderDetails() == null || order.getOrderDetails().isEmpty()) {
             return 0.0;
         }
         return order.getOrderDetails().stream()
-                .mapToDouble(item -> (item.getPrice() != null ? item.getPrice() : 0) * 
-                                    (item.getQuantity() != null ? item.getQuantity() : 0))
+                .mapToDouble(item -> (item.getPrice() != null ? item.getPrice() : 0) *
+                        (item.getQuantity() != null ? item.getQuantity() : 0))
                 .sum();
     }
 
@@ -310,7 +310,9 @@ public class CartServiceImpl implements CartService {
         double SHIPPING_FEE = 50000; // Phí vận chuyển cố định
         return Math.max(subtotal - discount + SHIPPING_FEE, 0);
     }
+
     public Page<Order> getOrdersByUsernamePaginated(String username, Pageable pageable) {
-        return orderRepository.findByAccountUsername(username, pageable);
+        List<String> excludedStatuses = List.of(Order.STATUS_PENDING, Order.STATUS_CART);
+        return orderRepository.findByAccountUsernameAndStatusNotIn(username, excludedStatuses, pageable);
     }
 }

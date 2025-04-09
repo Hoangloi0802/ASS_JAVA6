@@ -47,10 +47,16 @@ public class SecurityConfig {
         http
         .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(PUBLIC_ENDPOINTS).permitAll() // Các trang công khai
-                .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN") // Chỉ admin mới truy cập được trang admin
-                .requestMatchers("/**").hasAuthority("ROLE_ADMIN") // Admin có quyền truy cập tất cả trang
-                .anyRequest().denyAll() // User bị chặn nếu cố truy cập trang khác
+                  // Các endpoint công khai không cần đăng nhập
+                  .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
+                  // Các endpoint chỉ dành cho ROLE_ADMIN
+                  .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                  // Các endpoint dành cho ROLE_USER (bao gồm thanh toán VNPay)
+                  .requestMatchers("/vnpay/**", "/api/vnpay/**", "/thanhtoan/**", "/chitietdonhang/**").hasAuthority("ROLE_USER")
+                  // Cho phép ROLE_ADMIN truy cập mọi thứ
+                  .requestMatchers("/**").hasAuthority("ROLE_ADMIN")
+                  // Các yêu cầu khác cần xác thực (ROLE_USER hoặc ROLE_ADMIN)
+                  .anyRequest().authenticated() // Thay denyAll() bằng authenticated()
             )
             .formLogin(form -> form
                 .loginPage("/Dangnhap")
