@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,46 +29,21 @@ import ass.java6.ass.Repository.OrderDetailRepository;
 
 @Controller
 public class BillController {
+
     @Autowired
     OrderRepository orderRepository;
+
     @Autowired
     OrderDetailRepository orderDetailRepository;
 
     @GetMapping("/admin/bill")
-    public String getBill(Model model,
-            @RequestParam("page") Optional<Integer> page,
-            @RequestParam("size") Optional<Integer> size,
-            @RequestParam("search") Optional<String> search) {
+    public String getBill(Model model) {
         try {
-            int currentPage = page.orElse(1);
-            int pageSize = size.orElse(10); // 10 orders per page
-            Pageable pageable = PageRequest.of(currentPage - 1, pageSize);
-            Page<Order> orderPage;
-
-            if (search.isPresent() && !search.get().isEmpty()) {
-                try {
-                    Long orderId = Long.parseLong(search.get());
-                    orderPage = orderRepository.findByIdContaining(orderId, pageable);
-                    model.addAttribute("search", search.get());
-                } catch (NumberFormatException e) {
-                    model.addAttribute("errorMessage", "Mã hóa đơn phải là số!");
-                    orderPage = Page.empty();
-                }
-            } else {
-                orderPage = orderRepository.findAll(pageable);
-            }
-
-            model.addAttribute("orders", orderPage.getContent());
-            model.addAttribute("currentPage", orderPage.getNumber() + 1);
-            model.addAttribute("totalPages", orderPage.getTotalPages());
-            model.addAttribute("totalItems", orderPage.getTotalElements());
-            model.addAttribute("pageSize", pageSize);
-
+            List<Order> orders = orderRepository.findAll();
+            model.addAttribute("orders", orders);
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy danh sách đơn hàng: " + e.getMessage());
             e.printStackTrace();
-            model.addAttribute("orders", new ArrayList<>());
-            model.addAttribute("errorMessage", "Lỗi khi tải dữ liệu!");
         }
         return "admin/billManage";
     }
@@ -90,7 +64,7 @@ public class BillController {
             Map<String, Object> orderMap = new HashMap<>();
             orderMap.put("id", order.getId());
             orderMap.put("address", order.getAddress());
-            orderMap.put("status", order.isStatus());
+            orderMap.put("status", order.getStatus()); // Sử dụng status kiểu String
             orderMap.put("createDate", order.getCreateDate());
 
             if (order.getAccount() != null) {
@@ -167,18 +141,21 @@ public class BillController {
     }
 
     @PostMapping("/admin/bill/update-status/{id}")
-    public String updateOrderStatus(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+    public String updateOrderStatus(
+            @PathVariable("id") Long id,
+            @RequestParam("status") String newStatus,
+            RedirectAttributes redirectAttributes) {
         try {
             Order order = orderRepository.findById(id).orElse(null);
             if (order == null) {
                 redirectAttributes.addFlashAttribute("errorMessage", "Đơn hàng không tồn tại!");
                 return "redirect:/admin/bill";
             }
-            order.setStatus(!order.isStatus());
+            order.setStatus(newStatus);
             orderRepository.save(order);
+
             redirectAttributes.addFlashAttribute("successMessage",
-                    "Cập nhật trạng thái đơn hàng thành " + (order.isStatus() ? "Đã thanh toán" : "Chưa thanh toán")
-                            + " thành công!");
+                    "Cập nhật trạng thái đơn hàng thành " + newStatus + " thành công!");
             return "redirect:/admin/bill";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage",
@@ -190,7 +167,9 @@ public class BillController {
 
     @PostMapping("/admin/bill/update-status-ajax/{id}")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> updateOrderStatusAjax(@PathVariable("id") Long id) {
+    public ResponseEntity<Map<String, Object>> updateOrderStatusAjax(
+            @PathVariable("id") Long id,
+            @RequestParam("status") String newStatus) {
         Map<String, Object> response = new HashMap<>();
         try {
             Order order = orderRepository.findById(id).orElse(null);
@@ -200,13 +179,14 @@ public class BillController {
                 return ResponseEntity.badRequest().body(response);
             }
 
-            order.setStatus(!order.isStatus());
+            // Cập nhật trạng thái đơn hàng
+            order.setStatus(newStatus);
             orderRepository.save(order);
 
             response.put("success", true);
-            response.put("status", order.isStatus());
-            response.put("message", "Cập nhật trạng thái đơn hàng thành " +
-                    (order.isStatus() ? "Đã thanh toán" : "Chưa thanh toán") + " thành công!");
+            response.put("status", order.getStatus());
+            response.put("message", "Cập nhật trạng thái đơn hàng thành " + newStatus + " thành công!");
+
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             response.put("success", false);
@@ -224,6 +204,10 @@ public class BillController {
                 redirectAttributes.addFlashAttribute("errorMessage", "Đơn hàng không tồn tại!");
                 return "redirect:/admin/bill";
             }
+            if ("CART".equals(order.getStatus())) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Không thể xóa giỏ hàng tạm thời!");
+                return "redirect:/admin/bill";
+            }
             if (order.getOrderDetails() != null && !order.getOrderDetails().isEmpty()) {
                 redirectAttributes.addFlashAttribute("errorMessage",
                         "Không thể xóa đơn hàng vì có sản phẩm liên quan!");
@@ -237,4 +221,7 @@ public class BillController {
         }
         return "redirect:/admin/bill";
     }
+
+    
+    
 }

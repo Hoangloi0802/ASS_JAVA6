@@ -20,7 +20,7 @@ public class MomoService {
     private static final String SECRET_KEY = "K951B6PE1waDMi640xX08PD3vg6EkVlz";
     private static final String REDIRECT_URL = "http://localhost:8080/thanhtoan/momo/return";
     private static final String IPN_URL = "http://localhost:8080/thanhtoan/momo/ipn";
-    private static final String REQUEST_TYPE = "captureWallet";
+    private static final String REQUEST_TYPE = "payWithATM"; // Thay đổi từ "captureWallet" sang "payWithATM"
 
     public static class PaymentResponse {
         private String payUrl;
@@ -45,14 +45,14 @@ public class MomoService {
         try {
             String requestId = PARTNER_CODE + System.currentTimeMillis();
             String orderId = requestId;
-            String orderInfo = "Thanh toán đơn hàng";
+            String orderInfo = "Thanh toán đơn hàng qua ngân hàng nội địa";
             String extraData = "";
 
             String rawSignature = String.format(
                     "accessKey=%s&amount=%s&extraData=%s&ipnUrl=%s&orderId=%s&orderInfo=%s&partnerCode=%s&redirectUrl=%s&requestId=%s&requestType=%s",
                     ACCESS_KEY, amount, extraData, IPN_URL, orderId, orderInfo, PARTNER_CODE, REDIRECT_URL,
                     requestId, REQUEST_TYPE);
-            String signature = signHmacSHA256(rawSignature, SECRET_KEY);
+            String signature = signHmacSHA256(rawSignature);
 
             JSONObject requestBody = new JSONObject();
             requestBody.put("partnerCode", PARTNER_CODE);
@@ -83,12 +83,19 @@ public class MomoService {
                 }
 
                 JSONObject jsonResponse = new JSONObject(result.toString());
-                String payUrl = jsonResponse.getString("payUrl");
-                String qrCodeUrl = jsonResponse.getString("qrCodeUrl");
                 int resultCode = jsonResponse.getInt("resultCode");
-                String message = jsonResponse.getString("message");
+                String message = jsonResponse.optString("message", "No message");
 
-                return new PaymentResponse(payUrl, qrCodeUrl, resultCode, message);
+                if (resultCode == 0) {
+                    String payUrl = jsonResponse.getString("payUrl");
+                    String qrCodeUrl = jsonResponse.optString("qrCodeUrl", null);
+                    if (qrCodeUrl == null || qrCodeUrl.isEmpty()) {
+                        qrCodeUrl = "https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=" + payUrl;
+                    }
+                    return new PaymentResponse(payUrl, qrCodeUrl, resultCode, message);
+                } else {
+                    return new PaymentResponse(null, null, resultCode, "Lỗi MoMo: " + message);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -96,9 +103,9 @@ public class MomoService {
         }
     }
 
-    private static String signHmacSHA256(String data, String key) throws Exception {
+    public String signHmacSHA256(String data) throws Exception {
         Mac hmacSHA256 = Mac.getInstance("HmacSHA256");
-        SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+        SecretKeySpec secretKey = new SecretKeySpec(SECRET_KEY.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
         hmacSHA256.init(secretKey);
         byte[] hash = hmacSHA256.doFinal(data.getBytes(StandardCharsets.UTF_8));
         StringBuilder hexString = new StringBuilder();

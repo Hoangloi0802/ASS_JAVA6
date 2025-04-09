@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,86 +12,74 @@
     <link rel="icon" href="/photo/bill.png" type="image/png">
     <link rel="stylesheet" href="/css/bill.css">
     <style>
-        .loading-spinner {
-            display: inline-block;
-            width: 1.5rem;
-            height: 1.5rem;
-            border: 3px solid rgba(0, 0, 0, 0.1);
-            border-radius: 50%;
-            border-top-color: #3b82f6;
-            animation: spin 1s ease-in-out infinite;
-        }
+    .loading-spinner {
+        display: inline-block;
+        width: 1.5rem;
+        height: 1.5rem;
+        border: 3px solid rgba(0, 0, 0, 0.1);
+        border-radius: 50%;
+        border-top-color: #3b82f6;
+        animation: spin 1s ease-in-out infinite;
+    }
 
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
         }
+    }
 
-        .order-summary {
-            background-color: #f8fafc;
-            border-radius: 0.5rem;
-            padding: 1rem;
-            margin-top: 1rem;
-        }
+    .order-summary {
+        background-color: #f8fafc;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-top: 1rem;
+    }
 
-        .order-summary-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.5rem 0;
-            border-bottom: 1px dashed #e2e8f0;
-        }
+    .order-summary-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px dashed #e2e8f0;
+    }
 
-        .order-summary-item:last-child {
-            border-bottom: none;
-            font-weight: bold;
-        }
+    .order-summary-item:last-child {
+        border-bottom: none;
+        font-weight: bold;
+    }
 
-        .badge-success {
-            background-color: #10b981;
-            color: white;
-        }
+    .badge-success {
+        background-color: #10b981;
+        color: white;
+    }
 
-        .badge-warning {
-            background-color: #f59e0b;
-            color: white;
-        }
+    .badge-warning {
+        background-color: #f59e0b;
+        color: white;
+    }
 
-        .modal-table th,
-        .modal-table td {
-            vertical-align: middle;
-        }
+    .modal-table th,
+    .modal-table td {
+        vertical-align: middle;
+    }
 
-        .product-image {
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
-            border-radius: 4px;
-        }
+    .product-image {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 4px;
+    }
 
-        .action-buttons {
-            display: flex;
-            gap: 0.5rem;
-        }
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+    }
 
-        .action-buttons button {
-            transition: all 0.2s;
-        }
+    .action-buttons button {
+        transition: all 0.2s;
+    }
 
         .action-buttons button:hover {
             transform: translateY(-2px);
-        }
-
-        .pagination {
-            margin-bottom: 0;
-        }
-
-        .input-group {
-            max-width: 300px;
-        }
-
-        .table-container {
-            overflow-x: auto;
         }
     </style>
 </head>
@@ -228,19 +215,19 @@
                                         <td th:text="${o.account != null ? o.account.mobile : 'N/A'}"></td>
                                         <td>
                                             <span class="badge"
-                                                th:classappend="${o.status} ? 'badge-success' : 'badge-warning'"
-                                                th:text="${o.status} ? 'Đã thanh toán' : 'Chưa thanh toán'"
-                                                th:id="'status-badge-' + ${o.id}"></span>
+                                                  th:classappend="${o.status == 'SUCCESS'} ? 'badge-success' : (${o.status == 'FAILED'} ? 'badge-danger' : (${o.status == 'SHIPPING'} ? 'badge-info' : 'badge-warning'))"
+                                                  th:text="${o.status == 'SUCCESS'} ? 'Đã giao hàng' : (${o.status == 'FAILED'} ? 'Thất bại' : (${o.status == 'SHIPPING'} ? 'Đang giao hàng' : 'Chờ xử lý'))"
+                                                  th:id="'status-badge-' + ${o.id}" style="color: black;"></span>
                                         </td>
                                         <td>
                                             <div class="action-buttons">
                                                 <button type="button"
-                                                    class="btn btn-sm btn-outline-primary view-order-btn"
-                                                    th:data-order-id="${o.id}">
+                                                        class="btn btn-sm btn-outline-primary view-order-btn"
+                                                        th:data-order-id="${o.id}">
                                                     <i class="fa-solid fa-eye"></i>
                                                 </button>
                                                 <button type="button" class="btn btn-sm btn-outline-danger delete-btn"
-                                                    th:data-order-id="${o.id}">
+                                                        th:data-order-id="${o.id}">
                                                     <i class="fa-solid fa-trash"></i>
                                                 </button>
                                             </div>
@@ -292,7 +279,7 @@
     </div>
 
     <div class="modal fade" id="orderDetailModal" tabindex="-1" aria-labelledby="orderDetailModalLabel"
-        aria-hidden="true">
+         aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -439,6 +426,15 @@
                 });
             });
 
+            // Update order status from table
+            document.querySelectorAll('.update-status-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    const orderId = this.getAttribute('data-order-id');
+                    updateOrderStatus(orderId);
+                });
+            });
+
+            // Delete order from table
             document.querySelectorAll('.delete-btn').forEach(button => {
                 button.addEventListener('click', function () {
                     const orderId = this.getAttribute('data-order-id');
@@ -495,14 +491,17 @@
             }
 
             function displayOrderDetails(data) {
-                console.log('API response:', data);
+                console.log('API response:', data); // Debug log
 
                 const order = data.order;
                 const orderDetails = data.orderDetails || [];
                 const totalAmount = data.totalAmount || 0;
                 const discountAmount = data.discountAmount || 0;
-                const finalAmount = data.finalAmount || 0; 
+                const finalAmount = data.finalAmount;
 
+                console.log('Order details count:', orderDetails.length); // Debug log
+
+                // Hide loading spinner and show content
                 document.getElementById('modalLoadingSpinner').style.display = 'none';
                 document.getElementById('modalContent').style.display = 'block';
 
@@ -513,8 +512,8 @@
                 document.getElementById('orderDateInfo').textContent = formattedDate;
 
                 const statusBadge = document.createElement('span');
-                statusBadge.className = 'badge ' + (order.status ? 'badge-success' : 'badge-warning');
-                statusBadge.textContent = order.status ? 'Đã thanh toán' : 'Chưa thanh toán';
+                statusBadge.className = 'badge ' + (order.status === 'SUCCESS' ? 'badge-success' : (order.status === 'FAILED' ? 'badge-danger' : (order.status === 'SHIPPING' ? 'badge-info' : 'badge-warning')));
+                statusBadge.textContent = order.status === 'SUCCESS' ? 'Đã giao hàng' : (order.status === 'FAILED' ? 'Thất bại' : (order.status === 'SHIPPING' ? 'Đang giao hàng' : 'Chờ xử lý'));
                 document.getElementById('orderStatusInfo').innerHTML = '';
                 document.getElementById('orderStatusInfo').appendChild(statusBadge);
 
@@ -540,7 +539,7 @@
                 document.getElementById('customerAddressInfo').textContent = order.address || 'N/A';
 
                 document.getElementById('updateStatusBtnText').textContent =
-                    order.status ? 'Đánh Dấu Chưa Thanh Toán' : 'Đánh Dấu Đã Thanh Toán';
+                    order.status === 'SUCCESS' ? 'Đánh Dấu Thất Bại' : (order.status === 'SHIPPING' ? 'Đánh Dấu Đã Giao' : 'Đánh Dấu Đang Giao');
 
                 const tableBody = document.getElementById('orderDetailsTable').querySelector('tbody');
                 tableBody.innerHTML = '';
@@ -548,22 +547,57 @@
                 if (orderDetails.length > 0) {
                     orderDetails.forEach(item => {
                         const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${item.id}</td>
-                            <td>
-                                <div class="d-flex align-items-center gap-2">
-                                    ${item.product && item.product.image ?
-                                `<img src="${item.product.image}" class="product-image">` : ''}
-                                    <div>
-                                        <div class="fw-medium">${item.product ? item.product.name : 'N/A'}</div>
-                                        <div class="small text-muted">${item.product && item.product.category ? item.product.category.name : 'N/A'}</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>${formatCurrency(item.price || 0)}</td>
-                            <td>${item.quantity || 0}</td>
-                            <td>${formatCurrency((item.price || 0) * (item.quantity || 0))}</td>
-                        `;
+
+                        const idCell = document.createElement('td');
+                        idCell.textContent = item.id;
+                        row.appendChild(idCell);
+
+                        const productCell = document.createElement('td');
+                        const productInfo = document.createElement('div');
+                        productInfo.className = 'd-flex align-items-center gap-2';
+
+                        // Add product image if available
+                        if (item.product && item.product.image) {
+                            const img = document.createElement('img');
+                            img.src = item.product.image;
+                            img.alt = item.product.name;
+                            img.className = 'product-image'; 
+                            productInfo.appendChild(img);
+                        }
+
+                        const productDetails = document.createElement('div');
+
+                        const productName = document.createElement('div');
+                        productName.className = 'fw-medium';
+                        productName.textContent = item.product ? item.product.name : 'N/A';
+
+                        const categoryName = document.createElement('div');
+                        categoryName.className = 'small text-muted';
+                        categoryName.textContent = item.product && item.product.category ? item.product.category.name : 'N/A';
+
+                        productDetails.appendChild(productName);
+                        productDetails.appendChild(categoryName);
+                        productInfo.appendChild(productDetails);
+
+                        productCell.appendChild(productInfo);
+                        row.appendChild(productCell);
+
+                        // Ensure price is displayed correctly
+                        const priceCell = document.createElement('td');
+                        priceCell.textContent = formatCurrency(item.price || 0);
+                        row.appendChild(priceCell);
+
+                        // Ensure quantity is displayed correctly
+                        const quantityCell = document.createElement('td');
+                        quantityCell.textContent = item.quantity || 0;
+                        row.appendChild(quantityCell);
+
+                        // Calculate and display subtotal
+                        const subtotalCell = document.createElement('td');
+                        const subtotal = (item.price || 0) * (item.quantity || 0);
+                        subtotalCell.textContent = formatCurrency(subtotal);
+                        row.appendChild(subtotalCell);
+
                         tableBody.appendChild(row);
                     });
                 } else {
@@ -571,7 +605,7 @@
                 }
 
                 document.getElementById('subtotalAmount').textContent = formatCurrency(totalAmount);
-                const discountRow = document.getElementById('discountRow');
+
                 if (discountAmount > 0) {
                     discountRow.style.display = 'flex';
                     document.getElementById('discountAmount').textContent = '- ' + formatCurrency(discountAmount);
@@ -601,10 +635,12 @@
                                 Swal.showLoading();
                             }
                         });
+
+                        // Send AJAX request to update status
                         fetch(`/admin/bill/update-status-ajax/${orderId}`, {
                             method: 'POST',
                             headers: {
-                                'Content-Type': 'application/json',
+                                'Content-Type': 'application/x-www-form-urlencoded',
                             }
                         })
                             .then(response => response.json())
@@ -612,17 +648,19 @@
                                 if (data.success) {
                                     const statusBadge = document.getElementById(`status-badge-${orderId}`);
                                     if (statusBadge) {
-                                        statusBadge.className = `badge ${data.status ? 'badge-success' : 'badge-warning'}`;
-                                        statusBadge.textContent = data.status ? 'Đã thanh toán' : 'Chưa thanh toán';
+                                        statusBadge.className = `badge ${data.status === 'SUCCESS' ? 'badge-success' : (data.status === 'FAILED' ? 'badge-danger' : (data.status === 'SHIPPING' ? 'badge-info' : 'badge-warning'))}`;
+                                        statusBadge.textContent = data.status === 'SUCCESS' ? 'Đã giao hàng' : (data.status === 'FAILED' ? 'Thất bại' : (data.status === 'SHIPPING' ? 'Đang giao hàng' : 'Chờ xử lý'));
                                     }
+
+                                    // If modal is open with this order, update modal UI too
                                     if (currentOrderId == orderId) {
                                         const modalStatusBadge = document.getElementById('orderStatusInfo').querySelector('.badge');
                                         if (modalStatusBadge) {
-                                            modalStatusBadge.className = `badge ${data.status ? 'badge-success' : 'badge-warning'}`;
-                                            modalStatusBadge.textContent = data.status ? 'Đã thanh toán' : 'Chưa thanh toán';
+                                            modalStatusBadge.className = `badge ${data.status === 'SUCCESS' ? 'badge-success' : (data.status === 'FAILED' ? 'badge-danger' : (data.status === 'SHIPPING' ? 'badge-info' : 'badge-warning'))}`;
+                                            modalStatusBadge.textContent = data.status === 'SUCCESS' ? 'Đã giao hàng' : (data.status === 'FAILED' ? 'Thất bại' : (data.status === 'SHIPPING' ? 'Đang giao hàng' : 'Chờ xử lý'));
                                         }
                                         document.getElementById('updateStatusBtnText').textContent =
-                                            data.status ? 'Đánh Dấu Chưa Thanh Toán' : 'Đánh Dấu Đã Thanh Toán';
+                                            data.status === 'SUCCESS' ? 'Đánh Dấu Thất Bại' : (data.status === 'SHIPPING' ? 'Đánh Dấu Đã Giao' : 'Đánh Dấu Đang Giao');
                                     }
                                     Swal.fire({
                                         title: 'Thành công!',
@@ -672,29 +710,41 @@
                                 Swal.showLoading();
                             }
                         });
-                        fetch(`/admin/bill/delete/${orderId}`, {
+
+                        // Send AJAX request to delete order
+                        fetch(`/admin/bill/delete-ajax/${orderId}`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
                             }
                         })
-                            .then(response => {
-                                if (response.ok) {
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    // Remove row from table
                                     const orderRow = document.getElementById(`order-row-${orderId}`);
                                     if (orderRow) {
                                         orderRow.remove();
                                     }
+
+                                    // Close modal if open
                                     if (currentOrderId == orderId) {
                                         modal.hide();
                                     }
+
                                     Swal.fire({
                                         title: 'Thành công!',
-                                        text: 'Xóa đơn hàng thành công!',
+                                        text: data.message,
                                         icon: 'success',
                                         confirmButtonText: 'Đóng'
                                     });
                                 } else {
-                                    throw new Error('Failed to delete order');
+                                    Swal.fire({
+                                        title: 'Lỗi!',
+                                        text: data.message,
+                                        icon: 'error',
+                                        confirmButtonText: 'Đóng'
+                                    });
                                 }
                             })
                             .catch(error => {

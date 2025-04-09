@@ -195,6 +195,31 @@
         });
       });
    
+      document.getElementById('submitPaymentBtn').addEventListener('click', async (event) => {
+        event.preventDefault(); // Ngăn chặn form submit mặc định
+    
+        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+        const amount = document.getElementById('total-amount').textContent.replace(/\D/g, ''); // Lấy số tiền tổng cộng
+    
+        if (paymentMethod === 'momo') {
+            try {
+                const response = await fetch(`/thanhtoan/momo?amount=${amount}`); // Dùng GET thay vì POST
+                const data = await response.json();
+    
+                if (data.payUrl) {
+                    window.location.href = data.payUrl; // Chuyển hướng đến MoMo
+                } else {
+                    utils.showAlert('Lỗi!', 'Thanh toán MoMo thất bại: ' + data.error, 'error');
+                }
+            } catch (error) {
+                console.error('Lỗi thanh toán MoMo:', error);
+                utils.showAlert('Lỗi!', 'Có lỗi xảy ra khi thanh toán qua MoMo!', 'error');
+            }
+        } else {
+            document.getElementById('paymentForm').submit(); // Xử lý thanh toán thường
+        }
+    });
+    
     },
     changeQuantity(change, inputId) {
       var input = document.getElementById(inputId);
