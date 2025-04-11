@@ -41,7 +41,7 @@
               class="text-muted mb-4"></h2>
               
             <h6 class="mt-4 mb-3">Product Details</h6>
-            <p th:text="${product.description}" class="text-secondary mb-4"></p>
+            <p th:utext="${#strings.replace(product.description, '\n', '<br/>')}" class="text-secondary mb-4"></p>
            
             <!-- Nếu sản phẩm còn hàng, hiển thị nút thêm vào giỏ -->
             <form th:action="@{/cart}" method="get" class="mt-4"
