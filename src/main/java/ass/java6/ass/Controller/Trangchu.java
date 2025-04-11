@@ -18,15 +18,14 @@ public class Trangchu {
     private ProductService productService;
 
     @GetMapping("/")
-    public String home(Model model) {
-        List<Product> topSellingProducts = productService.findTopSellingProducts(8);
-        model.addAttribute("topSellingProducts", topSellingProducts);
-        model.addAttribute("currentPage", "home");
-
-        List<Product> latestProducts = productService.findLatestProducts(8);
-        model.addAttribute("latestProducts", latestProducts);
-        return "home/trangchu"; // view name
-    }
+public String home(Model model) {
+    List<Product> topSellingProducts = productService.findTopSellingProducts(8);
+    model.addAttribute("topSellingProducts", topSellingProducts);
+    model.addAttribute("currentPage", "home");
+    List<Product> latestProducts = productService.findLatestProducts(8);
+    model.addAttribute("latestProducts", latestProducts);
+    return "home/trangchu";
+}
 
     @GetMapping("/product/{id}")
     public String productDetail(@PathVariable("id") Integer id, Model model) {
