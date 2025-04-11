@@ -41,7 +41,7 @@
               class="text-muted mb-4"></h2>
               
             <h6 class="mt-4 mb-3">Product Details</h6>
-            <p th:text="${product.description}" class="text-secondary mb-4"></p>
+            <p th:utext="${#strings.replace(product.description, '\n', '<br/>')}" class="text-secondary mb-4"></p>
            
             <!-- Nếu sản phẩm còn hàng, hiển thị nút thêm vào giỏ -->
             <form th:action="@{/cart}" method="get" class="mt-4"
@@ -57,13 +57,13 @@
               <!-- Quantity Selector -->
               <div class="d-flex align-items-center gap-2 mb-4">
                 <button type="button" class="btn btn-outline-dark btn-sm px-3 py-2"
-                  onclick="changeQuantity(-1, 'quantityInput')" th:disabled="${product.quantity <= 1}">-</button>
+                  onclick="changeQuantity(-1, 'quantityInput')" th:disabled="${product.quantity <= 1}"><i class="fas fa-minus"></i></button>
 
                 <input type="number" id="quantityInput" name="quantity" value="1" min="1" th:max="${product.quantity}"
                   class="form-control form-control-sm text-center" style="width: 80px; height: 40px;" readonly>
 
                 <button type="button" class="btn btn-outline-dark btn-sm px-3 py-2"
-                  onclick="changeQuantity(1, 'quantityInput')" th:disabled="${product.quantity <= 1}">+</button>
+                  onclick="changeQuantity(1, 'quantityInput')" th:disabled="${product.quantity <= 1}"><i class="fas fa-plus"></i></button>
               </div>
 
               <!-- Submit Button -->

@@ -43,13 +43,28 @@
 /*--------------------------------------------------------------
 # General Styling & Shared Classes
 --------------------------------------------------------------*/
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
 body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; 
   color: var(--default-color);
   background-color: var(--background-color);
   font-family: var(--default-font);
-  
 }
-
+main, .content { 
+  flex: 1 0 auto; 
+}
+footer {
+  flex-shrink: 0; 
+  background-color: var(--background-color); 
+  padding: 20px 0; 
+  text-align: center; 
+}
 a {
   color: var(--accent-color);
   text-decoration: none;
@@ -572,8 +587,8 @@ th {
   outline: none;
   border-radius: 50%;
   transition: 0.5s ease-in-out;
-  background-color: #000000;
-  box-shadow: 0px 0px 3px #161616;
+  background-color: #fffafa;
+  box-shadow: 0px 0px 3px #000000;
   padding-right: 30px;
   color: #000000;
   /* cho text dễ thấy */
@@ -1018,4 +1033,41 @@ th {
   color: #6c757d;
   pointer-events: none;
   background-color: #f8f9fa;
+}
+
+.hover-white:hover {
+  color: white !important;
+  transition: color 0.3s;
+}
+
+#scroll-top {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0.8;
+  transition: all 0.3s;
+}
+
+#scroll-top:hover {
+  opacity: 1;
+  transform: translateY(-3px);
+}
+
+.main-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Ensure the wrapper takes at least the full viewport height */
+}
+
+/* Content area should take up remaining space */
+.content {
+  flex: 1 0 auto; /* Grow to fill available space, but don't shrink */
+}
+
+/* Footer should shrink to its content size */
+footer {
+  flex-shrink: 0; /* Prevent the footer from shrinking */
 }

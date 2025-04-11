@@ -14,6 +14,7 @@ import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -88,8 +89,10 @@ public class CartServiceImpl implements CartService {
                     Order newOrder = new Order();
                     newOrder.setAccount(account);
                     newOrder.setStatus("CART");
-
                     newOrder.setOrderDetails(new ArrayList<>()); // Initialize orderDetails
+                    return orderRepository.save(newOrder);
+                });
+    }
 
     @Override
     public int getTotalItemsInCart(Account account) {
@@ -108,10 +111,8 @@ public class CartServiceImpl implements CartService {
                 .sum();
         double discount = (cart.getVoucher() != null) ? cart.getVoucher().getDiscountAmount() : 0.0;
 
-
         // Tính tổng tiền thanh toán
         return Math.max(subtotal - discount, 0); // Đảm bảo không âm
-
     }
 
     @Override
@@ -124,10 +125,8 @@ public class CartServiceImpl implements CartService {
                 .mapToDouble(item -> item.getPrice() * item.getQuantity())
                 .sum();
         double discount = (cart.getVoucher() != null) ? cart.getVoucher().getDiscountAmount() : 0.0;
-
         double ship = 50000; // Fixed duplicate declaration
         return Math.max(subtotal - discount + ship, 0);
-
     }
 
     @Override
@@ -282,11 +281,8 @@ public class CartServiceImpl implements CartService {
                 cart.setVoucher(voucher);
                 orderRepository.save(cart);
             }
-
         }
     }
-
-
 
     @Override
     public double calculateSubtotal(Order order) {
@@ -294,8 +290,8 @@ public class CartServiceImpl implements CartService {
             return 0.0;
         }
         return order.getOrderDetails().stream()
-                .mapToDouble(item -> (item.getPrice() != null ? item.getPrice() : 0) * 
-                                    (item.getQuantity() != null ? item.getQuantity() : 0))
+                .mapToDouble(item -> (item.getPrice() != null ? item.getPrice() : 0) *
+                        (item.getQuantity() != null ? item.getQuantity() : 0))
                 .sum();
     }
 
@@ -314,8 +310,11 @@ public class CartServiceImpl implements CartService {
         double SHIPPING_FEE = 50000; // Phí vận chuyển cố định
         return Math.max(subtotal - discount + SHIPPING_FEE, 0);
     }
-    public Page<Order> getOrdersByUsernamePaginated(String username, Pageable pageable) {
-        return orderRepository.findByAccountUsername(username, pageable);
-    }
-}
 
+    public Page<Order> getOrdersByUsernamePaginated(String username, Pageable pageable) {
+        List<String> excludedStatuses = List.of(Order.STATUS_PENDING, Order.STATUS_CART);
+        return orderRepository.findByAccountUsernameAndStatusNotIn(username, excludedStatuses, pageable);
+    }
+
+    
+}

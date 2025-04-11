@@ -74,7 +74,7 @@ public class AccountController {
 
                     // 2️⃣ Tính tổng chi tiêu (tổng tiền tất cả đơn hàng)
                     double totalSpending = orders.stream()
-                               .flatMap(order -> order.getOrderDetails().stream())
+                            .flatMap(order -> order.getOrderDetails().stream())
                             .filter(detail -> detail.getPrice() != null && detail.getQuantity() != null)
                             .mapToDouble(detail -> detail.getPrice() * detail.getQuantity())
                             .sum();
@@ -141,14 +141,32 @@ public class AccountController {
         return ResponseEntity.status(404).body(Map.of("error", "Tài khoản không tồn tại!"));
     }
 
-    @GetMapping("/delete/{username}")
+    @PostMapping("/delete/{username}")
     public String deleteAccount(@PathVariable("username") String username, RedirectAttributes redirectAttributes) {
-        Optional<Account> accountOptional = accountRepository.findById(username);
-        if (accountOptional.isPresent()) {
-            accountRepository.delete(accountOptional.get());
-            redirectAttributes.addFlashAttribute("successMessage", "Xóa tài khoản thành công!");
-        } else {
-            redirectAttributes.addFlashAttribute("errorMessage", "Tài khoản không tồn tại!");
+        try {
+            Optional<Account> accountOptional = accountRepository.findById(username);
+            if (accountOptional.isPresent()) {
+                Account account = accountOptional.get();
+
+                if (account.getOrders() != null && !account.getOrders().isEmpty()) {
+                    redirectAttributes.addFlashAttribute("errorMessage",
+                            "Không thể xóa tài khoản vì có đơn hàng liên quan!");
+                    return "redirect:/admin/account";
+                }
+                if (account.getRole() == Role.ROLE_ADMIN) {
+                    redirectAttributes.addFlashAttribute("errorMessage",
+                            "Không thể xóa tài khoản admin!");
+                    return "redirect:/admin/account";
+                }
+
+                accountRepository.delete(account);
+                redirectAttributes.addFlashAttribute("successMessage", "Xóa tài khoản thành công!");
+            } else {
+                redirectAttributes.addFlashAttribute("errorMessage", "Tài khoản không tồn tại!");
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Lỗi khi xóa tài khoản: " + e.getMessage());
+            e.printStackTrace();
         }
         return "redirect:/admin/account";
     }

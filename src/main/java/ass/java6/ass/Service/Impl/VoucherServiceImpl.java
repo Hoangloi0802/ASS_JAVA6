@@ -1,6 +1,7 @@
 package ass.java6.ass.Service.Impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import ass.java6.ass.Entity.Voucher;
 import ass.java6.ass.Repository.VoucherRepository;
@@ -13,8 +14,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class VoucherServiceImpl implements VoucherService {
+
     @Autowired
-    private VoucherRepository voucherRepository; // ✅ Sửa lại tên
+    private VoucherRepository voucherRepository;
 
     @Override
     public List<Voucher> findAll() {
@@ -60,17 +62,48 @@ public class VoucherServiceImpl implements VoucherService {
                 .filter(v -> v.getMinOrderValue() <= orderAmount)
                 .toList();
     }
+
     @Override
     public List<Voucher> findByTrangThaiTrue() {
-        return voucherRepository.findByTrangThaiTrue(); // ✅ Gọi đúng repository
+        Date currentDate = new Date(System.currentTimeMillis());
+        return voucherRepository.findByTrangThaiTrue()
+                .stream()
+                .filter(voucher -> !voucher.getExpiryDate().before(currentDate))
+                .toList();
     }
 
     @Override
-     public List<Voucher> getValidVouchers(double totalOrderValue) {
+    public List<Voucher> getValidVouchers(double totalOrderValue) {
+        Date currentDate = new Date(System.currentTimeMillis());
         List<Voucher> allVouchers = voucherRepository.findByTrangThaiTrue();
         return allVouchers.stream()
-                .filter(voucher -> totalOrderValue >= voucher.getMinOrderValue()) // Chỉ lấy voucher hợp lệ
+                .filter(voucher -> !voucher.getExpiryDate().before(currentDate))
+                .filter(voucher -> totalOrderValue >= voucher.getMinOrderValue())
                 .collect(Collectors.toList());
     }
-    
+
+    @Override
+    @Scheduled(cron = "0 0 0 * * *") // Chạy tự động mỗi ngày lúc 0h
+    public void updateExpiredVouchers() {
+        try {
+            Date currentDate = new Date(System.currentTimeMillis());
+            List<Voucher> expiredVouchers = voucherRepository.findByExpiryDateLessThanAndTrangThaiTrue(currentDate);
+
+            if (!expiredVouchers.isEmpty()) {
+                expiredVouchers.forEach(voucher -> {
+                    voucher.setTrangThai(false);
+                    System.out.println("Voucher " + voucher.getCode() + " đã hết hạn và được cập nhật trạng thái.");
+                });
+                voucherRepository.saveAll(expiredVouchers);
+                System.out.println("Đã cập nhật trạng thái cho " + expiredVouchers.size()
+                        + " voucher hết hạn vào " + currentDate);
+            } else {
+                System.out.println("Không có voucher nào hết hạn cần cập nhật vào " + currentDate);
+            }
+        } catch (Exception e) {
+            System.err.println("Lỗi khi cập nhật trạng thái voucher hết hạn: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
 }

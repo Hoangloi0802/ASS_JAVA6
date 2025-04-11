@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @ControllerAdvice
@@ -63,6 +64,10 @@ public class CartController {
             switch (String.valueOf(action)) {
                 case "add":
                     if (product != null) {
+                        if (quantity > product.getQuantity()) {
+                            redirectAttributes.addFlashAttribute("error", "Số lượng yêu cầu vượt quá tồn kho!");
+                            return "redirect:/product/" + product.getId();
+                        }
                         cartService.addToCart(account, product, quantity);
                         redirectAttributes.addFlashAttribute("message", "Sản phẩm đã thêm vào giỏ hàng!");
                         return "redirect:/product/" + product.getId();
@@ -70,6 +75,10 @@ public class CartController {
                     break;
                 case "update":
                     if (product != null) {
+                        if (quantity > product.getQuantity()) {
+                            redirectAttributes.addFlashAttribute("error", "Số lượng yêu cầu vượt quá tồn kho!");
+                            return "redirect:/cart";
+                        }
                         cartService.updateQuantity(account, product, quantity);
                         redirectAttributes.addFlashAttribute("message", "Giỏ hàng đã được cập nhật!");
                         return "redirect:/cart";
@@ -114,9 +123,18 @@ public class CartController {
         try {
             Product product = productRepository.findById(productId)
                     .orElseThrow(() -> new IllegalArgumentException("Sản phẩm không tồn tại"));
+
+            if (quantity > product.getQuantity()) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("error",
+                        "Số lượng yêu cầu (" + quantity + ") vượt quá tồn kho (" + product.getQuantity() + ")!");
+                response.put("maxQuantity", product.getQuantity());
+                return ResponseEntity.badRequest().body(response);
+            }
+
             cartService.updateQuantity(account, product, quantity);
             Order cart = cartService.getCurrentCart(account);
-            validateVoucher(cart); // Kiểm tra và xóa voucher nếu không hợp lệ
+            validateVoucher(cart);
             return ResponseEntity.ok(createCartResponse(account));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
@@ -139,33 +157,63 @@ public class CartController {
             return ResponseEntity.badRequest().body(Map.of("error", "Giỏ hàng của bạn đang trống."));
         }
 
+        // Tìm voucher
         Voucher voucher = voucherService.findByCode(voucherCode);
         if (voucher == null) {
             cart.setVoucher(null);
             cartService.saveCart(cart);
-            return ResponseEntity.badRequest().body(Map.of("error", "Voucher không hợp lệ."));
+            return ResponseEntity.badRequest().body(Map.of("error", "Mã voucher không hợp lệ."));
         }
 
-        double subtotal = cartService.calculateSubtotal(account);
-        if (subtotal < voucher.getMinOrderValue()) {
-            cart.setVoucher(null);
-            cartService.saveCart(cart);
-            return ResponseEntity.badRequest().body(Map.of("error", "Đơn hàng chưa đủ điều kiện áp dụng voucher."));
+        // Kiểm tra loại sản phẩm (danh mục) mà voucher áp dụng
+        boolean isApplicable = true;
+        if (voucher.getCategory() != null) { // Nếu voucher chỉ áp dụng cho danh mục cụ thể
+            isApplicable = cart.getOrderDetails().stream()
+                    .anyMatch(orderDetail -> orderDetail.getProduct().getCategory() != null &&
+                            orderDetail.getProduct().getCategory().getId()
+                                    .equals(voucher.getCategory().getId()));
         }
 
-        // ✅ Kiểm tra xem giỏ hàng có sản phẩm thuộc danh mục của voucher không
-        boolean hasValidProduct = cart.getOrderDetails().stream()
-                .anyMatch(orderDetail -> orderDetail.getProduct().getCategory().getId()
-                        .equals(voucher.getCategory().getId()));
-
-        if (!hasValidProduct) {
+        if (!isApplicable) {
             cart.setVoucher(null);
             cartService.saveCart(cart);
             return ResponseEntity.badRequest()
-                    .body(Map.of("error", "Voucher không áp dụng cho sản phẩm trong giỏ hàng."));
+                    .body(Map.of("error", "Voucher này không áp dụng được cho sản phẩm trong giỏ hàng."));
         }
 
+        // Kiểm tra giá trị tối thiểu
+        double subtotal = cartService.calculateSubtotal(cart);
+        if (subtotal < voucher.getMinOrderValue()) {
+            cart.setVoucher(null);
+            cartService.saveCart(cart);
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", String.format("Đơn hàng cần tối thiểu %s để áp dụng voucher.", 
+                            voucher.getMinOrderValue())));
+        }
+
+        // Áp dụng voucher và lưu giỏ hàng
         cart.setVoucher(voucher);
+        cartService.saveCart(cart);
+        return ResponseEntity.ok(createCartResponse(account));
+    }
+
+    @GetMapping("/remove-voucher")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> removeVoucher() {
+        Account account = getAuthenticatedAccount();
+        if (account == null)
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+        Order cart = cartService.getCurrentCart(account);
+        if (cart == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Không tìm thấy giỏ hàng."));
+        }
+
+        if (cart.getVoucher() == null) {
+            return ResponseEntity.ok(createCartResponse(account));
+        }
+
+        cart.setVoucher(null);
         cartService.saveCart(cart);
         return ResponseEntity.ok(createCartResponse(account));
     }
@@ -182,7 +230,7 @@ public class CartController {
             return "redirect:/cart";
         }
 
-        return "redirect:/thanhtoan"; // Chuyển sang trang thanh toán
+        return "redirect:/thanhtoan";
     }
 
     // Helper methods
@@ -199,7 +247,7 @@ public class CartController {
             model.addAttribute("cartItems", Collections.emptyList());
             model.addAttribute("totalPrice", 0.0);
         } else {
-            validateVoucher(cart); // Kiểm tra và xóa voucher nếu không hợp lệ
+            validateVoucher(cart);
             List<OrderDetail> cartItems = cart.getOrderDetails();
             double subtotal = cartService.calculateSubtotal(cart.getAccount());
             double discount = cartService.calculateDiscount(cart.getAccount());
@@ -208,10 +256,22 @@ public class CartController {
                     .mapToDouble(item -> item.getPrice() * item.getQuantity())
                     .sum();
 
+            // Lọc danh sách voucher khả dụng dựa trên loại sản phẩm trong giỏ hàng
+            List<Voucher> allVouchers = voucherService.getValidVouchers(subtotal);
+            List<Voucher> applicableVouchers = allVouchers.stream()
+                    .filter(voucher -> {
+                        if (voucher.getCategory() == null) return true; // Áp dụng cho tất cả sản phẩm
+                        return cart.getOrderDetails().stream()
+                                .anyMatch(orderDetail -> orderDetail.getProduct().getCategory() != null &&
+                                        orderDetail.getProduct().getCategory().getId()
+                                                .equals(voucher.getCategory().getId()));
+                    })
+                    .collect(Collectors.toList());
+
             model.addAttribute("subtotal", subtotal);
             model.addAttribute("discount", discount);
             model.addAttribute("totalAmount", total);
-            model.addAttribute("vouchers", voucherService.getValidVouchers(subtotal));
+            model.addAttribute("vouchers", applicableVouchers);
             model.addAttribute("cartItems", cartItems);
             model.addAttribute("totalPrice", totalPrice);
         }
@@ -230,8 +290,24 @@ public class CartController {
         if (voucher == null)
             return;
 
+        // Kiểm tra giá trị tối thiểu
         double subtotal = cartService.calculateSubtotal(cart.getAccount());
         if (subtotal < voucher.getMinOrderValue()) {
+            cart.setVoucher(null);
+            cartService.saveCart(cart);
+            return;
+        }
+
+        // Kiểm tra loại sản phẩm (danh mục) mà voucher áp dụng
+        boolean isApplicable = true;
+        if (voucher.getCategory() != null) {
+            isApplicable = cart.getOrderDetails().stream()
+                    .anyMatch(orderDetail -> orderDetail.getProduct().getCategory() != null &&
+                            orderDetail.getProduct().getCategory().getId()
+                                    .equals(voucher.getCategory().getId()));
+        }
+
+        if (!isApplicable) {
             cart.setVoucher(null);
             cartService.saveCart(cart);
         }
@@ -239,9 +315,11 @@ public class CartController {
 
     private Map<String, Object> createCartResponse(Account account) {
         Map<String, Object> response = new HashMap<>();
+        Order cart = cartService.getCurrentCart(account);
         response.put("subtotal", cartService.calculateSubtotal(account));
         response.put("discount", cartService.calculateDiscount(account));
         response.put("total", cartService.calculateTotalPrice(account));
+        response.put("voucher", cart != null ? cart.getVoucher() : null); // Thêm thông tin voucher để frontend kiểm tra
         return response;
     }
 }

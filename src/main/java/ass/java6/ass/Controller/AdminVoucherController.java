@@ -1,6 +1,7 @@
 package ass.java6.ass.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,11 +13,14 @@ import ass.java6.ass.Service.VoucherService;
 import ass.java6.ass.Service.CategoryService;
 
 import java.sql.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/admin/nhansu")
 public class AdminVoucherController {
+
     @Autowired
     private VoucherService voucherService;
 
@@ -29,10 +33,9 @@ public class AdminVoucherController {
         List<Category> categories = categoryService.findAll();
         model.addAttribute("vouchers", vouchers);
         model.addAttribute("categories", categories);
-        return "admin/Quanlynhansu"; // Trang hiển thị danh sách
+        return "admin/Quanlynhansu";
     }
 
-    // Xử lý thêm/sửa voucher
     @PostMapping("/save")
     public String saveVoucher(@ModelAttribute("voucher") Voucher voucher, BindingResult result,
             RedirectAttributes redirect) {
@@ -40,6 +43,12 @@ public class AdminVoucherController {
             redirect.addFlashAttribute("errorMessage", "Có lỗi xảy ra! Vui lòng kiểm tra lại.");
             return "redirect:/admin/nhansu";
         }
+        Date currentDate = new Date(System.currentTimeMillis());
+        if (voucher.getExpiryDate().before(currentDate) && voucher.getTrangThai()) {
+            redirect.addFlashAttribute("errorMessage", "Không thể lưu voucher đã hết hạn với trạng thái Hoạt động!");
+            return "redirect:/admin/nhansu";
+        }
+
         voucherService.save(voucher);
         redirect.addFlashAttribute("successMessage", "Lưu voucher thành công!");
         return "redirect:/admin/nhansu";
@@ -71,5 +80,19 @@ public class AdminVoucherController {
         voucherService.deleteById(id);
         redirect.addFlashAttribute("successMessage", "Xóa voucher thành công!");
         return "redirect:/admin/nhansu";
+    }
+
+    @PostMapping("/update-expired")
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> updateExpiredVouchers() {
+        Map<String, String> response = new HashMap<>();
+        try {
+            voucherService.updateExpiredVouchers();
+            response.put("message", "Đã cập nhật trạng thái các voucher hết hạn thành công!");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("message", "Lỗi khi cập nhật trạng thái: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
     }
 }
