@@ -315,4 +315,6 @@ public class CartServiceImpl implements CartService {
         List<String> excludedStatuses = List.of(Order.STATUS_PENDING, Order.STATUS_CART);
         return orderRepository.findByAccountUsernameAndStatusNotIn(username, excludedStatuses, pageable);
     }
+
+    
 }
