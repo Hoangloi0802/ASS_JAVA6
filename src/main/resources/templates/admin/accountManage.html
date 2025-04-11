@@ -156,12 +156,12 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="card shadow-sm mb-4 fade-in">
-                    <div class="card-body">
+                <div class="card fade-in">
+                    <div class="card-header">
+                        <h5 class="card-title">Danh sách người dùng</h5>
                         <form method="GET" action="/admin/account">
                             <div class="row g-3">
-                                <div class="col-md-6">
+                                <div class="col-md-112">
                                     <div class="input-group">
                                         <input type="text" class="form-control" name="keyword"
                                             placeholder="Tìm kiếm người dùng..." th:value="${param.keyword}">
@@ -172,12 +172,6 @@
                                 </div>
                             </div>
                         </form>
-                    </div>
-                </div>
-
-                <div class="card fade-in">
-                    <div class="card-header">
-                        <h5 class="card-title">Danh sách người dùng</h5>
                     </div>
                     <div class="card-body">
                         <div class="table-container">

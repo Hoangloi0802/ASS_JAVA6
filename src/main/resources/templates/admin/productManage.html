@@ -103,24 +103,15 @@
                 <div class="card fade-in">
                     <div class="card-header">
                         <h5 class="card-title">Danh sách sản phẩm</h5>
+                        <form th:action="@{/admin/products}" method="get" class="d-flex">
+                            <input class="form-control me-2" type="search" name="keyword" th:value="${keyword}"
+                                placeholder="Tìm kiếm sản phẩm..." aria-label="Search">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </form>
                     </div>
                     <div class="card-body">
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <form th:action="@{/admin/products}" method="get" class="d-flex">
-                                    <input class="form-control me-2" type="search" name="keyword" th:value="${keyword}"
-                                        placeholder="Tìm kiếm sản phẩm..." aria-label="Search">
-                                    <button class="btn btn-outline-primary" type="submit">
-                                        <i class="fa-solid fa-search"></i> Tìm
-                                    </button>
-                                </form>
-                            </div>
-                            <div class="col-md-6 text-end">
-                                <small class="text-muted">
-                                    Tổng: <span th:text="${totalItems}"></span> sản phẩm
-                                </small>
-                            </div>
-                        </div>
                         <div class="table-container">
                             <table class="table">
                                 <thead>
@@ -176,6 +167,9 @@
                             </table>
                         </div>
                         <nav aria-label="Page navigation" th:if="${totalPages > 1}">
+                            <small class="text-muted p-3">
+                                Tổng: <span th:text="${totalItems}"></span> sản phẩm
+                            </small>
                             <ul class="pagination justify-content-center mt-3">
                                 <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
                                     <a class="page-link"
@@ -237,7 +231,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Trạng thái</label>
-                            <select class="form-select" name="available" id="productAvailable" >
+                            <select class="form-select" name="available" id="productAvailable">
                                 <option value="">Chọn trạng thái</option>
                                 <option value="true">Còn hàng</option>
                                 <option value="false">Hết hàng</option>
