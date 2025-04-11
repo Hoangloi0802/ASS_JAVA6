@@ -160,5 +160,26 @@ public class AccountServiceImpl implements AccoutService { // Sửa tên class
         // sendEmailConfig.sendEmail(email, "Đổi mật khẩu thành công", "Mật khẩu của bạn đã được cập nhật.");
     }
 
+    @Override
+    public void thaydoimatkhau(String username, String currentPassword, String newPassword, String confirmPassword) {
+        Account user = accountRepository.findByUsername(username)
+        .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy tài khoản"));
+
+    if (!bCryptPasswordEncoder.matches(currentPassword, user.getPassword())) {
+        throw new IllegalArgumentException("Mật khẩu hiện tại không đúng");
+    }
+
+    if (!newPassword.equals(confirmPassword)) {
+        throw new IllegalArgumentException("Xác nhận mật khẩu không khớp");
+    }
+
+    if (bCryptPasswordEncoder.matches(newPassword, user.getPassword())) {
+        throw new IllegalArgumentException("Mật khẩu mới phải khác mật khẩu hiện tại");
+    }
+
+    user.setPassword(bCryptPasswordEncoder.encode(newPassword));
+    accountRepository.save(user);
+}
+
 
 }
