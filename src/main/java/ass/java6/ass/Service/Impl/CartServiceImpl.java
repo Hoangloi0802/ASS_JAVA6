@@ -89,7 +89,9 @@ public class CartServiceImpl implements CartService {
                     Order newOrder = new Order();
                     newOrder.setAccount(account);
                     newOrder.setStatus("CART");
+
                     newOrder.setOrderDetails(new ArrayList<>()); // Initialize orderDetails
+
                     return orderRepository.save(newOrder);
                 });
     }
@@ -113,6 +115,7 @@ public class CartServiceImpl implements CartService {
 
         // Tính tổng tiền thanh toán
         return Math.max(subtotal - discount, 0); // Đảm bảo không âm
+
     }
 
     @Override
@@ -127,6 +130,7 @@ public class CartServiceImpl implements CartService {
         double discount = (cart.getVoucher() != null) ? cart.getVoucher().getDiscountAmount() : 0.0;
         double ship = 50000; // Fixed duplicate declaration
         return Math.max(subtotal - discount + ship, 0);
+
     }
 
     @Override
@@ -262,6 +266,8 @@ public class CartServiceImpl implements CartService {
         }
     }
 
+
+
     @Override
     @Transactional
     public void updateOrderStatus(Long orderId, boolean isPaid) {
@@ -281,8 +287,10 @@ public class CartServiceImpl implements CartService {
                 cart.setVoucher(voucher);
                 orderRepository.save(cart);
             }
+
         }
     }
+
 
     @Override
     public double calculateSubtotal(Order order) {

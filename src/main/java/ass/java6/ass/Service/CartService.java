@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 public interface CartService {
     Order addToCart(Account account, Product product, int quantity);
 
+
     Order getCurrentCart(Account account);
 
     void updateQuantity(Account account, Product product, int quantity);

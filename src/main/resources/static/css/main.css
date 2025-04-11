@@ -1034,6 +1034,8 @@ th {
   pointer-events: none;
   background-color: #f8f9fa;
 }
+<<<<<<< HEAD
+=======
 
 .hover-white:hover {
   color: white !important;
@@ -1071,3 +1073,4 @@ th {
 footer {
   flex-shrink: 0; /* Prevent the footer from shrinking */
 }
+>>>>>>> 542ec0afd31db27256752fb2102978f168e55928
