@@ -1,5 +1,6 @@
 package ass.java6.ass.Config;
 
+import java.net.URLEncoder;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,27 +129,31 @@ public class SecurityConfig {
     
     @Bean
     public AuthenticationFailureHandler customFailureHandler() {
-    return (request, response, exception) -> {
-        String error = "true"; 
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
-        Optional<Account> account = accountRepository.findByUsername(username);
-        if ( account.isEmpty()) {
-            
-            response.sendRedirect("/Dangnhap?error=Account does not exist.");
-            return;
-        }
-        if(account.get().isActivated() == false){
-            response.sendRedirect("/Dangnhap?error=Your account is not activated yet. Please reach out to the admin for assistance");
-            return;
-        }
-        if ( !bCryptPasswordEncoder().matches(account.get().getPassword(), password)) {
-            response.sendRedirect("/Dangnhap?error=The password you entered is incorrect");
-            return;
-        }
-        
-      
-        response.sendRedirect("/Dangnhap?error=" + error);
-    };
+        return (request, response, exception) -> {
+            String username = request.getParameter("username");
+            String password = request.getParameter("password");
+            Optional<Account> account = accountRepository.findByUsername(username);
+    
+            if (account.isEmpty()) {
+                String errorMessage = URLEncoder.encode("Tài khoản không tồn tại", "UTF-8");
+                response.sendRedirect("/Dangnhap?error=" + errorMessage);
+                return;
+            }
+            if (!account.get().isActivated()) {
+                String errorMessage = URLEncoder.encode("Tài khoản chưa được kích hoạt, vui lòng liên hệ admin", "UTF-8");
+                response.sendRedirect("/Dangnhap?error=" + errorMessage);
+                return;
+            }
+            if (!bCryptPasswordEncoder().matches(password, account.get().getPassword())) {
+                String errorMessage = URLEncoder.encode("Tài khoản hoặc mật khẩu không đúng", "UTF-8");
+                response.sendRedirect("/Dangnhap?error=" + errorMessage);
+                return;
+            }
+    
+            response.sendRedirect("/Dangnhap?error=true");
+        };
+    }
 }
-}
+    
+    
+

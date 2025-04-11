@@ -128,7 +128,6 @@ public class CartServiceImpl implements CartService {
                 .mapToDouble(item -> item.getPrice() * item.getQuantity())
                 .sum();
         double discount = (cart.getVoucher() != null) ? cart.getVoucher().getDiscountAmount() : 0.0;
-
         double ship = 50000; // Fixed duplicate declaration
         return Math.max(subtotal - discount + ship, 0);
 
@@ -268,6 +267,7 @@ public class CartServiceImpl implements CartService {
     }
 
 
+
     @Override
     @Transactional
     public void updateOrderStatus(Long orderId, boolean isPaid) {
@@ -323,5 +323,6 @@ public class CartServiceImpl implements CartService {
         List<String> excludedStatuses = List.of(Order.STATUS_PENDING, Order.STATUS_CART);
         return orderRepository.findByAccountUsernameAndStatusNotIn(username, excludedStatuses, pageable);
     }
-}
 
+    
+}

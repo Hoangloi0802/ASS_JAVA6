@@ -135,6 +135,7 @@ public class AccountServiceImpl implements AccoutService { // Sửa tên class
         }
 
 
+
         session.removeAttribute("otp");
         // Có thể thêm logic để cho phép đổi mật khẩu sau khi xác thực OTP
     }
@@ -159,31 +160,5 @@ public class AccountServiceImpl implements AccoutService { // Sửa tên class
         // sendEmailConfig.sendEmail(email, "Đổi mật khẩu thành công", "Mật khẩu của bạn đã được cập nhật.");
     }
 
-    @Override
-    public void thaydoimatkhau(String username, String currentPassword, String newPassword, String confirmPassword) {
-        if (username == null || username.trim().isEmpty()) {
-            throw new IllegalArgumentException("Tài khoản không hợp lệ");
-        }
-    
-        if (currentPassword == null || newPassword == null || confirmPassword == null) {
-            throw new IllegalArgumentException("Vui lòng nhập đầy đủ thông tin");
-        }
-    
-        Account account = accountRepository.findByUsername(username)
-            .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy tài khoản"));
-    
-        if (!bCryptPasswordEncoder.matches(currentPassword, account.getPassword())) {
-            throw new IllegalArgumentException(" Mật khẩu hiện tại không đúng");
-        }
-    
-        if (!newPassword.equals(confirmPassword)) {
-            throw new IllegalArgumentException(" Mật khẩu xác nhận không trùng khớp");
-        }
-    
-        if (newPassword.equals(currentPassword)) {
-            throw new IllegalArgumentException(" Mật khẩu mới không được trùng mật khẩu cũ");
-        }
-        account.setPassword(bCryptPasswordEncoder.encode(newPassword));
-        accountRepository.save(account);
-    }
+
 }

@@ -14,5 +14,6 @@ public interface AccoutService {
     Optional<Account> findByUsername(String username);
      void Checkotpquenmk(HttpSession session ,Integer otp);
      void doiMatKhau(String email, String password);
-     void thaydoimatkhau(String username, String currentPassword, String newPassword, String confirmPassword);
+
+
 }

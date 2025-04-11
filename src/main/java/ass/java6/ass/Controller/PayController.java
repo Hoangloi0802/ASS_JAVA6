@@ -20,7 +20,6 @@ import org.springframework.data.domain.Pageable;
 
 import org.springframework.data.domain.Sort;
 
-
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -101,6 +100,7 @@ public class PayController {
                     .mapToDouble(detail -> detail.getPrice() * detail.getQuantity())
                     .sum();
 
+
             double discount = (order.getVoucher() != null) ? order.getVoucher().getDiscountAmount() : 0.0;
             double shippingFee = 50000;
             double totalAmount = Math.max(subtotal - discount + shippingFee, 0);
@@ -120,12 +120,14 @@ public class PayController {
             if ("vnpay".equalsIgnoreCase(paymentMethod)) {
                 model.addAttribute("orderId", "ORDER_" + order.getId());
 
+
                 model.addAttribute("subtotal", subtotal);
                 model.addAttribute("discount", discount);
                 model.addAttribute("shippingFee", shippingFee);
                 model.addAttribute("totalAmount", totalAmount);
                 model.addAttribute("amount", amount);
                 return "pay";
+
 
             } else if ("momo".equalsIgnoreCase(paymentMethod)) {
                 PaymentResponse response = momoService.createPaymentRequest(String.valueOf(amount));
@@ -140,6 +142,7 @@ public class PayController {
                 order.setStatus("SHIPPING"); // Hoặc trạng thái phù hợp
                 cartService.saveOrder(order);
                 cartService.clearCart(account); // Xóa giỏ hàng sau khi đặt hàng thành công
+
 
                 return "redirect:/thanhtoan/thanhcong?orderId=" + order.getId();
             }
@@ -218,6 +221,7 @@ public class PayController {
 
     @GetMapping("/donhang")
 
+
     public String listOrders(Model model, @RequestParam(defaultValue = "0") int page) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
@@ -237,7 +241,6 @@ public class PayController {
         for (Order order : orderPage.getContent()) {
             totalMap.put(order.getId(), cartService.calculateOrderTotal(order));
         }
-
 
         model.addAttribute("orders", orderPage.getContent());
         model.addAttribute("grandTotal", grandTotal);
