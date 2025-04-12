@@ -1,5 +1,7 @@
 package ass.java6.ass.Controller;
 
+import java.security.Principal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +15,7 @@ import ass.java6.ass.Config.SendEmailConfig;
 import ass.java6.ass.Dto.DangkyRequest;
 import ass.java6.ass.Dto.DangnhapRequest;
 import ass.java6.ass.Dto.DatlaimkRequest;
+import ass.java6.ass.Dto.ThaydoimatkhauRequeset;
 import ass.java6.ass.Entity.Account;
 import ass.java6.ass.Repository.AccountRepository;
 import ass.java6.ass.Service.AccoutService;
@@ -144,6 +147,7 @@ public class LoginController {
         if (result.hasErrors()) {
             return "login/datlaimatkhau";
         }
+
         if(!datlaimkRequest.getPassword().equals(datlaimkRequest.getConfirmPassword())){
             model.addAttribute("errorMessage", "mật khẩu nhập lại không khớp");
             return "login/datlaimatkhau";
@@ -199,5 +203,26 @@ public class LoginController {
         }
         return "login/otp";
     }
+    @GetMapping("/doimatkhau")
+    public String tdmk(Model model){
+        model.addAttribute("tdmk",new ThaydoimatkhauRequeset());
+        return "login/doimatkhau";
+    }
+    @PostMapping("/doimatkhau")
+    public String posttdmk(@Valid @ModelAttribute("tdmk") ThaydoimatkhauRequeset thaydoimatkhauRequeset,BindingResult result,Model model,Principal principal){
+        if(result.hasErrors()){
+            return "login/doimatkhau";
+        }
+        try {
+            accoutService.thaydoimatkhau(principal.getName(), thaydoimatkhauRequeset.getCurrentPassword(), thaydoimatkhauRequeset.getNewPassword(), thaydoimatkhauRequeset.getConfirmPassword());
+            return "redirect:/";
+        } catch (IllegalArgumentException  e) {
+            model.addAttribute("errorMessage", e.getMessage());
+        }
+       
+        return "login/doimatkhau";
+    }
+    
+
 
 }

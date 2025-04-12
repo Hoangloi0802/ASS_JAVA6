@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+
 import org.springframework.data.domain.Sort;
 
 import org.springframework.security.core.Authentication;
@@ -26,6 +27,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -92,10 +94,13 @@ public class PayController {
             Order order = cartService.createTemporaryOrder(account, address);
             List<OrderDetail> orderDetails = order.getOrderDetails();
     
+
             // Tính toán tổng tiền
             double subtotal = orderDetails.stream()
                     .mapToDouble(detail -> detail.getPrice() * detail.getQuantity())
                     .sum();
+
+
             double discount = (order.getVoucher() != null) ? order.getVoucher().getDiscountAmount() : 0.0;
             double shippingFee = 50000;
             double totalAmount = Math.max(subtotal - discount + shippingFee, 0);
@@ -114,12 +119,16 @@ public class PayController {
     
             if ("vnpay".equalsIgnoreCase(paymentMethod)) {
                 model.addAttribute("orderId", "ORDER_" + order.getId());
+
+
                 model.addAttribute("subtotal", subtotal);
                 model.addAttribute("discount", discount);
                 model.addAttribute("shippingFee", shippingFee);
                 model.addAttribute("totalAmount", totalAmount);
                 model.addAttribute("amount", amount);
                 return "pay";
+
+
             } else if ("momo".equalsIgnoreCase(paymentMethod)) {
                 PaymentResponse response = momoService.createPaymentRequest(String.valueOf(amount));
                 if (response.getResultCode() == 0) {
@@ -133,6 +142,8 @@ public class PayController {
                 order.setStatus("SHIPPING"); // Hoặc trạng thái phù hợp
                 cartService.saveOrder(order);
                 cartService.clearCart(account); // Xóa giỏ hàng sau khi đặt hàng thành công
+
+
                 return "redirect:/thanhtoan/thanhcong?orderId=" + order.getId();
             }
         } catch (Exception e) {
@@ -209,6 +220,8 @@ public class PayController {
     }
 
     @GetMapping("/donhang")
+
+
     public String listOrders(Model model, @RequestParam(defaultValue = "0") int page) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
@@ -235,6 +248,7 @@ public class PayController {
         model.addAttribute("currentPage", orderPage.getNumber());
         model.addAttribute("totalPages", orderPage.getTotalPages());
         model.addAttribute("pageSize", pageSize);
+
 
         return "home/donhang";
     }
@@ -310,6 +324,7 @@ public class PayController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Lỗi xử lý VNPay callback: " + e.getMessage());
             return "redirect:/thanhtoan/thanhcong?orderId=" + tempOrder.getId();
+
         }
     }
 
@@ -381,6 +396,7 @@ public class PayController {
         return "redirect:/chitietdonhang/" + id;
     }
 
+
     @PostMapping("/chitietdonhang/{id}/cancel")
     public String cancelOrder(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
         Account account = getAuthenticatedAccount();
@@ -415,6 +431,7 @@ public class PayController {
         redirectAttributes.addFlashAttribute("message", "Đơn hàng đã được hủy thành công!");
         return "redirect:/chitietdonhang/" + id;
     }
+
 
     private Account getAuthenticatedAccount() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

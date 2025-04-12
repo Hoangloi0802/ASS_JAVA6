@@ -81,17 +81,16 @@ public class ProductImpl implements ProductService {
             }
         });
     }
-
     @Override
     public List<Product> findTopSellingProducts(int limit) {
         Pageable pageable = PageRequest.of(0, limit);
-        return ((Slice<Product>) productRepository.findTopSellingProducts(pageable)).getContent();
+        return productRepository.findTopSellingProducts(pageable).getContent();
     }
 
     @Override
     public List<Product> findLatestProducts(int limit) {
         Pageable pageable = PageRequest.of(0, limit);
-        return ((Slice<Product>) productRepository.findLatestProducts(pageable)).getContent();
+        return productRepository.findLatestProducts(pageable).getContent();
     }
 
     @Override

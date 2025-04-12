@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 public interface CartService {
     Order addToCart(Account account, Product product, int quantity);
 
+
     Order getCurrentCart(Account account);
 
     void updateQuantity(Account account, Product product, int quantity);
@@ -40,7 +41,6 @@ public interface CartService {
     Order getOrderById(Long orderId);
 
     List<Order> getOrdersByUsername(String username);
-
     Order createTemporaryOrder(Account account, String address);
 
     void saveOrder(Order order);
@@ -62,3 +62,4 @@ public interface CartService {
 
     double calculateOrderTotal(Order order);
 }
+
