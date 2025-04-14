@@ -5,6 +5,8 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
+
+import ass.java6.ass.Entity.OrderDetail;
 import ass.java6.ass.Entity.Product;
 
 public interface ProductService {
@@ -23,7 +25,11 @@ public interface ProductService {
 
     void deleteById(Integer id);
 
+    boolean decreaseStockForOrder(List<OrderDetail> orderDetails);
+
     Product save(Product product);
+
+    boolean decreaseStock(Integer productId, int quantity);
 
     Optional<Product> findById1(Integer id);
 
