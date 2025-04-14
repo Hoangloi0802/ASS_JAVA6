@@ -1,10 +1,11 @@
 package ass.java6.ass.Service.Impl;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import jakarta.transaction.Transactional;
+import ass.java6.ass.Entity.OrderDetail;
+import ass.java6.ass.Entity.Product;
+import ass.java6.ass.Entity.ProductImage;
+import ass.java6.ass.Repository.ProductRepository;
+import ass.java6.ass.Service.FileUploadService;
+import ass.java6.ass.Service.ProductService;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,12 +14,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import ass.java6.ass.Entity.Product;
-import ass.java6.ass.Entity.ProductImage;
-import ass.java6.ass.Repository.ProductRepository;
-import ass.java6.ass.Service.FileUploadService;
-import ass.java6.ass.Service.ProductService;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductImpl implements ProductService {
@@ -36,7 +38,7 @@ public class ProductImpl implements ProductService {
 
     @Override
     public Page<Product> filterSortAndPaginate(String keyword, Double priceFilter, String categoryId, String sort,
-            Pageable pageable) {
+                                              Pageable pageable) {
         Specification<Product> spec = Specification.where(null);
         String keywordPattern = (keyword != null && !keyword.trim().isEmpty())
                 ? "%" + keyword.trim().toLowerCase() + "%"
@@ -81,6 +83,7 @@ public class ProductImpl implements ProductService {
             }
         });
     }
+
     @Override
     public List<Product> findTopSellingProducts(int limit) {
         Pageable pageable = PageRequest.of(0, limit);
@@ -144,7 +147,6 @@ public class ProductImpl implements ProductService {
         updatedProduct.setQuantity(product.getQuantity());
         updatedProduct.setCategory(product.getCategory());
 
-        // Auto-update status based on quantity
         updatedProduct.setAvailable(product.getQuantity() > 0);
 
         if (mainImageFile != null && !mainImageFile.isEmpty()) {
@@ -185,5 +187,36 @@ public class ProductImpl implements ProductService {
         }
 
         return productRepository.save(updatedProduct);
+    }
+
+    @Override
+    @Transactional
+    public boolean decreaseStock(Integer productId, int quantity) {
+        Optional<Product> productOpt = productRepository.findById(productId);
+        if (productOpt.isEmpty()) {
+            return false;
+        }
+        Product product = productOpt.get();
+        if (!product.getAvailable() || product.getQuantity() < quantity || quantity <= 0) {
+            return false;
+        }
+        product.setQuantity(product.getQuantity() - quantity);
+        if (product.getQuantity() == 0) {
+            product.setAvailable(false);
+        }
+        productRepository.save(product);
+        return true;
+    }
+
+    @Transactional
+    public boolean decreaseStockForOrder(List<OrderDetail> orderDetails) {
+        for (OrderDetail detail : orderDetails) {
+            Integer productId = detail.getProduct().getId();
+            int quantity = detail.getQuantity();
+            if (!decreaseStock(productId, quantity)) {
+                return false; // Nếu một sản phẩm không đủ hàng, hủy toàn bộ
+            }
+        }
+        return true;
     }
 }
