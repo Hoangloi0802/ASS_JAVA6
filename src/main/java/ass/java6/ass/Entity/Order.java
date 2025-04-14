@@ -46,7 +46,8 @@ public class Order implements Serializable {
     @ManyToOne
     @JoinColumn(name = "voucher_id")
     private Voucher voucher;
-
+@Column(name = "payment_method")
+private String paymentMethod;
     public int getTotalQuantity() {
         return orderDetails.stream()
                 .mapToInt(OrderDetail::getQuantity)

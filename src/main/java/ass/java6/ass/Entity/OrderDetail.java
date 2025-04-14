@@ -25,5 +25,7 @@ public class OrderDetail {
 
     private Double price;
 
-    private Integer quantity;
+    private Integer quantity ;
+    @Column(name = "active", nullable = false)
+    private boolean active = true;
 }

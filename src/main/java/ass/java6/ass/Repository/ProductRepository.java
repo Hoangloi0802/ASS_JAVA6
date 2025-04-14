@@ -26,11 +26,13 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                      @Param("categoryId") String categoryId,
                      Pageable pageable);
 
-       @Query("SELECT p FROM Product p " +
-                     "LEFT JOIN p.orderDetails od " +
-                     "WHERE p.available = true AND p.quantity > 0 " +
+       @Query("SELECT p " +
+                     "FROM Product p " +
+                     "JOIN p.orderDetails od " +
+                     "JOIN od.order o " +
+                     "WHERE od.active = true AND o.status NOT IN ('FAILED', 'CART') " +
                      "GROUP BY p " +
-                     "ORDER BY COALESCE(SUM(od.quantity), 0) DESC")
+                     "ORDER BY SUM(od.quantity) DESC")
        Slice<Product> findTopSellingProducts(Pageable pageable);
 
        @Query("SELECT p FROM Product p ORDER BY p.createDate DESC")

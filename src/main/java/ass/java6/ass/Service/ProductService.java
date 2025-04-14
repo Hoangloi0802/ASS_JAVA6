@@ -26,7 +26,7 @@ public interface ProductService {
     void deleteById(Integer id);
 
     boolean decreaseStockForOrder(List<OrderDetail> orderDetails);
-
+    boolean restoreStockForOrder(List<OrderDetail> orderDetails) ;
     Product save(Product product);
 
     boolean decreaseStock(Integer productId, int quantity);

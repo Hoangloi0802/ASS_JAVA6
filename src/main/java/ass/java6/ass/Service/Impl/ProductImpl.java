@@ -208,14 +208,35 @@ public class ProductImpl implements ProductService {
         return true;
     }
 
+    @Override
     @Transactional
     public boolean decreaseStockForOrder(List<OrderDetail> orderDetails) {
         for (OrderDetail detail : orderDetails) {
             Integer productId = detail.getProduct().getId();
             int quantity = detail.getQuantity();
             if (!decreaseStock(productId, quantity)) {
-                return false; // Nếu một sản phẩm không đủ hàng, hủy toàn bộ
+                return false;
             }
+        }
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public boolean restoreStockForOrder(List<OrderDetail> orderDetails) {
+        for (OrderDetail detail : orderDetails) {
+            Optional<Product> productOpt = productRepository.findById(detail.getProduct().getId());
+            if (productOpt.isEmpty()) {
+                return false;
+            }
+            Product product = productOpt.get();
+            int quantity = detail.getQuantity();
+            if (quantity <= 0) {
+                return false;
+            }
+            product.setQuantity(product.getQuantity() + quantity);
+            product.setAvailable(true);
+            productRepository.save(product);
         }
         return true;
     }

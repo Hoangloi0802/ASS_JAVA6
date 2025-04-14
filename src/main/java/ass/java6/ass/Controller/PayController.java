@@ -27,6 +27,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import jakarta.servlet.http.HttpServletRequest;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -88,8 +90,27 @@ public class PayController {
         }
 
         try {
+            // Chuẩn hóa paymentMethod
+            String normalizedPaymentMethod;
+            switch (paymentMethod.toLowerCase()) {
+                case "cash":
+                    normalizedPaymentMethod = "COD";
+                    break;
+                case "vnpay":
+                    normalizedPaymentMethod = "VNPay";
+                    break;
+                case "momo":
+                    normalizedPaymentMethod = "MoMo";
+                    break;
+                default:
+                    redirectAttributes.addFlashAttribute("error", "Phương thức thanh toán không hợp lệ!");
+                    return "redirect:/thanhtoan";
+            }
+
             // Tạo đơn hàng tạm thời
             Order order = cartService.createTemporaryOrder(account, address);
+            order.setPaymentMethod(normalizedPaymentMethod);
+            order.setStatus(Order.STATUS_PENDING); // Dùng hằng số
             List<OrderDetail> orderDetails = order.getOrderDetails();
 
             // Tính toán tổng tiền
@@ -106,13 +127,13 @@ public class PayController {
                 return "redirect:/thanhtoan";
             }
 
-            // Lưu đơn hàng tạm thời
+            // Lưu đơn hàng
             cartService.saveOrder(order);
             request.getSession().setAttribute("tempOrder", order);
             request.getSession().setAttribute("account", account);
             request.getSession().setAttribute("totalAmount", totalAmount);
 
-            if ("vnpay".equalsIgnoreCase(paymentMethod)) {
+            if ("VNPay".equalsIgnoreCase(normalizedPaymentMethod)) {
                 model.addAttribute("orderId", "ORDER_" + order.getId());
                 model.addAttribute("subtotal", subtotal);
                 model.addAttribute("discount", discount);
@@ -120,7 +141,7 @@ public class PayController {
                 model.addAttribute("totalAmount", totalAmount);
                 model.addAttribute("amount", amount);
                 return "pay";
-            } else if ("momo".equalsIgnoreCase(paymentMethod)) {
+            } else if ("MoMo".equalsIgnoreCase(normalizedPaymentMethod)) {
                 PaymentResponse response = momoService.createPaymentRequest(String.valueOf(amount));
                 if (response.getResultCode() == 0) {
                     return "redirect:" + response.getPayUrl();
@@ -129,15 +150,15 @@ public class PayController {
                     return "redirect:/thanhtoan";
                 }
             } else {
-                // Thanh toán thường
+                // COD
                 boolean stockUpdated = productService.decreaseStockForOrder(orderDetails);
                 if (!stockUpdated) {
                     redirectAttributes.addFlashAttribute("error", "Không đủ hàng trong kho!");
-                    order.setStatus("FAILED");
+                    order.setStatus(Order.STATUS_FAILED);
                     cartService.saveOrder(order);
                     return "redirect:/thanhtoan";
                 }
-                order.setStatus("SHIPPING");
+                order.setStatus(Order.STATUS_SHIPPING);
                 cartService.saveOrder(order);
                 cartService.clearCart(account);
                 return "redirect:/thanhtoan/thanhcong?orderId=" + order.getId();
@@ -421,11 +442,45 @@ public class PayController {
             return "redirect:/chitietdonhang/" + id;
         }
 
-        order.setStatus(Order.STATUS_FAILED);
-        cartService.saveOrder(order);
+        boolean stockRestored = productService.restoreStockForOrder(order.getOrderDetails());
+        if (!stockRestored) {
+            redirectAttributes.addFlashAttribute("error", "Lỗi khi hoàn lại số lượng kho!");
+            return "redirect:/chitietdonhang/" + id;
+        }
 
-        redirectAttributes.addFlashAttribute("message", "Đơn hàng đã được hủy thành công!");
-        return "redirect:/chitietdonhang/" + id;
+        try {
+            for (OrderDetail detail : order.getOrderDetails()) {
+                detail.setActive(false); // Không tính vào thống kê bán
+            }
+            order.setStatus(Order.STATUS_FAILED); // Đánh dấu đơn hủy
+            order.setCreateDate(LocalDateTime.now()); // Giả lập cancelDate
+            cartService.saveOrder(order);
+            redirectAttributes.addFlashAttribute("message", "Đơn hàng đã được hủy thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Lỗi khi hủy đơn hàng: " + e.getMessage());
+            return "redirect:/chitietdonhang/" + id;
+        }
+
+        return "redirect:/huydon/" + id;
+    }
+
+    @GetMapping("/huydon/{id}")
+    public String showCancelOrder(@PathVariable("id") Long id, Model model) {
+        Order order = cartService.getOrderById(id);
+        if (order == null) {
+            model.addAttribute("error", "Không tìm thấy đơn hàng!");
+            return "home/huydon";
+        }
+
+        model.addAttribute("order", order);
+        model.addAttribute("username", order.getAccount().getUsername());
+        model.addAttribute("cancelTime", order.getCreateDate() != null
+                ? order.getCreateDate().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy"))
+                : LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy")));
+        model.addAttribute("orderId", "ORDER_" + order.getId());
+        model.addAttribute("paymentMethod", order.getPaymentMethod() != null ? order.getPaymentMethod() : "COD");
+
+        return "home/huydon";
     }
 
     private Account getAuthenticatedAccount() {

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{/layouts/header}">
+    <title>Hủy Đơn Hàng</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <style>
+        #stepContainer {
+            margin: 20px 0;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .step-circle {
+            width: 30px;
+            height: 30px;
+            background-color: #6c757d;
+            border-radius: 50%;
+            margin: 0 auto 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .step.active .step-circle {
+            background-color: #dc3545;
+        }
+
+        .step.done .step-circle {
+            background-color: #28a745;
+        }
+
+        .label {
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        .step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 14px;
+            left: 50%;
+            width: 100%;
+            height: 2px;
+            background-color: #6c757d;
+            z-index: -1;
+        }
+
+        .step.done:not(:last-child)::after {
+            background-color: #28a745;
+        }
+    </style>
+</head>
+
+<body>
+    <header th:replace="~{/layouts/nav}"></header>
+
+    <main>
+        <div class="mb-3">
+            <div class="container-fluid page-header py-5">
+                <h1 class="text-center text-white display-6">HỦY ĐƠN HÀNG</h1>
+            </div>
+        </div>
+
+        <div class="container py-4">
+            <a th:href="@{/donhang}" class="text-decoration-none">← TRỞ LẠI</a>
+
+            <div th:if="${error}" class="alert alert-danger" role="alert">
+                <span th:text="${error}"></span>
+            </div>
+
+            <div th:if="${order}" class="my-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="text-muted">Yêu cầu vào: <span
+                            th:text="${#temporals.format(order.createDate, 'HH:mm dd-MM-yyyy')}"></span></div>
+                </div>
+
+                <div class="d-flex justify-content-between position-relative" id="stepContainer">
+                    <div class="step" id="step1">
+                        <div class="step-circle" id="circle1">
+                            <div class="spinner-border spinner-border-sm text-light" role="status" id="spinner1"></div>
+                        </div>
+                        <div class="label">Gửi yêu cầu</div>
+                    </div>
+                    <div class="step" id="step2">
+                        <div class="step-circle" id="circle2">
+                            <div class="spinner-border spinner-border-sm text-light" role="status" id="spinner2"></div>
+                        </div>
+                        <div class="label">Tiếp nhận và xử lý</div>
+                    </div>
+                    <div class="step" id="step3">
+                        <div class="step-circle" id="circle3">
+                            <div class="spinner-border spinner-border-sm text-light" role="status" id="spinner3"></div>
+                        </div>
+                        <div class="label">Được chấp nhận</div>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${order}" class="alert alert-danger" role="alert">
+                <strong>Đã hủy đơn hàng</strong><br>
+                vào <span th:text="${cancelTime}"></span>.
+            </div>
+
+            <div th:if="${order}" class="card p-3 mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div><i class="bi bi-person-fill"></i> <strong th:text="${username}"></strong></div>
+                    <a href="#" class="btn btn-outline-primary btn-sm">Xem Shop</a>
+                </div>
+                <div th:if="${order.orderDetails == null or order.orderDetails.isEmpty()}" class="text-muted">
+                    <p>Không có sản phẩm trong đơn hàng.</p>
+                </div>
+                <div th:each="detail : ${order.orderDetails}" th:if="${detail.active == false}" class="d-flex">
+                    <img th:src="${detail.product != null and detail.product.productImages != null and !detail.product.productImages.isEmpty()} ? ${detail.product.productImages[0].imageUrl} : '/images/default-product.jpg'"
+                        class="me-3" alt="Ảnh sản phẩm" width="100" height="100" />
+                    <div>
+                        <h6 th:text="${detail.product != null} ? ${detail.product.name} : 'Sản phẩm không xác định'">
+                        </h6>
+                        <div class="text-muted small">Phân loại hàng: Không có</div>
+                        <div th:text="'x' + ${detail.quantity}"></div>
+                        <div class="fw-bold mt-1 text-danger"
+                            th:text="'₫' + ${#numbers.formatInteger(detail.price, 0, 'COMMA')}"></div>
+                    </div>
+                </div>
+            </div>
+
+            <table th:if="${order}" class="table">
+                <tbody>
+                    <tr>
+                        <th>Yêu cầu bởi</th>
+                        <td>Người mua</td>
+                    </tr>
+                    <tr>
+                        <th>Phương thức thanh toán</th>
+                        <td th:text="${paymentMethod == 'COD' ? 'Thanh toán khi nhận hàng' : 
+                                       paymentMethod == 'VNPay' ? 'Thanh toán qua VNPay' : 
+                                       paymentMethod == 'MoMo' ? 'Thanh toán qua MoMo' : 'Không xác định'}"></td>
+                    </tr>
+                    <tr>
+                        <th>Mã đơn hàng</th>
+                        <td><span class="text-danger" th:text="${orderId}"></span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <div th:replace="~{/layouts/footer}"></div>
+
+    <script>
+        function completeStep(stepNum) {
+            const step = document.getElementById('step' + stepNum);
+            const circle = document.getElementById('circle' + stepNum);
+            const spinner = document.getElementById('spinner' + stepNum);
+
+            if (spinner) {
+                spinner.remove();
+                circle.innerHTML = '<i class="fa-solid fa-check"></i>';
+                step.classList.add('done');
+            }
+        }
+
+        function activateStep(stepNum) {
+            const step = document.getElementById('step' + stepNum);
+            if (step) {
+                step.classList.add('active');
+            }
+        }
+
+        function runSteps() {
+            activateStep(1);
+            setTimeout(() => {
+                completeStep(1);
+                activateStep(2);
+            }, 1500);
+
+            setTimeout(() => {
+                completeStep(2);
+                activateStep(3);
+            }, 3000);
+
+            setTimeout(() => {
+                completeStep(3);
+            }, 4500);
+        }
+
+        document.addEventListener('DOMContentLoaded', runSteps);
+    </script>
+</body>
+
+</html>
