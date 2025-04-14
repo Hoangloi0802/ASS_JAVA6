@@ -1034,43 +1034,63 @@ th {
   pointer-events: none;
   background-color: #f8f9fa;
 }
-<<<<<<< HEAD
-=======
-
-.hover-white:hover {
-  color: white !important;
-  transition: color 0.3s;
+.step {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  flex: 1;
+  position: relative;
 }
 
-#scroll-top {
+.step-circle {
   width: 40px;
   height: 40px;
+  border-radius: 50%;
+  background-color: #ccc;
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
-  opacity: 0.8;
-  transition: all 0.3s;
+  font-weight: bold;
+  position: relative;
+  z-index: 1;
 }
 
-#scroll-top:hover {
-  opacity: 1;
-  transform: translateY(-3px);
+.step.active .step-circle {
+  background-color: #0d6efd;
 }
 
-.main-wrapper {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh; /* Ensure the wrapper takes at least the full viewport height */
+.step.done .step-circle {
+  background-color: #198754;
 }
 
-/* Content area should take up remaining space */
-.content {
-  flex: 1 0 auto; /* Grow to fill available space, but don't shrink */
+.step .label {
+  margin-top: 8px;
+  font-size: 0.85rem;
 }
 
-/* Footer should shrink to its content size */
-footer {
-  flex-shrink: 0; /* Prevent the footer from shrinking */
+.step-line {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  height: 4px;
+  width: 100%;
+  background-color: #ccc;
+  z-index: 0;
 }
->>>>>>> 542ec0afd31db27256752fb2102978f168e55928
+
+.step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  height: 4px;
+  width: 100%;
+  background-color: #ccc;
+  z-index: 0;
+}
+
+.step.done:not(:last-child)::after {
+  background-color: #198754;
+}

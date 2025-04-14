@@ -22,6 +22,8 @@
 
                     <p><strong>Mã đơn hàng:</strong> <span th:text="${order.id != null} ? ${order.id} : 'N/A'"></span>
                     </p>
+                    <p><strong>Hình thức thanh toán:</strong> <span
+                            th:text="${order.paymentMethod != null} ? ${order.paymentMethod} : 'N/A'"></span></p>
                     <p><strong>Ngày đặt:</strong> <span
                             th:text="${order.createDate != null} ? ${#temporals.format(order.createDate, 'dd/MM/yyyy HH:mm')} : 'N/A'"></span>
                     </p>

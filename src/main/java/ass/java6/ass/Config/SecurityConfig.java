@@ -36,7 +36,7 @@ public class SecurityConfig {
         "/profile/update","/profile",
         "/donmua", "/donhang", "/chitietdonhang/**", "/shop",
         "/giohang/**", "/thanhtoan/**", "/product/**",
-        "/cart/**",
+        "/cart/**","/huydon/**",
         "/quenmk", "/datlaimk", "/checkotp","/otpquenmk","/datlaimk","/datlaimatkhau","/goilaiotp","/doimatkhau",
         "/uploads/**","/admin/products/**",
 
