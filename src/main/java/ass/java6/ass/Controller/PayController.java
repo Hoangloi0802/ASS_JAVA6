@@ -425,34 +425,34 @@ public class PayController {
             redirectAttributes.addFlashAttribute("error", "Vui lòng đăng nhập để thực hiện hành động này!");
             return "redirect:/dangnhap";
         }
-
+    
         Order order = cartService.getOrderById(id);
         if (order == null) {
             redirectAttributes.addFlashAttribute("error", "Không tìm thấy đơn hàng!");
             return "redirect:/donhang";
         }
-
+    
         if (!order.getAccount().getUsername().equals(account.getUsername())) {
             redirectAttributes.addFlashAttribute("error", "Bạn không có quyền hủy đơn hàng này!");
             return "redirect:/donhang";
         }
-
+    
         if (!order.getStatus().equals(Order.STATUS_PENDING) && !order.getStatus().equals(Order.STATUS_SHIPPING)) {
             redirectAttributes.addFlashAttribute("error", "Đơn hàng không thể hủy ở trạng thái hiện tại!");
             return "redirect:/chitietdonhang/" + id;
         }
-
+    
         boolean stockRestored = productService.restoreStockForOrder(order.getOrderDetails());
         if (!stockRestored) {
             redirectAttributes.addFlashAttribute("error", "Lỗi khi hoàn lại số lượng kho!");
             return "redirect:/chitietdonhang/" + id;
         }
-
+    
         try {
             for (OrderDetail detail : order.getOrderDetails()) {
-                detail.setActive(false); // Không tính vào thống kê bán
+                detail.setActive(false); // Ngăn tính vào bán hàng
             }
-            order.setStatus(Order.STATUS_FAILED); // Đánh dấu đơn hủy
+            order.setStatus(Order.STATUS_FAILED);
             order.setCreateDate(LocalDateTime.now()); // Giả lập cancelDate
             cartService.saveOrder(order);
             redirectAttributes.addFlashAttribute("message", "Đơn hàng đã được hủy thành công!");
@@ -460,7 +460,7 @@ public class PayController {
             redirectAttributes.addFlashAttribute("error", "Lỗi khi hủy đơn hàng: " + e.getMessage());
             return "redirect:/chitietdonhang/" + id;
         }
-
+    
         return "redirect:/huydon/" + id;
     }
 

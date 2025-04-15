@@ -20,6 +20,8 @@
                 th:classappend="${order.status == 'SUCCESS'} ? 'bg-success' : (${order.status == 'FAILED'} ? 'bg-danger' : (${order.status == 'SHIPPING'} ? 'bg-info' : 'bg-warning'))"
                 th:text="${order.status == 'SUCCESS'} ? 'Đã giao hàng' : (${order.status == 'FAILED'} ? 'Thất bại' : (${order.status == 'SHIPPING'} ? 'Đang giao hàng' : 'Chờ xử lý'))">
           </span>
+        </p>
+        <p><strong>Phương thức thanh toán:</strong> <span th:text="${order.paymentMethod}"></span></p>
       </div>
     </div>
 
