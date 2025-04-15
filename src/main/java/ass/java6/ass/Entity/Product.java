@@ -67,7 +67,10 @@ public class Product implements Serializable {
         if (orderDetails == null) {
             return 0;
         }
-        return orderDetails.stream().mapToInt(OrderDetail::getQuantity).sum();
+        return orderDetails.stream()
+                .filter(od -> od.isActive() && !od.getOrder().getStatus().equals("FAILED") && !od.getOrder().getStatus().equals("CART"))
+                .mapToInt(OrderDetail::getQuantity)
+                .sum();
     }
     
 }
